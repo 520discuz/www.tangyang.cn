@@ -1,0 +1,308 @@
+﻿<html>
+<head>
+  <title>唐阳网络分享</title>
+  <meta name="description" content="欢迎光临，各种搜索引擎集合在首页，旨在方便大家搜索。同时网站也提供很多通过AI生成的实用小工具。" />
+  <style>
+    /* 全局样式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 搜索容器样式 */
+    .search-container {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .search-input {
+      width: 50%;
+      height: 16px;
+      padding: 12px 16px;
+      font-size: 16px;
+      margin: 0;
+      vertical-align: top;
+      outline: 0;
+      box-shadow: none;
+      border-radius: 10px 10px 10px 10px;
+      border: 2px solid #000;
+      background: #fff;
+      color: #222;
+      overflow: hidden;
+      box-sizing: content-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .search-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .search-btn {
+      text-decoration: none;
+      color: black;
+      margin: 10px;
+      font-size: 24px;
+      flex: 0 0 auto;
+    }
+
+    .search-btn:hover {
+      background-color: #cccccc;
+    }
+
+    /* 响应式样式 */
+    @media (max-width: 767px) {
+      .search-input {
+        width: 90%;
+      }
+
+      .search-btn {
+        display: block;
+        margin: 10px auto;
+        flex-basis: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <center>欢迎来到唐阳网络分享，这是一个公益性质的网站，分享各类电脑版实用小工具，本站小工具均为HTML代码编写，全部免费开源无广告，用电脑鼠标右击网页选择另存为就可永久保存到本地电脑！</center>
+  <hr />
+  <div class="search-container">
+    <h2><font color="#000">请先输入您要搜索的内容：</font></h2>
+    
+    <input type="text" class="search-input" placeholder="点击此处输入关键字" id="searchInput">
+    <script>
+      const input = document.getElementById('searchInput');
+
+      input.addEventListener('focus', function() {
+        // 当输入框获得焦点时，清空占位符
+        this.placeholder = '';
+      });
+
+      input.addEventListener('blur', function() {
+        // 当输入框失去焦点且为空时，恢复占位符
+        if (this.value === '') {
+          this.placeholder = '点击此处输入关键字';
+        }
+      });
+    </script>
+    
+    <h2><font color="#000">然后点击下面的搜索引擎：</font></h2>
+    <div class="search-buttons">
+      <!-- 动态生成搜索按钮 -->
+    </div>
+  </div>
+
+  <script>
+    // 搜索引擎链接配置
+    function isMobileDevice() {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    var searchEngines = {
+      'baidu百度搜索': {url: isMobileDevice() ? 'https://m.baidu.com/s?wd=' : 'https://www.baidu.com/s?wd=', extraParams: ''},
+      'bing必应搜索': {url: 'https://cn.bing.com/search?q=', extraParams: ''},
+      '360搜索': {url: 'https://www.so.com/s?ie=utf-8&fr=360sou_newhome&src=360sou_newhome&ssid=e961692a196a4e7ca74fe089e0b53822&sp=a9a&cp=060a9a0007&nlpv=placeholder_test_zc_55&q=', extraParams: ''},
+      'sogou搜狗搜索': {url: 'https://www.sogou.com/web?query=', extraParams: ''},
+      'toutiao头条搜索': {url: 'https://so.toutiao.com/search?dvpf=pc&source=input&keyword=', extraParams: ''},
+      'bilibili哔哩哔哩搜索': {url: 'https://search.bilibili.com/all?keyword=', extraParams: ''},
+      'douyin抖音搜索': {url: 'https://www.douyin.com/search/', extraParams: ''},
+      'kuaishou快手搜索': {url: 'https://www.kuaishou.com/search/video?searchKey=', extraParams: ''},
+      'zhihu知乎搜索': {url: 'https://www.zhihu.com/search?type=content&q=', extraParams: ''},
+      'xhs小红书搜索': {url: 'https://www.xiaohongshu.com/search_result?keyword=', extraParams: ''},
+      'weibo微博搜索': {url: 'https://s.weibo.com/weibo?q=', extraParams: ''},
+      'youdao有道搜索': {url: 'https://www.youdao.com/result?word=', extraParams: '&lang=en'},
+      'douban豆瓣搜索': {url: 'https://www.douban.com/search?source=suggest&q=', extraParams: ''},
+      'taobao淘宝搜索': {url: 'https://s.taobao.com/search?commend=all&ie=utf8&initiative_id=tbindexz_20170306&localImgKey=&page=1&q=', extraParams: '&search_type=item&sourceId=tb.index&spm=a21bo.jianhua%2Fa.201856.d13&ssid=s5-e&tab=all'},
+      'tmall天猫搜索': {url: 'https://s.taobao.com/search?fromTmallRedirect=true&localImgKey=&page=13&q=', extraParams: '&spm=a21bo.tmall%2Fa.201856.d13&tab=mall'},
+      'jd京东搜索': {url: 'https://search.jd.com/Search?keyword=', extraParams: ''},
+      'pdd拼多多搜索': {url: 'https://mobile.yangkeduo.com/search_result.html?search_key=', extraParams: ''},
+      '1688阿里巴巴搜索': {url: 'https://p4psearch.1688.com/page.html?hpageId=old-sem-pc-list&keywords=', extraParams: ''},
+      'amazon亚马逊搜索': {url: 'https://www.amazon.com/s?k=', extraParams: ''},
+      'goofish闲鱼搜索': {url: 'https://www.goofish.com/search?q=', extraParams: ''},
+      '163网易搜索': {url: 'https://www.163.com/search?keyword=', extraParams: ''},
+      'sohu搜狐搜索': {url: 'https://search.sohu.com/?queryType=outside&keyword=', extraParams: ''},
+      'sina新浪搜索': {url: 'https://search.sina.com.cn/?c=news&q=', extraParams: ''},
+      'qq腾讯搜索': {url: 'https://new.qq.com/search?query=', extraParams: ''}
+    };
+
+    // 动态生成搜索按钮
+    var searchButtonsContainer = document.querySelector('.search-buttons');
+    for (var engine in searchEngines) {
+var buttonHtml = `<a href="#" class="search-btn" data-engine="${engine}" style="color: ${
+    engine === 'baidu百度搜索' ? '#3235e5' : // 
+    engine === 'bing必应搜索' ? '#297bbf' : // 
+    engine === '360搜索' ? '#3ab261' : // 
+    engine === 'sogou搜狗搜索' ? '#f78c1a' : // 
+    engine === 'toutiao头条搜索' ? '#e63e3d' : // 
+    engine === 'bilibili哔哩哔哩搜索' ? '#3cafee' : // 
+    engine === 'douyin抖音搜索' ? '#000000' : // 
+    engine === 'kuaishou快手搜索' ? '#f43a00' : // 
+    engine === 'zhihu知乎搜索' ? '#3373fa' : // 
+    engine === 'xhs小红书搜索' ? '#f41e3d' : // 
+    engine === 'weibo微博搜索' ? '#cc2925' : // 
+    engine === 'youdao有道搜索' ? '#f10007' : // 
+    engine === 'douban豆瓣搜索' ? '#217700' : // 
+    engine === 'yahoo雅虎搜索' ? '#74029b' : // 
+    engine === 'taobao淘宝搜索' ? '#f44c00' : // 
+    engine === 'tmall天猫搜索' ? '#f40030' : // 
+    engine === 'jd京东搜索' ? '#bf0f1c' : // 
+    engine === 'pdd拼多多搜索' ? '#d72b1b' : // 
+    engine === '1688阿里巴巴搜索' ? '#f67100' : // 
+    engine === 'amazon亚马逊搜索' ? '#040505' : // 
+    engine === 'goofish闲鱼搜索' ? '#f9e201' : // 
+    engine === '163网易搜索' ? '#b9262a' : // 
+    engine === 'sohu搜狐搜索' ? '#fad000' : // 
+    engine === 'sina新浪搜索' ? '#de3035' : // 
+    engine === 'qq腾讯搜索' ? '#2153d4' : // 
+    'black' // 默认颜色
+}">${engine}</a>`;
+      searchButtonsContainer.innerHTML += buttonHtml;
+    }
+
+    // 为每个搜索按钮添加事件监听器
+    var searchButtons = document.querySelectorAll('.search-btn');
+    searchButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var searchInput = document.querySelector('.search-input').value;
+        var searchEngine = this.getAttribute('data-engine');
+        var searchUrl = searchEngines[searchEngine].url + encodeURIComponent(searchInput) + searchEngines[searchEngine].extraParams;
+        window.open(searchUrl, '_blank');
+      });
+    });
+  </script>
+  <hr />
+  <center>
+
+    <h2>实用小工具：</h2>
+</center>
+<p>
+【计算类】
+<a href="../html/jsq/" target="_blank"><strong>在线计算器</strong></a>、
+<a href="../html/xljg/" target="_blank">新老价格百分比计算器</a>、
+<a href="../html/fwgt/" target="_blank">房屋公摊面积计</a>、
+<a href="../html/bsjsq" target="_blank">倍数计算器</a>、
+<a href="../html/bfbjsq" target="_blank">百分比计算器</a>、
+<a href="../html/szfblsd" target="_blank"><strong>数字倍数比例锁定器</strong></a>、
+<a href="../html/bcjjsq" target="_blank"><strong>订阅套餐业务补差价计算器</strong></a>、
+<a href="../html/nhjsq" target="_blank">年化收益率查询工具</a>、
+<a href="../html/fljsq" target="_blank"><strong>存款利息复利回报率计算器</strong></a>、
+<a href="../html/bl" target="_blank">玻璃重量计算器</a>、
+<a href="../html/wtzl" target="_blank">物体重量计算器</a>、
+<a href="../html/wpjg" target="_blank">物品尺寸价格计算器</a>、
+<a href="../html/hjgpjj" target="_blank"><strong>黄金股票基金盈亏计算器</strong></a>、
+<a href="../html/pjzjsq" target="_blank">平均分数值计算器</a>、
+<a href="../html/cgsbsjjljsq" target="_blank">成功失败实际几率计算器</a>、
+<a href="../html/ztzglmnq" target="_blank">掷骰子概率模拟器</a>、
+<a href="../html/csljsq" target="_blank">出水量计算器</a>、
+
+<div>
+<p>
+【汽车类】
+<a href="../html/yfch" target="_blank"><strong>行程油费查询器</strong></a>、
+<a href="../html/xsjlcx" target="_blank">行驶距离预测查询工具</a>、
+<a href="../html/mglyh" target="_blank"><strong>每公里油耗油费查询工具</strong></a>、
+<a href="../html/jyjesyfcxgj" target="_blank">加油金额式油费查询工具</a>、
+<a href="../html/xhylsyjcxgj" target="_blank">消耗油量式油价查询工具</a>、
+<a href="../html/xnyddc" target="_blank"><strong>新能源电动车电费计算查询工具</strong></a>、
+<a href="../html/xssjcx" target="_blank">行驶时间预测查询工具</a>、
+<p>
+【其他类】
+<a href="../html/huanse/" target="_blank">网页自由换色</a>、
+<a href="../html/beijing/" target="_blank">纯色背景网页</a>、
+<a href="../html/smjdt/" target="_blank">生命进度条</a>、
+<a href="../html/md5" target="_blank">md5加密</a>、
+<a href="../html/sjmmsc" target="_blank">随机密码生成器</a>、
+<a href="../html/zdymmscq" target="_blank"><strong>自定义密码生成器</strong></a>、
+<a href="../html/pmbh" target="_blank">跑马灯式屏幕保护程序</a>、
+<a href="../html/drspmbhcx" target="_blank">淡入式屏幕保护程序</a>、
+<a href="../html/ppi" target="_blank">PPI查询</a>、
+<a href="../html/xzsd" target="_blank">宽带下载速度查询</a>、
+<a href="../html/xzsj" target="_blank"><strong>文件下载时间查询</strong></a>、
+<a href="../html/kdll" target="_blank">宽带下载流量消耗查询器</a>、
+<a href="../html/wbnr" target="_blank">文本内容统计工具</a>、
+<a href="../html/sjc" target="_blank">时间戳转换器</a>、
+<a href="../html/zjtj" target="_blank">字节统计工具</a>、
+<a href="../html/sbdjcstj" target="_blank">鼠标点击次数统计</a>、
+<a href="../html/jpajcstj" target="_blank">键盘按键次数统计</a>、
+<a href="../html/uuid" target="_blank">UUID生成器</a>、
+<a href="../html/wzzbase64zhq" target="_blank">文字转BASE64转换器</a>、
+<a href="../html/tpzbase64zhq" target="_blank">图片转BASE64转换器</a>、
+<a href="../html/htmlwzscq" target="_blank">HTML文章生成器</a>、
+<a href="../html/urlbjmgj" target="_blank">URL编解码工具</a>、
+<a href="../html/wbqzgj" target="_blank">文本去重工具</a>、
+
+<p>
+【图片类】
+<a href="../html/tpwjys" target="_blank"><strong>图片文件大小压缩工具</strong></a>、
+<a href="../html/tpdxxg" target="_blank">图片大小修改器</a>、
+<a href="../html/tpwzsytj" target="_blank">图片文字水印添加器</a>、
+<a href="../html/tppj" target="_blank">图片拼接器</a>、
+<a href="../html/tptjtjsy" target="_blank">图片添加图片水印工具</a>、
+<a href="../html/tptmd" target="_blank">图片透明度调节器</a>、
+<a href="../html/jggtpscq" target="_blank">九宫格图片生成器</a>、
+<a href="../html/tpxzgj" target="_blank">图片旋转工具</a>、
+<a href="../html/zdydggtpscq" target="_blank"><strong>自定义多宫格图片生成器</strong></a>、
+<a href="../html/tpyjclgj" target="_blank">图片圆角处理工具</a>、
+<a href="../html/wzztp" target="_blank">文字转图片工具</a>、
+<a href="../html/qsq" target="_blank">RGB取色器</a>、
+<a href="../html/csjb" target="_blank">彩色渐变框</a>、
+<a href="../html/ccwbnrzbcctpscq" target="_blank">超长文本内容转变超长图片生成器</a>、
+<a href="../html/ktjscstpbhbgj" target="_blank">可调节式彩色图片变黑白工具</a>、
+<a href="../html/tpfgzhq" target="_blank">图片风格转换器</a>、
+
+<p>
+【单位类】
+<a href="../html/cddw" target="_blank"><strong>长度单位换算器</strong></a>、
+<a href="../html/ldw" target="_blank">力单位换算器</a>、
+<a href="../html/mddw" target="_blank">密度单位换算器</a>、
+<a href="../html/mjdw" target="_blank">面积单位换算器</a>、
+<a href="../html/sddw" target="_blank">速度单位换算器</a>、
+<a href="../html/tjdw" target="_blank">体积单位换算器</a>、
+<a href="../html/yqdw" target="_blank">压强单位换算器</a>、
+<a href="../html/zldw" target="_blank"><strong>质量单位换算器</strong></a>、
+<a href="../html/ccdw" target="_blank">存储单位换算器</a>、
+<a href="../html/dldw" target="_blank">电流单位换算器</a>、
+<a href="../html/dydw" target="_blank">电压单位换算器</a>、
+<a href="../html/jddw" target="_blank">角度单位换算器</a>、
+<a href="../html/ljdw" target="_blank">力矩单位换算器</a>、
+<a href="../html/sjdw" target="_blank">时间单位换算器</a>、
+<a href="../html/wddw" target="_blank">温度单位换算器</a>、
+<a href="../html/gldw" target="_blank">功率单位换算器</a>、
+<a href="../html/dzdw" target="_blank">电阻单位换算器</a>、
+<a href="../html/gnrdw" target="_blank">功能热单位换算器</a>、
+<a href="../html/rmbdw" target="_blank">人民币单位换算器</a>、
+<a href="../html/gzddw" target="_blank">光照度单位换算器</a>、
+<a href="../html/wyzyy/" target="_blank">万元转亿元转换工具</a>、
+
+<p>
+【生活类】
+<a href="../html/mb" target="_blank">可新建式秒表</a>、
+<a href="../html/tsjsq" target="_blank">天数计算器</a>、
+<a href="../html/qhtjs" target="_blank">前后天计算器</a>、
+<a href="../html/jt" target="_blank"><strong>几天前后是几月几日</strong></a>、
+<a href="../html/dbbj" target="_blank">待办事项便笺</a>、
+<a href="../html/djs" target="_blank">自定义声音式倒计时器</a>、
+<a href="../html/bmncxq" target="_blank">本命年查询器</a>、
+<a href="../html/sjgd" target="_blank">世界各地时间</a>、
+<a href="../html/wbdb" target="_blank">文本对比工具</a>、
+<a href="../html/bzqjsq" target="_blank">保质期计算器</a>、
+<a href="../html/bzztjbltscq" target="_blank">饼柱状统计比例图生成器</a>、
+<a href="../html/hxldldtjbltscq" target="_blank">环形漏斗雷达统计比例图生成器</a>、
+<a href="../html/nntzjkdbmicxq" target="_blank">男女体重健康度BMI查询器</a>、
+<a href="../html/znsgycq" target="_blank">子女身高预测器</a>、
+
+<p>
+<p>
+<hr />
+<p>
+<center>
+<p><a href="https://beian.miit.gov.cn/" target="_blank">闽ICP备11012075号-7</a>
+  </p></center>
+
+
+</body>
+</html>
