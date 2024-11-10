@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>文字转图片工具</title>
+    <style>
+        /* 前面的样式保持不变 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+        }
+        .controls {
+            flex: 1;
+            min-width: 300px;
+        }
+        .preview-area {
+            flex: 2;
+            position: relative;
+            min-height: 400px;
+            padding: 20px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .canvas-container {
+            position: relative;
+            background-image: 
+                linear-gradient(45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            border: 1px solid #999;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="color"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+        }
+        .coordinates {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* 新增的调整大小控制点样式 */
+        .resize-handle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            z-index: 100;
+        }
+        /* 四角 */
+        .resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+        .resize-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+        .resize-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+        .resize-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+        /* 四边中点 */
+        .resize-handle.n { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+        .resize-handle.s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+        .resize-handle.w { left: -4px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
+        .resize-handle.e { right: -4px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <h2>文字设置</h2>
+            <div class="form-group">
+                <label for="text">输入文字:</label>
+                <textarea id="text" rows="4" style="width: 100%">请输入文字</textarea>
+            </div>
+            <div class="form-group">
+                <label for="fontSize">字体大小:</label>
+                <input type="number" id="fontSize" value="32" min="1">
+            </div>
+            <div class="form-group">
+                <label for="fontFamily">字体:</label>
+                <select id="fontFamily">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="SimSun">宋体</option>
+                    <option value="Microsoft YaHei">微软雅黑</option>
+                    <option value="SimHei">黑体</option>
+                    <option value="KaiTi">楷体</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="textColor">文字颜色:</label>
+                <input type="color" id="textColor" value="#000000">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="isBold"> 加粗
+                </label>
+            </div>
+            <h2>画布设置</h2>
+            <div class="form-group">
+                <label for="canvasWidth">宽度 (px):</label>
+                <input type="number" id="canvasWidth" value="400" min="1">
+            </div>
+            <div class="form-group">
+                <label for="canvasHeight">高度 (px):</label>
+                <input type="number" id="canvasHeight" value="300" min="1">
+            </div>
+            <div class="coordinates">
+                文字位置: X: <span id="textX">0</span>, Y: <span id="textY">0</span>
+            </div>
+            <button id="saveButton">保存图片</button>
+        </div>
+        <div class="preview-area">
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="canvas"></canvas>
+                <!-- 8个调整大小的控制点 -->
+
+                <div class="resize-handle n" data-handle="n"></div>
+                <div class="resize-handle ne" data-handle="ne"></div>
+                <div class="resize-handle e" data-handle="e"></div>
+                <div class="resize-handle se" data-handle="se"></div>
+                <div class="resize-handle s" data-handle="s"></div>
+                <div class="resize-handle sw" data-handle="sw"></div>
+                <div class="resize-handle w" data-handle="w"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvasContainer');
+        
+        // 获取所有输入元素
+        const textInput = document.getElementById('text');
+        const fontSizeInput = document.getElementById('fontSize');
+        const fontFamilySelect = document.getElementById('fontFamily');
+        const textColorInput = document.getElementById('textColor');
+        const isBoldCheckbox = document.getElementById('isBold');
+        const canvasWidthInput = document.getElementById('canvasWidth');
+        const canvasHeightInput = document.getElementById('canvasHeight');
+        const saveButton = document.getElementById('saveButton');
+        const textXSpan = document.getElementById('textX');
+        const textYSpan = document.getElementById('textY');
+
+        // 文字位置
+        let textX = 200;
+        let textY = 150;
+        let isDragging = false;
+        let isResizing = false;
+        let currentHandle = '';
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let startX = 0;
+        let startY = 0;
+        let startWidth = 0;
+        let startHeight = 0;
+
+        // 初始化画布大小
+        function initCanvas() {
+            const width = parseInt(canvasWidthInput.value);
+            const height = parseInt(canvasHeightInput.value);
+            
+            canvas.width = width;
+            canvas.height = height;
+            canvasContainer.style.width = width + 'px';
+            canvasContainer.style.height = height + 'px';
+            
+            // 确保文字位置在画布范围内
+            textX = Math.min(textX, width);
+            textY = Math.min(textY, height);
+            drawText();
+        }
+
+        // 绘制文字
+        function drawText() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 设置字体
+            const fontSize = fontSizeInput.value + 'px';
+            const fontFamily = fontFamilySelect.value;
+            const isBold = isBoldCheckbox.checked ? 'bold' : '';
+            ctx.font = `${isBold} ${fontSize} ${fontFamily}`;
+            
+            // 设置文字颜色
+            ctx.fillStyle = textColorInput.value;
+            
+            // 设置文字对齐方式
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // 绘制每行文字
+            const lines = textInput.value.split('\n');
+            const lineHeight = parseInt(fontSizeInput.value) * 1.2;
+            const totalHeight = lines.length * lineHeight;
+            const startY = textY - (totalHeight / 2) + (lineHeight / 2);
+            
+            lines.forEach((line, index) => {
+                ctx.fillText(line, textX, startY + index * lineHeight);
+            });
+
+            // 更新坐标显示
+            textXSpan.textContent = Math.round(textX);
+            textYSpan.textContent = Math.round(textY);
+        }
+
+        // 调整大小处理函数
+        function handleResize(e) {
+            if (!isResizing) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+
+            switch (currentHandle) {
+                case 'nw':
+                    newWidth = startWidth - dx;
+                    newHeight = startHeight - dy;
+                    canvasContainer.style.left = (startX + dx) + 'px';
+                    canvasContainer.style.top = (startY + dy) + 'px';
+                    break;
+                case 'n':
+                    newHeight = startHeight - dy;
+                    break;
+                case 'ne':
+                    newWidth = startWidth + dx;
+                    newHeight = startHeight - dy;
+                    break;
+                case 'e':
+                    newWidth = startWidth + dx;
+                    break;
+                case 'se':
+                    newWidth = startWidth + dx;
+                    newHeight = startHeight + dy;
+                    break;
+                case 's':
+                    newHeight = startHeight + dy;
+                    break;
+                case 'sw':
+                    newWidth = startWidth - dx;
+                    newHeight = startHeight + dy;
+                    break;
+                case 'w':
+                    newWidth = startWidth - dx;
+                    break;
+            }
+
+            // 设置最小尺寸
+            newWidth = Math.max(1, newWidth);
+            newHeight = Math.max(1, newHeight);
+
+            // 更新画布尺寸
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            canvasContainer.style.width = newWidth + 'px';
+            canvasContainer.style.height = newHeight + 'px';
+
+            // 更新输入框的值
+            canvasWidthInput.value = newWidth;
+            canvasHeightInput.value = newHeight;
+
+            drawText();
+        }
+
+        // 鼠标事件监听
+        // 文字拖动
+        canvas.addEventListener('mousedown', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            
+            const textWidth = ctx.measureText(textInput.value).width;
+            const textHeight = parseInt(fontSizeInput.value);
+            
+            if (Math.abs(clickX - textX) < textWidth/2 && 
+                Math.abs(clickY - textY) < textHeight/2) {
+                isDragging = true;
+                dragOffsetX = textX - clickX;
+                dragOffsetY = textY - clickY;
+            }
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                const rect = canvas.getBoundingClientRect();
+                textX = e.clientX - rect.left + dragOffsetX;
+                textY = e.clientY - rect.top + dragOffsetY;
+                
+                textX = Math.max(0, Math.min(textX, canvas.width));
+                textY = Math.max(0, Math.min(textY, canvas.height));
+                
+                drawText();
+            }
+        });
+
+        // 大小调整控制点事件
+        document.querySelectorAll('.resize-handle').forEach(handle => {
+            handle.addEventListener('mousedown', function(e) {
+                isResizing = true;
+                currentHandle = this.dataset.handle;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = canvas.width;
+                startHeight = canvas.height;
+                e.stopPropagation();
+            });
+        });
+
+        document.addEventListener('mousemove', handleResize);
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            isResizing = false;
+            currentHandle = '';
+        });
+
+        // 输入变化事件
+        [textInput, fontSizeInput, fontFamilySelect, textColorInput, isBoldCheckbox].forEach(input => {
+            input.addEventListener('input', drawText);
+        });
+
+        [canvasWidthInput, canvasHeightInput].forEach(input => {
+            input.addEventListener('change', initCanvas);
+        });
+
+        // 保存图片
+        saveButton.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'text-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // 初始化
+        initCanvas();
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>年龄计算器</title>
+  <style>
+    .health-bar {
+      width: 400px;
+      height: 30px;
+      background-color: #ff0000;
+      border-radius: 0px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .health-bar .health {
+      height: 100%;
+      background-color: #f2f2f2;
+      border-radius:0px;
+      transition: width 0.5s;
+    }
+  </style>
+  <script>
+    function calculateDays() {
+      var age = parseInt(document.getElementById("ageInput").value);
+      var maxAge = 85;
+      var livedDays = age * 365;
+      var remainingDays = (maxAge - age) * 365;
+      var healthPercentage = (age / maxAge) * 100;
+
+      document.getElementById("result").innerHTML = "根据您输入的年龄，已经活了 " + livedDays + " 天，预计还能活至少 " + remainingDays + " 天（以最大寿命为85岁计算）。";
+      document.getElementById("health").style.width = healthPercentage + "%";
+    }
+  </script>
+</head>
+<body>
+  <h1>年龄计算器、生命倒计时进度条</h1>
+  <h2>（以最大寿命为85岁计算）</h1>
+  <label for="ageInput">请输入年龄：</label>
+  <input type="number" id="ageInput" min="0">
+  <button onClick="calculateDays()">计算</button>
+  <div class="health-bar">
+    <div class="health" id="health"></div>
+  </div>
+  <div id="result"></div>
+</body>
+</html>

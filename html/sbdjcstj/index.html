@@ -1,0 +1,80 @@
+<html>
+<head>
+    <title>点击次数统计</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #counter {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        #timer {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #stopButton {
+            background-color: #f44336; /* 红色 */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>鼠标点击次数统计</h1>
+    <button id="clickButton" onclick="handleClick()">点击我!</button>
+    <button id="stopButton" onclick="stopTimer()">停止计时</button>
+    <div id="counter">点击次数: 0</div>
+    <div id="timer" style="display: none;">计时: 0.000秒</div>
+
+    <script>
+        let clickCount = 0;
+        let timerRunning = false;
+        let seconds = 0;
+        let milliseconds = 0;
+        let timerInterval;
+
+        function handleClick() {
+            clickCount++;
+            document.getElementById('counter').innerText = '点击次数: ' + clickCount;
+
+            // 如果是第一次点击，启动计时器
+            if (!timerRunning) {
+                timerRunning = true;
+                document.getElementById('timer').style.display = 'block';
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            let lastTime = Date.now();
+            timerInterval = setInterval(() => {
+                const currentTime = Date.now();
+                milliseconds += currentTime - lastTime;
+                lastTime = currentTime;
+
+                if (milliseconds >= 1000) {
+                    seconds++;
+                    milliseconds -= 1000;
+                }
+
+                document.getElementById('timer').innerText = `计时: ${seconds}.${Math.floor(milliseconds / 10).toString().padStart(2, '0')}秒`;
+            }, 10);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            // 在此可以选择添加一些停计时后提示
+            alert(`计时停止! 当前点击次数: ${clickCount}, 时间: ${seconds}.${Math.floor(milliseconds / 10).toString().padStart(2, '0')}秒`);
+        }
+    </script>
+</body>
+</html>

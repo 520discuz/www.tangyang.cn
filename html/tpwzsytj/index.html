@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>图片文字水印添加器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .controls {
+            width: 300px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .image-container {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="color"],
+        select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #666;
+        }
+        #preview {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #fileInput {
+            display: none;
+        }
+        canvas {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片文字水印添加器</h1>
+    
+    <div class="container">
+        <div class="controls">
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" accept="image/*">
+                <p>点击或拖拽图片到此处上传</p>
+            </div>
+
+            <div class="control-group">
+                <label>水印文字</label>
+                <input type="text" id="watermarkText" value="水印文字">
+            </div>
+
+            <div class="control-group">
+                <label>文字颜色</label>
+                <input type="color" id="textColor" value="#000000">
+                <input type="range" id="opacity" min="0" max="100" value="30">
+                <span id="opacityValue">30%</span>
+            </div>
+
+            <div class="control-group">
+                <label>文字大小</label>
+                <input type="number" id="fontSize" value="30" min="1">
+            </div>
+
+            <div class="control-group">
+                <label>字体</label>
+                <select id="fontFamily">
+                    <option value="Arial">Arial</option>
+                    <option value="宋体">宋体</option>
+                    <option value="黑体">黑体</option>
+                    <option value="楷体">楷体</option>
+                    <option value="微软雅黑">微软雅黑</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>排列方式</label>
+                <select id="arrangement">
+                    <option value="single">单个水印</option>
+                    <option value="tile">平铺水印</option>
+                    <option value="diagonal">对角线排列</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>水印位置（单个水印时生效）</label>
+                <select id="position">
+                    <option value="center">居中</option>
+                    <option value="topLeft">左上角</option>
+                    <option value="topRight">右上角</option>
+                    <option value="bottomLeft">左下角</option>
+                    <option value="bottomRight">右下角</option>
+                </select>
+            </div>
+
+            <div class="control-group" id="tileSettings">
+                <label>水印间距（平铺时生效）</label>
+                <input type="number" id="spacing" value="100" min="50">
+            </div>
+
+            <div class="control-group">
+                <label>水印旋转角度</label>
+                <input type="number" id="rotation" value="-30" min="-180" max="180">
+            </div>
+
+            <button id="saveButton" disabled>保存图片</button>
+        </div>
+
+        <div class="image-container">
+            <canvas id="canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const saveButton = document.getElementById('saveButton');
+        let originalImage = null;
+
+        // 所有控制元素
+        const controls = {
+            text: document.getElementById('watermarkText'),
+            color: document.getElementById('textColor'),
+            opacity: document.getElementById('opacity'),
+            fontSize: document.getElementById('fontSize'),
+            fontFamily: document.getElementById('fontFamily'),
+            arrangement: document.getElementById('arrangement'),
+            position: document.getElementById('position'),
+            spacing: document.getElementById('spacing'),
+            rotation: document.getElementById('rotation'),
+            opacityValue: document.getElementById('opacityValue')
+        };
+
+        // 监听所有控制元素的变化
+        Object.values(controls).forEach(control => {
+            if (control.type !== 'span') {
+                control.addEventListener('input', updateWatermark);
+            }
+        });
+
+        // 上传图片处理
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#666';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#ccc';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ccc';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage = new Image();
+                originalImage.onload = () => {
+                    canvas.width = originalImage.width;
+                    canvas.height = originalImage.height;
+                    updateWatermark();
+                    saveButton.disabled = false;
+                };
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateWatermark() {
+            if (!originalImage) return;
+
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制原始图片
+            ctx.drawImage(originalImage, 0, 0);
+
+            // 设置水印样式
+            const fontSize = parseInt(controls.fontSize.value);
+            const font = `${fontSize}px ${controls.fontFamily.value}`;
+            const color = controls.color.value;
+            const opacity = parseInt(controls.opacity.value) / 100;
+            const rotation = parseInt(controls.rotation.value) * Math.PI / 180;
+
+            ctx.font = font;
+            ctx.fillStyle = color;
+            ctx.globalAlpha = opacity;
+            
+            const text = controls.text.value;
+            const textWidth = ctx.measureText(text).width;
+
+            // 根据不同排列方式绘制水印
+            switch (controls.arrangement.value) {
+                case 'single':
+                    drawSingleWatermark(text, textWidth, fontSize);
+                    break;
+                case 'tile':
+                    drawTiledWatermark(text, textWidth, fontSize);
+                    break;
+                case 'diagonal':
+                    drawDiagonalWatermark(text, textWidth, fontSize);
+                    break;
+            }
+
+            // 恢复透明度
+            ctx.globalAlpha = 1;
+            
+            // 更新透明度显示
+            controls.opacityValue.textContent = `${controls.opacity.value}%`;
+        }
+
+        function drawSingleWatermark(text, textWidth, fontSize) {
+            let x, y;
+            
+            switch (controls.position.value) {
+                case 'center':
+                    x = (canvas.width - textWidth) / 2;
+                    y = canvas.height / 2;
+                    break;
+                case 'topLeft':
+                    x = 20;
+                    y = fontSize + 20;
+                    break;
+                case 'topRight':
+                    x = canvas.width - textWidth - 20;
+                    y = fontSize + 20;
+                    break;
+                case 'bottomLeft':
+                    x = 20;
+                    y = canvas.height - 20;
+                    break;
+                case 'bottomRight':
+                    x = canvas.width - textWidth - 20;
+                    y = canvas.height - 20;
+                    break;
+            }
+
+            drawRotatedText(text, x, y);
+        }
+
+        function drawTiledWatermark(text, textWidth, fontSize) {
+            const spacing = parseInt(controls.spacing.value);
+            for (let y = fontSize; y < canvas.height; y += spacing) {
+                for (let x = 0; x < canvas.width; x += spacing + textWidth) {
+                    drawRotatedText(text, x, y);
+                }
+            }
+        }
+
+        function drawDiagonalWatermark(text, textWidth, fontSize) {
+            const spacing = parseInt(controls.spacing.value);
+            const diagonal = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+            const numSteps = Math.ceil(diagonal / spacing);
+            const angleRad = Math.atan2(canvas.height, canvas.width);
+            
+            for (let i = 0; i < numSteps; i++) {
+                const x = i * spacing * Math.cos(angleRad);
+                const y = i * spacing * Math.sin(angleRad);
+                drawRotatedText(text, x, y);
+            }
+        }
+
+        function drawRotatedText(text, x, y) {
+            const rotation = parseInt(controls.rotation.value) * Math.PI / 180;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+        }
+
+        // 保存图片
+        saveButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'watermarked-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>世界各地时间</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .country {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .country h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .country p {
+      margin: 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <center>友情提示：本网页由人工智能机器人生成，数据仅供参考，如果有发现错误可以进行反馈，谢谢  </center><br>
+    <div class="country">
+      <h3>北京时间</h3>
+      <p id="beijing-time"></p>
+    </div>
+    <div class="country">
+      <h3>东京时间</h3>
+      <p id="tokyo-time"></p>
+    </div>
+    <div class="country">
+      <h3>纽约时间</h3>
+      <p id="new-york-time"></p>
+    </div>
+    <div class="country">
+      <h3>伦敦时间</h3>
+      <p id="london-time"></p>
+    </div>
+    <div class="country">
+      <h3>巴黎时间</h3>
+      <p id="paris-time"></p>
+    </div>
+    <div class="country">
+      <h3>柏林时间</h3>
+      <p id="berlin-time"></p>
+    </div>
+    <div class="country">
+      <h3>莫斯科时间</h3>
+      <p id="moscow-time"></p>
+    </div>
+    <div class="country">
+      <h3>德里时间</h3>
+      <p id="delhi-time"></p>
+    </div>
+    <div class="country">
+      <h3>东京时间</h3>
+      <p id="tokyo-time-2"></p>
+    </div>
+    <div class="country">
+      <h3>墨尔本时间</h3>
+      <p id="melbourne-time"></p>
+    </div>
+    <div class="country">
+      <h3>约翰内斯堡时间</h3>
+      <p id="johannesburg-time"></p>
+    </div>
+    <div class="country">
+      <h3>里约热内卢时间</h3>
+      <p id="rio-time"></p>
+    </div>
+    <div class="country">
+      <h3>洛杉矶时间</h3>
+      <p id="los-angeles-time"></p>
+    </div>
+    <div class="country">
+      <h3>迪拜时间</h3>
+      <p id="dubai-time"></p>
+    </div>
+    <div class="country">
+      <h3>开罗时间</h3>
+      <p id="cairo-time"></p>
+    </div>
+    <div class="country">
+      <h3>东京时间</h3>
+      <p id="tokyo-time-3"></p>
+    </div>
+    <div class="country">
+      <h3>孟买时间</h3>
+      <p id="mumbai-time"></p>
+    </div>
+    <div class="country">
+      <h3>悉尼时间</h3>
+      <p id="sydney-time"></p>
+    </div>
+    <div class="country">
+      <h3>曼谷时间</h3>
+      <p id="bangkok-time"></p>
+    </div>
+    <div class="country">
+      <h3>东京时间</h3>
+      <p id="tokyo-time-4"></p>
+    </div>
+  </div>
+
+  <script>
+    function updateTime() {
+      const beijingTime = new Date().toLocaleString("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        hour12: false,
+      });
+      const tokyoTime = new Date().toLocaleString("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        hour12: false,
+      });
+      const newYorkTime = new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        hour12: false,
+      });
+      const londonTime = new Date().toLocaleString("en-GB", {
+        timeZone: "Europe/London",
+        hour12: false,
+      });
+      const parisTime = new Date().toLocaleString("fr-FR", {
+        timeZone: "Europe/Paris",
+        hour12: false,
+      });
+      const berlinTime = new Date().toLocaleString("de-DE", {
+        timeZone: "Europe/Berlin",
+        hour12: false,
+      });
+      const moscowTime = new Date().toLocaleString("ru-RU", {
+        timeZone: "Europe/Moscow",
+        hour12: false,
+      });
+      const delhiTime = new Date().toLocaleString("hi-IN", {
+        timeZone: "Asia/Kolkata",
+        hour12: false,
+      });
+      const melbourneTime = new Date().toLocaleString("en-AU", {
+        timeZone: "Australia/Melbourne",
+        hour12: false,
+      });
+      const johannesburgTime = new Date().toLocaleString("en-ZA", {
+        timeZone: "Africa/Johannesburg",
+        hour12: false,
+      });
+      const rioTime = new Date().toLocaleString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        hour12: false,
+      });
+      const losAngelesTime = new Date().toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour12: false,
+      });
+      const dubaiTime = new Date().toLocaleString("ar-AE", {
+        timeZone: "Asia/Dubai",
+        hour12: false,
+      });
+      const cairoTime = new Date().toLocaleString("ar-EG", {
+        timeZone: "Africa/Cairo",
+        hour12: false,
+      });
+      const mumbaiTime = new Date().toLocaleString("hi-IN", {
+        timeZone: "Asia/Kolkata",
+        hour12: false,
+      });
+      const sydneyTime = new Date().toLocaleString("en-AU", {
+        timeZone: "Australia/Sydney",
+        hour12: false,
+      });
+      const bangkokTime = new Date().toLocaleString("th-TH", {
+        timeZone: "Asia/Bangkok",
+        hour12: false,
+      });
+
+      document.getElementById("beijing-time").textContent = beijingTime;
+      document.getElementById("tokyo-time").textContent = tokyoTime;
+      document.getElementById("new-york-time").textContent = newYorkTime;
+      document.getElementById("london-time").textContent = londonTime;
+      document.getElementById("paris-time").textContent = parisTime;
+      document.getElementById("berlin-time").textContent = berlinTime;
+      document.getElementById("moscow-time").textContent = moscowTime;
+      document.getElementById("delhi-time").textContent = delhiTime;
+      document.getElementById("tokyo-time-2").textContent = tokyoTime;
+      document.getElementById("melbourne-time").textContent = melbourneTime;
+      document.getElementById("johannesburg-time").textContent = johannesburgTime;
+      document.getElementById("rio-time").textContent = rioTime;
+      document.getElementById("los-angeles-time").textContent = losAngelesTime;
+      document.getElementById("dubai-time").textContent = dubaiTime;
+      document.getElementById("cairo-time").textContent = cairoTime;
+      document.getElementById("tokyo-time-3").textContent = tokyoTime;
+      document.getElementById("mumbai-time").textContent = mumbaiTime;
+      document.getElementById("sydney-time").textContent = sydneyTime;
+      document.getElementById("bangkok-time").textContent = bangkokTime;
+      document.getElementById("tokyo-time-4").textContent = tokyoTime;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>

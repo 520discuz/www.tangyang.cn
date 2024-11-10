@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>图片文件大小压缩工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .preview-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        .preview-box {
+            flex: 1;
+            text-align: center;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .file-input {
+            margin: 20px 0;
+        }
+        .quality-value {
+            margin-left: 10px;
+        }
+        .size-info {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片文件大小压缩工具</h1>
+        
+        <div class="file-input">
+            <label for="imageInput">选择图片文件：</label>
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+
+        <div class="controls">
+            <label for="qualitySlider">
+                压缩质量: <span id="qualityValue" class="quality-value">80</span>
+            </label>
+            <input type="range" id="qualitySlider" min="1" max="100" value="80">
+        </div>
+
+        <div class="preview-container">
+            <div class="preview-box">
+                <h3>原始图片</h3>
+                <img id="originalPreview" class="preview-image">
+                <div id="originalSize" class="size-info"></div>
+            </div>
+            <div class="preview-box">
+                <h3>压缩预览</h3>
+                <img id="compressedPreview" class="preview-image">
+                <div id="compressedSize" class="size-info"></div>
+            </div>
+        </div>
+
+        <button id="downloadBtn" disabled>下载压缩后的图片</button>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const originalPreview = document.getElementById('originalPreview');
+        const compressedPreview = document.getElementById('compressedPreview');
+        const originalSize = document.getElementById('originalSize');
+        const compressedSize = document.getElementById('compressedSize');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let originalImage = null;
+
+        imageInput.addEventListener('change', handleImageUpload);
+        qualitySlider.addEventListener('input', handleQualityChange);
+        downloadBtn.addEventListener('click', downloadCompressedImage);
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 显示原始文件大小
+            originalSize.textContent = `文件大小: ${formatFileSize(file.size)}`;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                originalImage = new Image();
+                originalImage.src = event.target.result;
+                originalPreview.src = event.target.result;
+
+                originalImage.onload = function() {
+                    compressImage();
+                };
+            };
+            reader.readAsDataURL(file);
+            downloadBtn.disabled = false;
+        }
+
+        function handleQualityChange(e) {
+            qualityValue.textContent = e.target.value;
+            if (originalImage) {
+                compressImage();
+            }
+        }
+
+        function compressImage() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // 设置画布大小
+            canvas.width = originalImage.width;
+            canvas.height = originalImage.height;
+
+            // 在画布上绘制图像
+            ctx.drawImage(originalImage, 0, 0);
+
+            // 将画布内容转换为压缩后的图片
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', qualitySlider.value / 100);
+            compressedPreview.src = compressedDataUrl;
+
+            // 计算压缩后的文件大小
+            const base64Length = compressedDataUrl.length - 'data:image/jpeg;base64,'.length;
+            const compressedFileSizeBytes = base64Length * 0.75;
+            compressedSize.textContent = `压缩后大小: ${formatFileSize(compressedFileSizeBytes)}`;
+        }
+
+        function downloadCompressedImage() {
+            const link = document.createElement('a');
+            link.download = 'compressed_image.jpg';
+            link.href = compressedPreview.src;
+            link.click();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

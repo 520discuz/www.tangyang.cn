@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>图片大小修改器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .upload-container {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .upload-container:hover {
+            border-color: #999;
+        }
+        .image-container {
+            margin: 20px 0;
+            max-width: 100%;
+        }
+        #preview {
+            max-width: 100%;
+            height: auto;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .resolution-text {
+            margin: 10px 0;
+            color: #666;
+        }
+        #fileInput {
+            display: none;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片大小修改器</h1>
+    
+    <div class="upload-container" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*">
+        <p>点击或拖拽图片到此处上传</p>
+    </div>
+
+    <div class="controls" style="display: none;">
+        <input type="number" id="widthInput" placeholder="宽度">
+        <span>×</span>
+        <input type="number" id="heightInput" placeholder="高度">
+        <label>
+            <input type="checkbox" id="lockAspect" checked>
+            保持宽高比
+        </label>
+    </div>
+
+    <div class="resolution-text"></div>
+    
+    <div class="image-container">
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="preview" style="display: none;">
+    </div>
+
+    <button id="saveButton" style="display: none;">保存图片</button>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const lockAspect = document.getElementById('lockAspect');
+        const saveButton = document.getElementById('saveButton');
+        const controls = document.querySelector('.controls');
+        const resolutionText = document.querySelector('.resolution-text');
+
+        let originalImage = null;
+        let aspectRatio = 1;
+
+        // 处理文件上传
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#666';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#ccc';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ccc';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage = new Image();
+                originalImage.onload = () => {
+                    aspectRatio = originalImage.width / originalImage.height;
+                    updateImage(originalImage.width, originalImage.height);
+                    widthInput.value = originalImage.width;
+                    heightInput.value = originalImage.height;
+                    controls.style.display = 'flex';
+                    saveButton.style.display = 'inline-block';
+                    preview.style.display = 'block';
+                    resolutionText.textContent = `原始分辨率: ${originalImage.width} × ${originalImage.height}`;
+                };
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 处理尺寸输入
+        widthInput.addEventListener('input', () => {
+            if (lockAspect.checked) {
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+            }
+            updateImage(widthInput.value, heightInput.value);
+        });
+
+        heightInput.addEventListener('input', () => {
+            if (lockAspect.checked) {
+                widthInput.value = Math.round(heightInput.value * aspectRatio);
+            }
+            updateImage(widthInput.value, heightInput.value);
+        });
+
+        function updateImage(width, height) {
+            if (!originalImage) return;
+            
+            // 设置canvas大小
+            canvas.width = width;
+            canvas.height = height;
+            
+            // 在canvas上绘制调整大小后的图片
+            ctx.drawImage(originalImage, 0, 0, width, height);
+            
+            // 更新预览图片
+            preview.src = canvas.toDataURL();
+            
+            // 更新分辨率文本
+            resolutionText.textContent = `当前分辨率: ${width} × ${height}`;
+        }
+
+        // 保存图片
+        saveButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'resized-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

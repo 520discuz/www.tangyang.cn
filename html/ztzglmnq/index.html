@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掷骰子概率模拟器</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .roll-count {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .roll-button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .roll-button:hover {
+            background-color: #0056b3;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .history-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .history-title {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .history-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .dice-result {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">掷骰子概率模拟器</h1>
+        
+        <div class="control-panel">
+            一次扔几个骰子？<input type="number" class="roll-count" id="rollCount" value="1" min="1" placeholder="投掷出现次数">
+            <button class="roll-button" onClick="rollDice()">投掷骰子</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <!-- 统计数据将在这里动态生成 -->
+        </div>
+
+        <div class="history-container">
+            <h3 class="history-title">投掷历史记录</h3>
+            <div class="history-grid" id="historyGrid">
+                <!-- 历史记录将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let stats = {
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0
+        };
+        let history = [];
+
+        function rollDice() {
+            const count = parseInt(document.getElementById('rollCount').value) || 1;
+            const newRolls = [];
+            
+            for (let i = 0; i < count; i++) {
+                const result = Math.floor(Math.random() * 6) + 1;
+                newRolls.push(result);
+                stats[result]++;
+            }
+            
+            history = [...newRolls, ...history]; // 新结果添加到开头
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            // 更新统计数据
+            const totalRolls = Object.values(stats).reduce((a, b) => a + b, 0);
+            const statsHtml = Object.entries(stats).map(([number, count]) => {
+                const percentage = totalRolls === 0 ? 0 : ((count / totalRolls) * 100).toFixed(2);
+                return `
+                    <div class="stat-box">
+                        <div style="font-size: 1.2em; font-weight: bold;">骰子点数 ${number}</div>
+                        <div>出现次数: ${count}</div>
+                        <div>出现概率: ${percentage}%</div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('statsGrid').innerHTML = statsHtml;
+
+            // 更新历史记录
+            const historyHtml = history.map(result => 
+                `<div class="dice-result">${result}</div>`
+            ).join('');
+            document.getElementById('historyGrid').innerHTML = historyHtml;
+        }
+
+        // 初始化显示
+        updateDisplay();
+    </script>
+</body>
+</html>

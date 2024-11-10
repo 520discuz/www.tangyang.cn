@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>随机密码生成器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #password-display {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: block;
+      margin: 10px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>随机密码生成器</h1>
+  <div id="password-display">点击按钮生成密码</div>
+  <button onclick="generatePassword()">生成复杂密码（有特殊符号）</button>
+  <button onclick="generateNumericPassword()">生成纯数字密码</button>
+  <button onclick="generateAlphaPassword()">生成纯英文字母密码</button>
+  <button onclick="generateLowerCasePassword()">生成全小写英文字母密码</button>
+  <button onclick="generateUpperCasePassword()">生成全大写英文字母密码</button>
+  <button onclick="generateAlphaNumericPassword()">生成数字和字母组合密码</button>
+
+  <script>
+    function generatePassword() {
+      const length = 16; // 密码长度
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-="; // 字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+
+    function generateNumericPassword() {
+      const length = 16; // 密码长度
+      const charset = "0123456789"; // 纯数字字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+
+    function generateAlphaPassword() {
+      const length = 16; // 密码长度
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // 纯英文字母字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+
+    function generateLowerCasePassword() {
+      const length = 16; // 密码长度
+      const charset = "abcdefghijklmnopqrstuvwxyz"; // 全小写英文字母字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+
+    function generateUpperCasePassword() {
+      const length = 16; // 密码长度
+      const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // 全大写英文字母字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+
+    function generateAlphaNumericPassword() {
+      const length = 16; // 密码长度
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // 数字和字母组合字符集
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+
+      document.getElementById("password-display").textContent = password;
+    }
+  </script>
+</body>
+</html>

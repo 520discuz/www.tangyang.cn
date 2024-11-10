@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <title>数字倍数比例锁定器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        input {
+            padding: 10px;
+            margin: 0 5px;
+            width: 100px;
+        }
+        button {
+            padding: 10px;
+        }
+        .locked-message {
+            color: red;
+            margin-top: 10px;
+            display: none; /* 默认隐藏 */
+        }
+    </style>
+</head>
+<body>
+    <h1>数字倍数（或分辨率）比例锁定器</h1>
+    <h2>友情提示：本功能不支持小数点</h2>
+	    <h2>请先在两个输入框输入数字，然后点击锁定按钮，然后再进行修改数字</h2>
+	    <h2>如果输入错误的数字并且点击了锁定按钮，可以刷新网页或重新进入网页进行清除</h2>
+    <div class="input-container">
+        <input type="number" id="leftInput" placeholder="输入数字">
+        <input type="number" id="rightInput" placeholder="输入数字">
+        <button id="lockButton">锁定</button>
+    </div>
+
+    <div class="locked-message" id="lockedMessage">已锁定</div>
+
+    <script>
+        let ratio = 1;
+
+        document.getElementById('lockButton').addEventListener('click', function() {
+            const leftInput = document.getElementById('leftInput');
+            const rightInput = document.getElementById('rightInput');
+            const lockedMessage = document.getElementById('lockedMessage');
+
+            const leftValue = parseInt(leftInput.value);
+            const rightValue = parseInt(rightInput.value);
+
+            if (!isNaN(leftValue) && !isNaN(rightValue) && leftValue !== 0) {
+                ratio = rightValue / leftValue; // 计算比率
+                lockedMessage.style.display = 'block'; // 显示锁定消息
+            }
+
+            // 监听左侧输入框的变化
+            leftInput.addEventListener('input', function() {
+                const newValue = parseInt(leftInput.value);
+                if (!isNaN(newValue)) {
+                    rightInput.value = Math.floor(newValue * ratio); // 更新右侧值为整数
+                } else {
+                    rightInput.value = ''; // 清空右侧值
+                }
+            });
+
+            // 监听右侧输入框的变化
+            rightInput.addEventListener('input', function() {
+                const newRightValue = parseInt(rightInput.value);
+                if (!isNaN(newRightValue)) {
+                    leftInput.value = Math.floor(newRightValue / ratio); // 更新左侧值为整数
+                } else {
+                    leftInput.value = ''; // 清空左侧值
+                }
+            });
+        });
+    </script>
+</body>
+</html>

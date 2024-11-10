@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>图片透明度调节器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .image-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #preview {
+            max-width: 100%;
+            max-height: 400px;
+            margin: 10px 0;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片透明度调节器</h1>
+        
+        <div class="controls">
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+
+        <div class="image-container">
+            <canvas id="preview" class="hide"></canvas>
+        </div>
+
+        <div class="controls hide" id="adjustControls">
+            <label>
+                透明度: <span id="opacityValue">100</span>%
+                <input type="range" id="opacitySlider" min="0" max="100" value="100">
+            </label>
+            <button id="saveButton">保存图片</button>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const preview = document.getElementById('preview');
+        const opacitySlider = document.getElementById('opacitySlider');
+        const opacityValue = document.getElementById('opacityValue');
+        const saveButton = document.getElementById('saveButton');
+        const adjustControls = document.getElementById('adjustControls');
+        const ctx = preview.getContext('2d');
+        let originalImage = null;
+
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    originalImage = new Image();
+                    originalImage.onload = function() {
+                        preview.width = originalImage.width;
+                        preview.height = originalImage.height;
+                        preview.classList.remove('hide');
+                        adjustControls.classList.remove('hide');
+                        updateImage();
+                    };
+                    originalImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        opacitySlider.addEventListener('input', function() {
+            opacityValue.textContent = this.value;
+            updateImage();
+        });
+
+        function updateImage() {
+            ctx.clearRect(0, 0, preview.width, preview.height);
+            ctx.globalAlpha = opacitySlider.value / 100;
+            ctx.drawImage(originalImage, 0, 0);
+        }
+
+        saveButton.addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'adjusted-image.png';
+            link.href = preview.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>压强单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+        .unit-row:nth-child(odd) {
+            background-color: #f5f5f5;
+        }
+        input {
+            width: 200px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        .unit {
+            width: 100px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>压强单位换算器</h1>
+    
+    <div class="unit-row">
+        <label>帕斯卡:</label>
+        <input type="number" id="pa" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(Pa)</span>
+    </div>
+    <div class="unit-row">
+        <label>兆帕:</label>
+        <input type="number" id="mpa" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(MPa)</span>
+    </div>
+    <div class="unit-row">
+        <label>千帕:</label>
+        <input type="number" id="kpa" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(kPa)</span>
+    </div>
+    <div class="unit-row">
+        <label>百帕:</label>
+        <input type="number" id="hpa" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(hPa)</span>
+    </div>
+    <div class="unit-row">
+        <label>标准大气压:</label>
+        <input type="number" id="atm" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(atm)</span>
+    </div>
+    <div class="unit-row">
+        <label>毫米汞柱:</label>
+        <input type="number" id="mmhg" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(mmHg)</span>
+    </div>
+    <div class="unit-row">
+        <label>英寸汞柱:</label>
+        <input type="number" id="inhg" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(inHg)</span>
+    </div>
+    <div class="unit-row">
+        <label>巴:</label>
+        <input type="number" id="bar" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(bar)</span>
+    </div>
+    <div class="unit-row">
+        <label>毫巴:</label>
+        <input type="number" id="mbar" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(mbar)</span>
+    </div>
+    <div class="unit-row">
+        <label>磅力/平方英尺:</label>
+        <input type="number" id="psf" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(psf)</span>
+    </div>
+    <div class="unit-row">
+        <label>磅力/平方英寸:</label>
+        <input type="number" id="psi" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(psi)</span>
+    </div>
+    <div class="unit-row">
+        <label>毫米水柱:</label>
+        <input type="number" id="mmh2o" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(mmH?O)</span>
+    </div>
+    <div class="unit-row">
+        <label>公斤力/平方厘米:</label>
+        <input type="number" id="kgfcm2" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(kgf/cm2)</span>
+    </div>
+    <div class="unit-row">
+        <label>公斤力/平方米:</label>
+        <input type="number" id="kgfm2" step="any" oninput="convert(this.id, this.value)">
+        <span class="unit">(kgf/m2)</span>
+    </div>
+
+    <script>
+        function convert(sourceId, value) {
+            if (value === '') return;
+            // 将输入值转换为基准单位（帕斯卡 Pa）
+            let pascalValue = toPascal(sourceId, parseFloat(value));
+            
+            // 更新所有输入框
+            updateAllInputs(pascalValue, sourceId);
+        }
+
+        function toPascal(unit, value) {
+            switch(unit) {
+                case 'pa': return value;
+                case 'mpa': return value * 1000000;
+                case 'kpa': return value * 1000;
+                case 'hpa': return value * 100;
+                case 'atm': return value * 101325;
+                case 'mmhg': return value * 133.322;
+                case 'inhg': return value * 3386.389;
+                case 'bar': return value * 100000;
+                case 'mbar': return value * 100;
+                case 'psf': return value * 47.88026;
+                case 'psi': return value * 6894.757;
+                case 'mmh2o': return value * 9.80665;
+                case 'kgfcm2': return value * 98066.5;
+                case 'kgfm2': return value * 9.80665;
+                default: return value;
+            }
+        }
+
+        function fromPascal(unit, pascalValue) {
+            switch(unit) {
+                case 'pa': return pascalValue;
+                case 'mpa': return pascalValue / 1000000;
+                case 'kpa': return pascalValue / 1000;
+                case 'hpa': return pascalValue / 100;
+                case 'atm': return pascalValue / 101325;
+                case 'mmhg': return pascalValue / 133.322;
+                case 'inhg': return pascalValue / 3386.389;
+                case 'bar': return pascalValue / 100000;
+                case 'mbar': return pascalValue / 100;
+                case 'psf': return pascalValue / 47.88026;
+                case 'psi': return pascalValue / 6894.757;
+                case 'mmh2o': return pascalValue / 9.80665;
+                case 'kgfcm2': return pascalValue / 98066.5;
+                case 'kgfm2': return pascalValue / 9.80665;
+                default: return pascalValue;
+            }
+        }
+
+        function updateAllInputs(pascalValue, sourceId) {
+            document.querySelectorAll('input').forEach(input => {
+                if (input.id !== sourceId) {
+                    let convertedValue = fromPascal(input.id, pascalValue);
+                    // 使用toLocaleString避免科学计数法
+                    if (Math.abs(convertedValue) >= 1e-6 && Math.abs(convertedValue) < 1e21) {
+                        input.value = convertedValue.toLocaleString('fullwide', {useGrouping: false, maximumFractionDigits: 10});
+                    } else {
+                        input.value = convertedValue;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

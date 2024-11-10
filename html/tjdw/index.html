@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>体积单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .unit-row input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .unit-row label {
+            min-width: 140px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>体积单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>立方千米 (km3):</label>
+            <input type="text" id="km3" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方米 (m3):</label>
+            <input type="text" id="m3" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方分米 (dm3):</label>
+            <input type="text" id="dm3" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方厘米 (cm3):</label>
+            <input type="text" id="cm3" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方毫米 (mm3):</label>
+            <input type="text" id="mm3" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>升 (l):</label>
+            <input type="text" id="l" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>分升 (dl):</label>
+            <input type="text" id="dl" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>毫升 (ml):</label>
+            <input type="text" id="ml" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>厘升 (cl):</label>
+            <input type="text" id="cl" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公石 (hl):</label>
+            <input type="text" id="hl" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>微升 (ul):</label>
+            <input type="text" id="ul" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>立方英尺 (cu ft):</label>
+            <input type="text" id="cuft" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方英寸 (cu in):</label>
+            <input type="text" id="cuin" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>立方码 (cu yd):</label>
+            <input type="text" id="cuyd" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>亩英尺:</label>
+            <input type="text" id="acft" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英制加仑 (uk gal):</label>
+            <input type="text" id="ukgal" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>美制加仑 (us gal):</label>
+            <input type="text" id="usgal" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英制液体盎司 (oz):</label>
+            <input type="text" id="ukoz" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>美制液体盎司 (oz):</label>
+            <input type="text" id="usoz" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>桶 (bbl):</label>
+            <input type="text" id="bbl" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>品脱 (pt):</label>
+            <input type="text" id="pt" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <script>
+        // 所有单位换算到立方米的系数
+        const units = {
+            // 公制
+            'km3': 1000000000,
+            'm3': 1,
+            'dm3': 0.001,
+            'cm3': 0.000001,
+            'mm3': 0.000000001,
+            'l': 0.001,
+            'dl': 0.0001,
+            'ml': 0.000001,
+            'cl': 0.00001,
+            'hl': 0.1,
+            'ul': 0.000000001,
+
+            // 英制
+            'cuft': 0.028316846592,
+            'cuin': 0.000016387064,
+            'cuyd': 0.764554857984,
+            'acft': 1233.48183754752,
+            'ukgal': 0.00454609,
+            'usgal': 0.003785411784,
+            'ukoz': 0.0000284130625,
+            'usoz': 0.0000295735295625,
+            'bbl': 0.158987294928,
+            'pt': 0.000473176473,
+        };
+
+        function convert(fromUnit, value) {
+            if (value === '') {
+                clearAll();
+                return;
+            }
+
+            // 移除非数字字符（保留小数点和负号）
+            value = value.replace(/[^\d.-]/g, '');
+            
+            // 转换为数字
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) {
+                return;
+            }
+
+            // 先转换为立方米
+            const cubicMeters = numValue * units[fromUnit];
+
+            // 更新所有输入框
+            for (let unit in units) {
+                if (unit !== fromUnit) {
+                    const element = document.getElementById(unit);
+                    if (element) {
+                        // 转换到目标单位并格式化
+                        const convertedValue = cubicMeters / units[unit];
+                        // 使用toFixed来避免科学计数法，但需要去掉末尾的0
+                        element.value = convertedValue.toFixed(20).replace(/\.?0+$/, '');
+                    }
+                }
+            }
+        }
+
+        function clearAll() {
+            for (let unit in units) {
+                const element = document.getElementById(unit);
+                if (element) {
+                    element.value = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

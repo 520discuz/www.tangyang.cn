@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>自定义多宫格图片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-panel label {
+            display: inline-block;
+            width: 120px;
+            margin: 10px 0;
+        }
+        
+        .control-panel input {
+            width: 100px;
+            padding: 5px;
+            margin-right: 20px;
+        }
+        
+        .button-group {
+            margin-top: 15px;
+        }
+        
+        .button-group button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .button-group button:hover {
+            opacity: 0.9;
+        }
+        
+        #grid-container {
+        
+        
+        .grid {
+            display: grid;
+            gap: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .grid-cell {
+            position: relative;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .grid-cell img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .grid-cell input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .grid-cell:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+        }
+        
+        .placeholder-text {
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 添加删除按钮样式 */
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(255, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            z-index: 2;
+        }
+
+        .grid-cell:hover .delete-btn {
+            display: flex;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(255, 0, 0, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div>
+            <label>行数：</label>
+            <input type="number" id="rows" value="3" min="1" max="10" oninput="updateGrid()">
+            <label>列数：</label>
+            <input type="number" id="cols" value="3" min="1" max="10" oninput="updateGrid()">
+        </div>
+        <div>
+            <label>单元格宽度(px)：</label>
+            <input type="number" id="cellWidth" value="200" min="50" max="500" oninput="updateGrid()">
+            <label>单元格高度(px)：</label>
+            <input type="number" id="cellHeight" value="200" min="50" max="500" oninput="updateGrid()">
+        </div>
+        <div>
+            <label>单元格间距(px)：</label>
+            <input type="number" id="gap" value="10" min="0" max="50" oninput="updateGrid()">
+        </div>
+        <div>
+            <label>背景颜色：</label>
+            <input type="color" id="bgColor" value="#ffffff" oninput="updateGrid()" style="width: 50px; padding: 0;">
+            <label style="margin-left: 20px;">
+                <input type="checkbox" id="transparentBg" onChange="updateGrid()"> 透明背景
+            </label>
+        </div>
+        <div class="button-group">
+            <button onClick="saveImage()">保存图片</button>
+        </div>
+    </div>
+    
+    <div id="grid-container">
+        <div id="photo-grid" class="grid"></div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function updateGrid() {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const cellWidth = parseInt(document.getElementById('cellWidth').value);
+            const cellHeight = parseInt(document.getElementById('cellHeight').value);
+            const gap = parseInt(document.getElementById('gap').value);
+            
+            const grid = document.getElementById('photo-grid');
+            const currentCells = grid.children.length;
+            const targetCells = rows * cols;
+            
+            // 更新网格样式
+            grid.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
+            grid.style.gap = gap > 0 ? `${gap}px` : '0';
+            
+            // 如果需要添加更多单元格
+            if (currentCells < targetCells) {
+                for (let i = currentCells; i < targetCells; i++) {
+                    addNewCell(cellHeight);
+                }
+            }
+            // 如果需要删除多余的单元格
+            else if (currentCells > targetCells) {
+                while (grid.children.length > targetCells) {
+                    grid.removeChild(grid.lastChild);
+                }
+            }
+            
+            // 更新所有单元格的高度
+            Array.from(grid.children).forEach(cell => {
+                cell.style.height = `${cellHeight}px`;
+            });
+        }
+
+        function addNewCell(height) {
+            const grid = document.getElementById('photo-grid');
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.style.height = `${height}px`;
+            
+            const placeholder = document.createElement('div');
+            placeholder.className = 'placeholder-text';
+            placeholder.textContent = '点击上传图片';
+            cell.appendChild(placeholder);
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = function(e) {
+                e.stopPropagation();
+                const img = cell.querySelector('img');
+                if (img) {
+                    cell.removeChild(img);
+                    placeholder.style.display = 'block';
+                }
+            };
+            cell.appendChild(deleteBtn);
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const existingImg = cell.querySelector('img');
+                            if (existingImg) {
+                                cell.removeChild(existingImg);
+                            }
+                            placeholder.style.display = 'none';
+                            cell.insertBefore(img, deleteBtn);
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            cell.appendChild(input);
+            grid.appendChild(cell);
+        }
+
+        async function saveImage() {
+            const grid = document.getElementById('photo-grid');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+
+            // 显示加载动画
+            loadingOverlay.style.display = 'flex';
+
+            try {
+                // 临时隐藏文件输入框、删除按钮和占位符文本
+                const inputs = grid.querySelectorAll('input[type="file"]');
+                const deleteBtns = grid.querySelectorAll('.delete-btn');
+                const placeholders = grid.querySelectorAll('.placeholder-text');
+                inputs.forEach(input => input.style.display = 'none');
+                deleteBtns.forEach(btn => btn.style.display = 'none');
+                placeholders.forEach(placeholder => placeholder.style.display = 'none');
+
+                // 使用html2canvas捕获网格区域
+                const transparentBg = document.getElementById('transparentBg').checked;
+                const bgColor = document.getElementById('bgColor').value;
+                
+                const canvas = await html2canvas(grid, {
+                    useCORS: true,
+                    backgroundColor: transparentBg ? null : bgColor,
+                    scale: 2 // 提高输出质量
+                });
+
+                // 恢复文件输入框、删除按钮和占位符文本的显示
+                inputs.forEach(input => input.style.display = '');
+                deleteBtns.forEach(btn => btn.style.display = '');
+                placeholders.forEach(placeholder => placeholder.style.display = '');
+
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = '多宫格图片.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('保存图片时出错：', error);
+                alert('保存图片时出错，请重试！');
+            } finally {
+                // 隐藏加载动画
+                loadingOverlay.style.display = 'none';
+            }
+        }
+        
+        // 初始化网格
+        updateGrid();
+    </script>
+</body>
+</html>

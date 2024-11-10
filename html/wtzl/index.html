@@ -1,0 +1,73 @@
+<head>
+    <title>物体重量计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        input, select {
+            width: 100px;
+            margin: 5px;
+        }
+        button {
+            margin-top: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>物体重量计算器</h1>
+	    <h2>密度输入</h2>
+    <label for="density">密度 (kg/m3):</label>
+    <input type="number" id="density" required><br>
+
+    <h2>尺寸输入</h2>
+    <label for="width">宽度:</label>
+    <input type="number" id="width" required>
+    <select id="width-unit">
+        <option value="1">米</option>
+        <option value="0.01">厘米</option>
+        <option value="0.001">毫米</option>
+    </select><br>
+
+    <label for="height">高度:</label>
+    <input type="number" id="height" required>
+    <select id="height-unit">
+        <option value="1">米</option>
+        <option value="0.01">厘米</option>
+        <option value="0.001">毫米</option>
+    </select><br>
+
+    <label for="thickness">厚度:</label>
+    <input type="number" id="thickness" required>
+    <select id="thickness-unit">
+        <option value="1">米</option>
+        <option value="0.01">厘米</option>
+        <option value="0.001">毫米</option>
+    </select><br>
+
+    <button onclick="calculateWeight()">计算重量</button>
+    <div id="result"></div>
+
+    <script>
+        function calculateWeight() {
+            const density = parseFloat(document.getElementById("density").value);
+            const width = parseFloat(document.getElementById("width").value) * parseFloat(document.getElementById("width-unit").value);
+            const height = parseFloat(document.getElementById("height").value) * parseFloat(document.getElementById("height-unit").value);
+            const thickness = parseFloat(document.getElementById("thickness").value) * parseFloat(document.getElementById("thickness-unit").value);
+
+            // 计算体积 (m3)
+            const volume = width * height * thickness;
+
+            // 计算重量 (kg)
+            const weight = density * volume;
+
+            document.getElementById("result").innerText = `物体重量约为: ${weight.toFixed(2)} kg`;
+        }
+    </script>
+</body>
+</html>

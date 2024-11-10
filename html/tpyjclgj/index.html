@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>图片圆角处理工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        
+        .control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .control-group label {
+            min-width: 120px;
+            margin-right: 10px;
+        }
+        
+        .control-group input[type="number"],
+        .control-group input[type="range"] {
+            width: 150px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        
+        .control-group span {
+            margin: 0 5px;
+        }
+        
+        .preview-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        #previewArea {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #previewImage {
+            transition: all 0.3s ease;
+            object-fit: none;
+            max-width: none;
+            max-height: none;
+        }
+
+        /* 添加图片容器来控制图片显示大小 */
+        .image-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: fit-content;
+            height: fit-content;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            color: #666;
+            border-radius: 8px;
+        }
+        
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .button-group button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .button-group button:hover {
+            opacity: 0.9;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .color-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #top-left-radius, #top-right-radius, #bottom-left-radius, #bottom-right-radius {
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="control-group">
+            <label>选择图片：</label>
+            <input type="file" accept="image/*" id="imageInput" onchange="handleImageUpload(event)">
+        </div>
+
+        <div class="control-group">
+            <label>背景区域：</label>
+            <input type="number" id="containerWidth" value="800" min="100" max="2000" step="10" placeholder="宽度" 
+                oninput="updateContainerSize()">
+            <span>×</span>
+            <input type="number" id="containerHeight" value="600" min="100" max="2000" step="10" placeholder="高度" 
+                oninput="updateContainerSize()">
+            <label style="min-width: auto; margin: 0 5px;">像素</label>
+        </div>
+
+        <div class="control-group">
+            <label>统一圆角：</label>
+            <input type="number" id="radiusNumber" value="0" min="0" max="500" step="1" oninput="updateRadius('number')">
+            <input type="range" id="radiusRange" value="0" min="0" max="500" step="1" oninput="updateRadius('range')">
+        </div>
+
+        <div class="control-group">
+            <label>单独圆角：</label>
+            <label style="min-width: 80px;">左上：
+                <input type="number" id="top-left-radius" value="0" min="0" max="500" oninput="updateCustomRadius()">
+            </label>
+            <label style="min-width: 80px;">右上：
+                <input type="number" id="top-right-radius" value="0" min="0" max="500" oninput="updateCustomRadius()">
+            </label>
+            <label style="min-width: 80px;">左下：
+                <input type="number" id="bottom-left-radius" value="0" min="0" max="500" oninput="updateCustomRadius()">
+            </label>
+            <label style="min-width: 80px;">右下：
+                <input type="number" id="bottom-right-radius" value="0" min="0" max="500" oninput="updateCustomRadius()">
+            </label>
+        </div>
+
+        <div class="control-group">
+            <label>背景设置：</label>
+            <span class="color-label">
+                <input type="color" id="bgColor" value="#ffffff" oninput="updateBackground()">
+                <span>背景颜色</span>
+            </span>
+            <label>
+                <input type="checkbox" id="transparentBg" onchange="updateBackground()"> 透明背景
+            </label>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="saveImage()">保存图片</button>
+            <button onclick="resetRadius()">重置圆角</button>
+        </div>
+    </div>
+    
+    <div class="preview-container" id="previewContainer">
+        <div id="previewArea">
+            <div class="upload-area" id="uploadArea">
+                
+            </div>
+            <div class="image-container" id="imageContainer" style="display: none;">
+                <img id="previewImage">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    const imageContainer = document.getElementById('imageContainer');
+                    const uploadArea = document.getElementById('uploadArea');
+                    
+                    // 创建临时图片获取原始尺寸
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        // 设置图片原始尺寸
+                        previewImage.style.width = `${tempImg.width}px`;
+                        previewImage.style.height = `${tempImg.height}px`;
+                        // 显示图片
+                        previewImage.src = e.target.result;
+                        imageContainer.style.display = 'flex';
+                        uploadArea.style.display = 'none';
+                        // 应用当前的圆角设置
+                        updateCustomRadius();
+                    };
+                    tempImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function updateRadius(source) {
+            const numberInput = document.getElementById('radiusNumber');
+            const rangeInput = document.getElementById('radiusRange');
+            
+            if (source === 'number') {
+                rangeInput.value = numberInput.value;
+            } else {
+                numberInput.value = rangeInput.value;
+            }
+            
+            const radius = numberInput.value;
+            
+            // 更新所有单独圆角输入框
+            document.getElementById('top-left-radius').value = radius;
+            document.getElementById('top-right-radius').value = radius;
+            document.getElementById('bottom-left-radius').value = radius;
+            document.getElementById('bottom-right-radius').value = radius;
+            
+            updateCustomRadius();
+        }
+        
+        function updateCustomRadius() {
+            const previewImage = document.getElementById('previewImage');
+            const topLeft = document.getElementById('top-left-radius').value;
+            const topRight = document.getElementById('top-right-radius').value;
+            const bottomLeft = document.getElementById('bottom-left-radius').value;
+            const bottomRight = document.getElementById('bottom-right-radius').value;
+            
+            previewImage.style.borderRadius = 
+                `${topLeft}px ${topRight}px ${bottomRight}px ${bottomLeft}px`;
+        }
+        
+        function resetRadius() {
+            const inputs = [
+                'radiusNumber', 'radiusRange',
+                'top-left-radius', 'top-right-radius',
+                'bottom-left-radius', 'bottom-right-radius'
+            ];
+            
+            inputs.forEach(id => {
+                document.getElementById(id).value = 0;
+            });
+            
+            updateCustomRadius();
+        }
+
+        function updateContainerSize() {
+            const container = document.getElementById('previewContainer');
+            const width = document.getElementById('containerWidth').value;
+            const height = document.getElementById('containerHeight').value;
+            
+            container.style.width = `${width}px`;
+            container.style.height = `${height}px`;
+        }
+
+        function updateBackground() {
+            const container = document.getElementById('previewContainer');
+            const transparentBg = document.getElementById('transparentBg').checked;
+            const bgColor = document.getElementById('bgColor');
+            
+            container.style.backgroundColor = transparentBg ? 'transparent' : bgColor.value;
+            bgColor.disabled = transparentBg;
+        }
+        
+        async function saveImage() {
+            const container = document.getElementById('previewContainer');
+            const transparentBg = document.getElementById('transparentBg').checked;
+            const bgColor = document.getElementById('bgColor').value;
+            
+            try {
+                const canvas = await html2canvas(container, {
+                    useCORS: true,
+                    backgroundColor: transparentBg ? null : bgColor,
+                    scale: 2
+                });
+
+                const link = document.createElement('a');
+                link.download = '圆角处理图片.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('保存图片时出错：', error);
+                alert('保存图片时出错，请重试！');
+            }
+        }
+
+        // 支持拖拽上传
+        const previewArea = document.getElementById('previewArea');
+        
+        previewArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            document.querySelector('.upload-area').style.borderColor = '#2196F3';
+        });
+        
+        previewArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            document.querySelector('.upload-area').style.borderColor = '#ccc';
+        });
+        
+        previewArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.querySelector('.upload-area').style.borderColor = '#ccc';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    const imageContainer = document.getElementById('imageContainer');
+                    const uploadArea = document.getElementById('uploadArea');
+                    
+                    // 创建临时图片获取原始尺寸
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        // 设置图片原始尺寸
+                        previewImage.style.width = `${tempImg.width}px`;
+                        previewImage.style.height = `${tempImg.height}px`;
+                        // 显示图片
+                        previewImage.src = e.target.result;
+                        imageContainer.style.display = 'flex';
+                        uploadArea.style.display = 'none';
+                        updateCustomRadius();
+                    };
+                    tempImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 初始化
+        updateBackground();
+        updateContainerSize();
+    </script>
+</body>
+</html>
