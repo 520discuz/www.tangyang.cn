@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+    <title>年化收益率查询工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin: 10px 0;
+        }
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            width: 200px;
+        }
+        button {
+            padding: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>年化收益率查询工具</h1>
+
+    <div class="input-container">
+        <input type="number" id="principal" placeholder="输入本金（元）" required>
+        <input type="number" id="annualRate" placeholder="输入年化收益率（%）" required>
+        <button id="calculateButton">计算收益</button>
+        <div class="result" id="result1"></div>
+    </div>
+
+    <h1>年化收益反推工具</h1>
+
+    <div class="input-container">
+        <input type="number" id="principal2" placeholder="输入本金（元）" required>
+        <input type="number" id="finalAmount" placeholder="输入最终收益（元）" required>
+        <button id="calculateButton2">计算年化率</button>
+        <div class="result" id="result2"></div>
+    </div>
+
+    <script>
+        // 年化收益率查询工具
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const annualRate = parseFloat(document.getElementById('annualRate').value) / 100; // 转换为小数
+
+            const finalAmount = principal * Math.pow(1 + annualRate, 1);
+            document.getElementById('result1').textContent = `最终收益: ${finalAmount.toFixed(2)} 元`;
+        });
+
+        // 年化收益反推工具
+        document.getElementById('calculateButton2').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal2').value);
+            const finalAmount = parseFloat(document.getElementById('finalAmount').value);
+
+            const annualRate = Math.pow(finalAmount / principal, 1 / 1) - 1;
+            document.getElementById('result2').textContent = `年化收益率: ${(annualRate * 100).toFixed(2)}%`;
+        });
+    </script>
+</body>
+</html>

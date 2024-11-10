@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>淡入式屏幕保护程序</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #colorScreen {
+            width: 100%;
+            height: 100%;
+            transition: background-color 3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="colorScreen"></div>
+    <script>
+        const colors = [
+            // 红色系
+            '#FF0000', '#FF1493', '#FF4500', '#FF6347', '#FF69B4', 
+            '#FF7F50', '#FF8C00', '#FFA07A', '#FFB6C1', '#DC143C',
+            
+            // 蓝色系
+            '#0000FF', '#00008B', '#0000CD', '#00BFFF', '#1E90FF',
+            '#4169E1', '#483D8B', '#4682B4', '#6495ED', '#7B68EE',
+            
+            // 绿色系
+            '#006400', '#008000', '#008B8B', '#00FA9A', '#00FF00',
+            '#00FF7F', '#00FFFF', '#2E8B57', '#32CD32', '#3CB371',
+            
+            // 紫色系
+            '#800080', '#8A2BE2', '#8B008B', '#9370DB', '#9400D3',
+            '#9932CC', '#BA55D3', '#C71585', '#D8BFD8', '#DDA0DD',
+            
+            // 黄色系
+            '#FFD700', '#FFFF00', '#FFFFE0', '#FFFACD', '#FAFAD2',
+            '#F0E68C', '#EEE8AA', '#DAA520', '#BDB76B', '#F4A460',
+            
+            // 其他精选颜色
+            '#2F4F4F', '#556B2F', '#8B4513', '#A0522D', '#B8860B',
+            '#CD853F', '#D2691E', '#DAA520', '#E9967A', '#F08080'
+        ];
+
+        const colorScreen = document.getElementById('colorScreen');
+        let currentIndex = 0;
+
+        function changeColor() {
+            colorScreen.style.backgroundColor = colors[currentIndex];
+            currentIndex = (currentIndex + 1) % colors.length;
+        }
+
+        // 初始颜色
+        changeColor();
+        // 每5秒切换一次颜色
+        setInterval(changeColor, 5000);
+
+        // 点击任意位置全屏显示
+        document.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        });
+
+        // 显示当前颜色代码（调试用，可以删除）
+        colorScreen.addEventListener('click', () => {
+            console.log('当前颜色:', colors[currentIndex]);
+        });
+    </script>
+</body>
+</html>

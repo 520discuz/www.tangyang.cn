@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>男女体重健康度BMI查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .input-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        label {
+            width: 120px;
+            color: #444;
+        }
+        input[type="number"] {
+            width: 200px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .radio-label input[type="radio"] {
+            cursor: pointer;
+            width: 1.2em;
+            height: 1.2em;
+        }
+        .result-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        .result-title {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .result-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .health-status {
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 1rem;
+        }
+        .status-healthy {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-warning {
+            background-color: #FFC107;
+            color: black;
+        }
+        .status-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3e0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .recommendations {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e3f2fd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .empty-notice {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>男女体重健康度BMI查询器</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label>性别:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="gender" value="male" checked oninput="checkHealth()">
+                        男性
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="gender" value="female" oninput="checkHealth()">
+                        女性
+                    </label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="age">年龄:</label>
+                <input type="number" id="age" placeholder="请输入年龄" oninput="checkHealth()">
+            </div>
+            <div class="input-group">
+                <label for="weight">体重 (kg):</label>
+                <input type="number" id="weight" step="0.1" placeholder="请输入体重" oninput="checkHealth()">
+            </div>
+            <div class="input-group">
+                <label for="height">身高 (cm):</label>
+                <input type="number" id="height" step="0.1" placeholder="请输入身高" oninput="checkHealth()">
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-title">健康状况报告</div>
+            <div class="result-item">
+                <div id="emptyNotice" class="empty-notice">请输入身高和体重进行计算</div>
+                <div id="resultContent" style="display: none;">
+                    BMI指数：<span id="resultBMI"></span><br>
+                    健康状况：<span id="resultStatus"></span>
+                </div>
+            </div>
+            <div class="recommendations" id="recommendations">
+                <!-- 健康建议将在这里显示 -->
+            </div>
+        </div>
+
+        <div class="note">
+            注意事项：
+            <ul>
+                <li>BMI指数仅供参考，不同年龄段和体型的人群可能会有差异</li>
+                <li>建议结合专业医生的意见进行综合评估</li>
+                <li>保持健康的生活方式和适量运动很重要</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function checkHealth() {
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            
+            const emptyNotice = document.getElementById('emptyNotice');
+            const resultContent = document.getElementById('resultContent');
+
+            // 检查是否有有效输入
+            if (!weight || !height) {
+                emptyNotice.style.display = 'block';
+                resultContent.style.display = 'none';
+                document.getElementById('recommendations').innerHTML = '';
+                return;
+            }
+
+            // 显示结果区域
+            emptyNotice.style.display = 'none';
+            resultContent.style.display = 'block';
+
+            // 计算BMI
+            const bmi = weight / ((height / 100) * (height / 100));
+            const bmiRounded = bmi.toFixed(1);
+
+            // 根据性别和年龄调整BMI标准
+            let standardLow = 18.5;
+            let standardHigh = 24;
+            let standardOverweight = 28;
+
+            if (gender === 'female') {
+                // 女性BMI标准略低
+                standardLow = 18;
+                standardHigh = 23;
+                standardOverweight = 27;
+            }
+
+            // 根据年龄调整标准
+            if (age >= 60) {
+                // 老年人BMI标准略高
+                standardLow += 0.5;
+                standardHigh += 1;
+                standardOverweight += 1;
+            }
+
+            // 确定健康状态
+            let status = '';
+            let statusClass = '';
+            let recommendations = '';
+            let genderText = gender === 'male' ? '男性' : '女性';
+
+            if (bmi < standardLow) {
+                status = '体重偏轻';
+                statusClass = 'status-warning';
+                recommendations = `
+                    <h3>健康建议：</h3>
+                    <ul>
+                        <li>适当增加饮食量，保证营养均衡</li>
+                        <li>进行适量的力量训练（特别是${gender === 'male' ? '增肌训练' : '塑形训练'}）</li>
+                        <li>保证充足的休息时间</li>
+                        <li>建议咨询营养师制定饮食计划</li>
+                    </ul>
+                `;
+            } else if (bmi >= standardLow && bmi < standardHigh) {
+                status = '体重正常';
+                statusClass = 'status-healthy';
+                recommendations = `
+                    <h3>健康建议：</h3>
+                    <ul>
+                        <li>继续保持健康的生活方式</li>
+                        <li>坚持适量运动（每周3-5次，每次30-60分钟）</li>
+                        <li>保持均衡饮食</li>
+                        <li>定期体检</li>
+                    </ul>
+                `;
+            } else if (bmi >= standardHigh && bmi < standardOverweight) {
+                status = '体重偏重';
+                statusClass = 'status-warning';
+                recommendations = `
+                    <h3>健康建议：</h3>
+                    <ul>
+                        <li>控制饮食摄入，避免高热量食物</li>
+                        <li>增加有氧运动时间（推荐${gender === 'male' ? '跑步、游泳' : '健走、瑜伽'}）</li>
+                        <li>保持规律作息</li>
+                        <li>建议咨询医生制定减重计划</li>
+                    </ul>
+                `;
+            } else {
+                status = '体重超重';
+                statusClass = 'status-danger';
+                recommendations = `
+                    <h3>健康建议：</h3>
+                    <ul>
+                        <li>严格控制饮食，避免高糖高脂食物</li>
+                        <li>每天保证充足的运动时间（建议${gender === 'male' ? '力量训练配合有氧运动' : '有氧运动为主，辅以轻量力训'}）</li>
+                        <li>建议就医检查，制定专业的减重计划</li>
+                        <li>注意监测血压和血糖</li>
+                    </ul>
+                `;
+            }
+
+            // 显示结果
+            document.getElementById('resultBMI').textContent = bmiRounded;
+            const statusSpan = document.createElement('span');
+            statusSpan.textContent = status;
+            statusSpan.className = `health-status ${statusClass}`;
+            document.getElementById('resultStatus').innerHTML = '';
+            document.getElementById('resultStatus').appendChild(statusSpan);
+            document.getElementById('recommendations').innerHTML = recommendations;
+        }
+
+        // 页面加载时进行初始检查
+        checkHealth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>力单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <h1>力单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>牛:</label>
+            <input type="number" id="N" step="any" oninput="convert(this.id, this.value)">
+            <span>(N)</span>
+        </div>
+        <div class="unit-row">
+            <label>千牛:</label>
+            <input type="number" id="kN" step="any" oninput="convert(this.id, this.value)">
+            <span>(kN)</span>
+        </div>
+        <div class="unit-row">
+            <label>千克力:</label>
+            <input type="number" id="kgf" step="any" oninput="convert(this.id, this.value)">
+            <span>(kgf)</span>
+        </div>
+        <div class="unit-row">
+            <label>克力:</label>
+            <input type="number" id="gf" step="any" oninput="convert(this.id, this.value)">
+            <span>(gf)</span>
+        </div>
+        <div class="unit-row">
+            <label>公吨力:</label>
+            <input type="number" id="tf" step="any" oninput="convert(this.id, this.value)">
+            <span>(tf)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫牛:</label>
+            <input type="number" id="mN" step="any" oninput="convert(this.id, this.value)">
+            <span>(mN)</span>
+        </div>
+        <div class="unit-row">
+            <label>纳牛:</label>
+            <input type="number" id="nN" step="any" oninput="convert(this.id, this.value)">
+            <span>(nN)</span>
+        </div>
+        <div class="unit-row">
+            <label>微牛:</label>
+            <input type="number" id="uN" step="any" oninput="convert(this.id, this.value)">
+            <span>(μN)</span>
+        </div>
+        <div class="unit-row">
+            <label>百万牛顿:</label>
+            <input type="number" id="MN" step="any" oninput="convert(this.id, this.value)">
+            <span>(MN)</span>
+        </div>
+        <div class="unit-row">
+            <label>吉牛顿:</label>
+            <input type="number" id="GN" step="any" oninput="convert(this.id, this.value)">
+            <span>(GN)</span>
+        </div>
+        <div class="unit-row">
+            <label>公斤力:</label>
+            <input type="number" id="kgf2" step="any" oninput="convert(this.id, this.value)">
+            <span>(kgf)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫克力:</label>
+            <input type="number" id="mgf" step="any" oninput="convert(this.id, this.value)">
+            <span>(mgf)</span>
+        </div>
+        <div class="unit-row">
+            <label>米制吨力:</label>
+            <input type="number" id="metric_tf" step="any" oninput="convert(this.id, this.value)">
+            <span>(tf)</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>磅力:</label>
+            <input type="number" id="lbf" step="any" oninput="convert(this.id, this.value)">
+            <span>(lbf)</span>
+        </div>
+        <div class="unit-row">
+            <label>千磅力:</label>
+            <input type="number" id="kip" step="any" oninput="convert(this.id, this.value)">
+            <span>(kip)</span>
+        </div>
+        <div class="unit-row">
+            <label>达因:</label>
+            <input type="number" id="dyn" step="any" oninput="convert(this.id, this.value)">
+            <span>(dyn)</span>
+        </div>
+        <div class="unit-row">
+            <label>美制吨力:</label>
+            <input type="number" id="us_tf" step="any" oninput="convert(this.id, this.value)">
+            <span>(US ton-force)</span>
+        </div>
+        <div class="unit-row">
+            <label>英制吨力:</label>
+            <input type="number" id="uk_tf" step="any" oninput="convert(this.id, this.value)">
+            <span>(UK ton-force)</span>
+        </div>
+        <div class="unit-row">
+            <label>磅达:</label>
+            <input type="number" id="pdl" step="any" oninput="convert(this.id, this.value)">
+            <span>(pdl)</span>
+        </div>
+    </div>
+
+    <script>
+        function convert(sourceId, value) {
+            if (value === '') return;
+            // 将输入值转换为基准单位（牛顿 N）
+            let newtonValue = toNewton(sourceId, parseFloat(value));
+            
+            // 更新所有输入框
+            updateAllInputs(newtonValue, sourceId);
+        }
+
+        function toNewton(unit, value) {
+            switch(unit) {
+                // 公制
+                case 'N': return value;
+                case 'kN': return value * 1000;
+                case 'kgf': case 'kgf2': return value * 9.80665;
+                case 'gf': return value * 0.00980665;
+                case 'tf': return value * 9806.65;
+                case 'mN': return value * 0.001;
+                case 'nN': return value * 1e-9;
+                case 'uN': return value * 1e-6;
+                case 'MN': return value * 1e6;
+                case 'GN': return value * 1e9;
+                case 'mgf': return value * 9.80665e-6;
+                case 'metric_tf': return value * 9806.65;
+                // 英制
+                case 'lbf': return value * 4.4482216152605;
+                case 'kip': return value * 4448.2216152605;
+                case 'dyn': return value * 1e-5;
+                case 'us_tf': return value * 8896.443230521;
+                case 'uk_tf': return value * 9964.016418;
+                case 'pdl': return value * 0.138254954376;
+                default: return value;
+            }
+        }
+
+        function fromNewton(unit, newtonValue) {
+            switch(unit) {
+                // 公制
+                case 'N': return newtonValue;
+                case 'kN': return newtonValue / 1000;
+                case 'kgf': case 'kgf2': return newtonValue / 9.80665;
+                case 'gf': return newtonValue / 0.00980665;
+                case 'tf': return newtonValue / 9806.65;
+                case 'mN': return newtonValue / 0.001;
+                case 'nN': return newtonValue / 1e-9;
+                case 'uN': return newtonValue / 1e-6;
+                case 'MN': return newtonValue / 1e6;
+                case 'GN': return newtonValue / 1e9;
+                case 'mgf': return newtonValue / 9.80665e-6;
+                case 'metric_tf': return newtonValue / 9806.65;
+                // 英制
+                case 'lbf': return newtonValue / 4.4482216152605;
+                case 'kip': return newtonValue / 4448.2216152605;
+                case 'dyn': return newtonValue / 1e-5;
+                case 'us_tf': return newtonValue / 8896.443230521;
+                case 'uk_tf': return newtonValue / 9964.016418;
+                case 'pdl': return newtonValue / 0.138254954376;
+                default: return newtonValue;
+            }
+        }
+
+        function updateAllInputs(newtonValue, sourceId) {
+            document.querySelectorAll('input').forEach(input => {
+                if (input.id !== sourceId) {
+                    let convertedValue = fromNewton(input.id, newtonValue);
+                    // 使用toLocaleString避免科学计数法
+                    if (Math.abs(convertedValue) >= 1e-6 && Math.abs(convertedValue) < 1e21) {
+                        input.value = convertedValue.toLocaleString('fullwide', {useGrouping: false, maximumFractionDigits: 10});
+                    } else {
+                        input.value = convertedValue;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

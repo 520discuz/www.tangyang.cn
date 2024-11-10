@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<head>
+    <title>订阅套餐业务补差价计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 1px;
+            padding: 40px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 350px;
+            width: 100%;
+        }
+        input[type="number"], button, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>补差价计算器</h1>
+                <h2>友情提示：新套餐价格要比老套餐高，否则程序无法给出正确结果</h2>
+        <label for="type">选择计费周期:</label>
+        <select id="type" onChange="toggleFields()">
+            <option value="year">按年度</option>
+            <option value="month">按月度</option>
+            <option value="quarter">按季度</option>
+            <option value="week">按周度</option>
+        </select>
+
+        <div id="yearFields">
+            <label for="oldYearPrice">老套餐价格 (元):</label>
+            <input type="number" id="oldYearPrice" placeholder="请输入老套餐价格" required>
+            
+            <label for="usedDaysYear">使用天数:</label>
+            <input type="number" id="usedDaysYear" placeholder="请输入使用天数" required>
+            
+            <label for="newYearPrice">新套餐价格 (元):</label>
+            <input type="number" id="newYearPrice" placeholder="请输入新套餐价格" required>
+        </div>
+
+        <div id="monthFields" style="display:none;">
+            <label for="oldMonthlyPrice">老套餐月费用 (元):</label>
+            <input type="number" id="oldMonthlyPrice" placeholder="请输入老套餐月费用" required>
+
+            <label for="usedDaysMonth">使用天数:</label>
+            <input type="number" id="usedDaysMonth" placeholder="请输入使用天数" required>
+
+            <label for="newMonthlyPrice">新套餐月费用 (元):</label>
+            <input type="number" id="newMonthlyPrice" placeholder="请输入新套餐月费用" required>
+        </div>
+
+        <div id="quarterFields" style="display:none;">
+            <label for="oldQuarterPrice">老套餐季费用 (元):</label>
+            <input type="number" id="oldQuarterPrice" placeholder="请输入老套餐季费用" required>
+
+            <label for="usedDaysQuarter">使用天数:</label>
+            <input type="number" id="usedDaysQuarter" placeholder="请输入使用天数" required>
+
+            <label for="newQuarterPrice">新套餐季费用 (元):</label>
+            <input type="number" id="newQuarterPrice" placeholder="请输入新套餐季费用" required>
+        </div>
+
+        <div id="weekFields" style="display:none;">
+            <label for="oldWeeklyPrice">老套餐周费用 (元):</label>
+            <input type="number" id="oldWeeklyPrice" placeholder="请输入老套餐周费用" required>
+
+            <label for="usedDaysWeek">使用天数:</label>
+            <input type="number" id="usedDaysWeek" placeholder="请输入使用天数" required>
+
+            <label for="newWeeklyPrice">新套餐周费用 (元):</label>
+            <input type="number" id="newWeeklyPrice" placeholder="请输入新套餐周费用" required>
+        </div>
+
+        <button onClick="calculateDifference()">计算补差价</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function toggleFields() {
+            const type = document.getElementById('type').value;
+            document.getElementById('yearFields').style.display = type === 'year' ? 'block' : 'none';
+            document.getElementById('monthFields').style.display = type === 'month' ? 'block' : 'none';
+            document.getElementById('quarterFields').style.display = type === 'quarter' ? 'block' : 'none';
+            document.getElementById('weekFields').style.display = type === 'week' ? 'block' : 'none';
+        }
+
+        function calculateDifference() {
+            const type = document.getElementById('type').value;
+            let difference = 0;
+
+            if (type === 'year') {
+                const oldPrice = parseFloat(document.getElementById('oldYearPrice').value);
+                const usedDays = parseInt(document.getElementById('usedDaysYear').value);
+                const newPrice = parseFloat(document.getElementById('newYearPrice').value);
+
+                const oldDailyPrice = oldPrice / 365;
+                const usedCost = oldDailyPrice * usedDays;
+                const remainingValue = oldPrice - usedCost;
+
+                const newDailyPrice = newPrice / 365;
+                const remainingDays = 365 - usedDays;
+                const newRemainingCost = newDailyPrice * remainingDays;
+
+                difference = newRemainingCost - remainingValue;
+
+            } else if (type === 'month') {
+                const oldMonthlyPrice = parseFloat(document.getElementById('oldMonthlyPrice').value);
+                const usedDays = parseInt(document.getElementById('usedDaysMonth').value);
+                const newMonthlyPrice = parseFloat(document.getElementById('newMonthlyPrice').value);
+
+                const oldDailyPrice = oldMonthlyPrice / 30;
+                const usedCost = oldDailyPrice * usedDays;
+                const remainingValue = oldMonthlyPrice - usedCost;
+
+                const newDailyPrice = newMonthlyPrice / 30;
+                const remainingDays = 30 - usedDays;
+                const newRemainingCost = newDailyPrice * remainingDays;
+
+                difference = newRemainingCost - remainingValue;
+
+            } else if (type === 'quarter') {
+                const oldQuarterPrice = parseFloat(document.getElementById('oldQuarterPrice').value);
+                const usedDays = parseInt(document.getElementById('usedDaysQuarter').value);
+                const newQuarterPrice = parseFloat(document.getElementById('newQuarterPrice').value);
+
+                const oldDailyPrice = oldQuarterPrice / 90; // 假设季度为90天
+                const usedCost = oldDailyPrice * usedDays;
+                const remainingValue = oldQuarterPrice - usedCost;
+
+                const newDailyPrice = newQuarterPrice / 90;
+                const remainingDays = 90 - usedDays;
+                const newRemainingCost = newDailyPrice * remainingDays;
+
+                difference = newRemainingCost - remainingValue;
+
+            } else if (type === 'week') {
+                const oldWeeklyPrice = parseFloat(document.getElementById('oldWeeklyPrice').value);
+                const usedDays = parseInt(document.getElementById('usedDaysWeek').value);
+                const newWeeklyPrice = parseFloat(document.getElementById('newWeeklyPrice').value);
+
+                const oldDailyPrice = oldWeeklyPrice / 7;
+                const usedCost = oldDailyPrice * usedDays;
+                const remainingValue = oldWeeklyPrice - usedCost;
+
+                const newDailyPrice = newWeeklyPrice / 7;
+                const remainingDays = 7 - usedDays;
+                const newRemainingCost = newDailyPrice * remainingDays;
+
+                difference = newRemainingCost - remainingValue;
+            }
+
+            document.getElementById('result').innerText = `需要补差价: ${difference.toFixed(2)} 元`;
+        }
+    </script>
+</body>
+</html>

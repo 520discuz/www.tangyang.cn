@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <title>百分比计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>百分比计算器</h1>
+	    <h2>	友情提示：假设左边输入一万、右边输入百分之五十，结果就是一万五（一万多了五千）。</h2>
+
+    <input type="number" id="numberInput" placeholder="输入数字">
+    <input type="number" id="percentageInput" placeholder="输入百分比，不用输入%号">
+    <button id="calculateButton">计算</button>
+
+    <h2>结果: <span id="result">0</span></h2>
+
+    <script>
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            const number = parseFloat(document.getElementById('numberInput').value);
+            const percentage = parseFloat(document.getElementById('percentageInput').value);
+
+            // 处理百分比输入
+            const percentageValue = isNaN(percentage) ? 0 : percentage / 100; // 将数字转换为百分比
+
+            // 计算总和
+            const result = number + (number * percentageValue);
+
+            // 更新结果显示
+            document.getElementById('result').textContent = isNaN(result) ? '请输入有效数字' : result.toFixed(2); // 保留两位小数
+        });
+    </script>
+</body>
+</html>

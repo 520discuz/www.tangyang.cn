@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>九宫格图片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-item {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            margin-right: 10px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .preview-container {
+            position: relative;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .grid-container {
+            display: flex;
+            flex-wrap: wrap;
+            position: relative;
+            background-color: white;
+        }
+        .grid-item {
+            position: relative;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .grid-item input[type="file"] {
+            display: none;
+        }
+        .grid-item:hover::before {
+            content: '点击上传图片';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            z-index: 1;
+        }
+        .save-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="control-item">
+                <label>图片间距 (px):</label>
+                <input type="number" id="gap-size" value="10" min="0" max="100">
+            </div>
+            <div class="control-item">
+                <label>单格尺寸 (px):</label>
+                <input type="number" id="cell-size" value="300" min="100" max="800">
+            </div>
+        </div>
+        
+        <div class="preview-container">
+            <div class="grid-container" id="grid">
+                <div class="grid-item" onclick="triggerFileInput(0)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 0)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(1)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 1)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(2)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 2)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(3)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 3)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(4)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 4)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(5)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 5)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(6)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 6)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(7)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 7)">
+                </div>
+                <div class="grid-item" onclick="triggerFileInput(8)">
+                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 8)">
+                </div>
+            </div>
+        </div>
+        
+        <button class="save-btn" onclick="saveImage()">保存九宫格</button>
+    </div>
+
+    <script>
+        // 获取控制元素
+        const gapInput = document.getElementById('gap-size');
+        const cellInput = document.getElementById('cell-size');
+        const grid = document.getElementById('grid');
+
+        // 更新网格样式
+        function updateGridStyle() {
+            const gap = parseInt(gapInput.value);
+            const cellSize = parseInt(cellInput.value);
+            const totalWidth = cellSize * 3 + gap * 2;
+            
+            // 更新网格容器样式
+            grid.style.width = totalWidth + 'px';
+            grid.style.height = totalWidth + 'px';
+            
+            // 更新每个格子的样式
+            document.querySelectorAll('.grid-item').forEach((item, index) => {
+                const row = Math.floor(index / 3);
+                const col = index % 3;
+                
+                item.style.position = 'absolute';
+                item.style.width = cellSize + 'px';
+                item.style.height = cellSize + 'px';
+                item.style.left = (col * (cellSize + gap)) + 'px';
+                item.style.top = (row * (cellSize + gap)) + 'px';
+            });
+        }
+
+        // 初始化样式
+        updateGridStyle();
+
+        // 添加事件监听器
+        gapInput.addEventListener('input', updateGridStyle);
+        cellInput.addEventListener('input', updateGridStyle);
+
+        // 触发文件选择
+        function triggerFileInput(index) {
+            document.querySelectorAll('input[type="file"]')[index].click();
+        }
+
+        // 处理文件选择
+        function handleFileSelect(event, index) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const gridItem = document.querySelectorAll('.grid-item')[index];
+                    let img = gridItem.querySelector('img');
+                    if (!img) {
+                        img = document.createElement('img');
+                        gridItem.appendChild(img);
+                    }
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 保存图片
+        function saveImage() {
+            // 创建一个新的canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置canvas尺寸
+            const cellSize = parseInt(cellInput.value);
+            const gap = parseInt(gapInput.value);
+            const totalSize = cellSize * 3 + gap * 2;
+            
+            canvas.width = totalSize;
+            canvas.height = totalSize;
+            
+            // 设置白色背景
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制每个图片
+            const promises = [];
+            document.querySelectorAll('.grid-item img').forEach((img, index) => {
+                const row = Math.floor(index / 3);
+                const col = index % 3;
+                const x = col * (cellSize + gap);
+                const y = row * (cellSize + gap);
+                
+                promises.push(new Promise((resolve) => {
+                    if (img.complete) {
+                        ctx.drawImage(img, x, y, cellSize, cellSize);
+                        resolve();
+                    } else {
+                        img.onload = () => {
+                            ctx.drawImage(img, x, y, cellSize, cellSize);
+                            resolve();
+                        };
+                    }
+                }));
+            });
+            
+            // 等待所有图片绘制完成后下载
+            Promise.all(promises).then(() => {
+                const link = document.createElement('a');
+                link.download = '九宫格.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>

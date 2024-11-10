@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>每公里油耗油费查询工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-with-unit {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .unit-label {
+            color: #666;
+            min-width: 60px;
+            font-size: 14px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2196F3;
+            font-size: 18px;
+        }
+        .cost-highlight {
+            font-weight: bold;
+            color: #e53935;
+            font-size: 18px;
+        }
+        .efficiency-highlight {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 18px;
+        }
+        .invalid {
+            border-color: #ff5252;
+        }
+        .error-message {
+            color: #ff5252;
+            font-size: 0.9em;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>每公里油耗油费查询工具</h2>
+        <div class="input-group">
+            <label for="totalDistance">加满一箱油能跑多少公里:</label>
+            <div class="input-with-unit">
+                <input type="number" id="totalDistance" min="0" step="0.1" placeholder="请输入可行驶总公里数" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">公里</span>
+            </div>
+            <div id="totalDistance-error" class="error-message">请输入有效的公里数</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="fuelCapacity">油箱加满油一共要多少升:</label>
+            <div class="input-with-unit">
+                <input type="number" id="fuelCapacity" min="0" step="0.1" placeholder="请输入油箱容量" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">升</span>
+            </div>
+            <div id="fuelCapacity-error" class="error-message">请输入有效的油量</div>
+        </div>
+
+        <div class="input-group">
+            <label for="fuelPrice">油价:</label>
+            <div class="input-with-unit">
+                <input type="number" id="fuelPrice" min="0" step="0.01" placeholder="请输入当前油价" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">元/升</span>
+            </div>
+            <div id="fuelPrice-error" class="error-message">请输入有效的油价</div>
+        </div>
+
+        <div id="result" class="result">
+            <h3>计算结果:</h3>
+            
+            <div class="result-item">
+                <p>1升油可以跑:
+                    <span id="km-per-liter" class="efficiency-highlight">0.00</span> 
+                    <span class="unit-label">公里</span>
+                </p>
+            </div>
+            
+            <div class="result-item">
+                <p>跑1公里需要:
+                    <span id="liter-per-km" class="highlight">0.00</span> 
+                    <span class="unit-label">升油</span>
+                </p>
+            </div>
+            
+            <div class="result-item">
+                <p>跑1公里花费:
+                    <span id="cost-per-km" class="cost-highlight">0.00</span> 
+                    <span class="unit-label">元</span>
+                </p>
+            </div>
+            
+            <div class="result-item">
+                <p>百公里油耗:
+                    <span id="consumption-per-100km" class="highlight">0.00</span> 
+                    <span class="unit-label">升/100公里</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateInput(input) {
+            const value = parseFloat(input.value);
+            const errorElement = document.getElementById(input.id + '-error');
+            
+            if (isNaN(value) || value < 0) {
+                input.classList.add('invalid');
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                input.classList.remove('invalid');
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        function updateResult() {
+            const totalDistance = parseFloat(document.getElementById('totalDistance').value) || 0;
+            const fuelCapacity = parseFloat(document.getElementById('fuelCapacity').value) || 0;
+            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value) || 0;
+
+            // 验证输入
+            const isDistanceValid = validateInput(document.getElementById('totalDistance'));
+            const isCapacityValid = validateInput(document.getElementById('fuelCapacity'));
+            const isPriceValid = validateInput(document.getElementById('fuelPrice'));
+
+            if (isDistanceValid && isCapacityValid && isPriceValid && fuelCapacity > 0) {
+                // 计算每升油可以行驶的公里数
+                const kmPerLiter = totalDistance / fuelCapacity;
+                
+                // 计算每公里需要的油量
+                const literPerKm = fuelCapacity / totalDistance;
+                
+                // 计算每公里的花费
+                const costPerKm = literPerKm * fuelPrice;
+                
+                // 计算百公里油耗
+                const consumptionPer100km = (fuelCapacity / totalDistance) * 100;
+
+                // 更新显示结果
+                document.getElementById('km-per-liter').textContent = kmPerLiter.toFixed(2);
+                document.getElementById('liter-per-km').textContent = literPerKm.toFixed(3);
+                document.getElementById('cost-per-km').textContent = costPerKm.toFixed(2);
+                document.getElementById('consumption-per-100km').textContent = consumptionPer100km.toFixed(1);
+            }
+        }
+
+        // 页面加载时初始化显示
+        updateResult();
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>环形漏斗雷达统计比例图生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .chart-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        canvas {
+            background: white;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .color-picker {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>环形漏斗雷达统计比例图生成器</h1>
+    
+    <div id="inputContainer">
+        <div class="input-group">
+            <input type="text" placeholder="名称" class="name-input">
+            <input type="number" placeholder="数值" class="value-input">
+            <button onClick="removeInput(this)">删除</button>
+        </div>
+    </div>
+    
+    <button onClick="addInput()">添加输入项</button>
+
+    <div class="controls">
+        <div>
+            <label>画布宽度：</label>
+            <input type="number" id="canvasWidth" value="400" min="200" max="800">
+            <label>画布高度：</label>
+            <input type="number" id="canvasHeight" value="300" min="200" max="600">
+        </div>
+        <div>
+            <button onClick="generateCharts()">生成图表</button>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-box">
+            <h3>饼状图</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>柱状图</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>环形图</h3>
+            <canvas id="doughnutChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>漏斗图</h3>
+            <canvas id="funnelChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>雷达图</h3>
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // 添加输入区域
+        function addInput() {
+            const container = document.getElementById('inputContainer');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <input type="text" placeholder="名称" class="name-input">
+                <input type="number" placeholder="数值" class="value-input">
+                <button onclick="removeInput(this)">删除</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // 删除输入区域
+        function removeInput(button) {
+            button.parentElement.remove();
+        }
+
+        // 获取输入数据
+        function getData() {
+            const data = [];
+            const groups = document.getElementsByClassName('input-group');
+            for (let group of groups) {
+                const name = group.querySelector('.name-input').value;
+                const value = parseFloat(group.querySelector('.value-input').value);
+                if (name && !isNaN(value)) {
+                    data.push({ name, value });
+                }
+            }
+            return data;
+        }
+
+        // 生成随机颜色
+        function getRandomColors(count) {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                const hue = (i * 360 / count) % 360;
+                colors.push(`hsl(${hue}, 70%, 60%)`);
+            }
+            return colors;
+        }
+
+        // 绘制饼图
+        function drawPieChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 20;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            let startAngle = -Math.PI / 2;
+            const colors = getRandomColors(data.length);
+
+            data.forEach((item, index) => {
+                const sliceAngle = (2 * Math.PI * item.value) / total;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                
+                ctx.fillStyle = colors[index];
+                ctx.fill();
+                
+                // 添加标签
+                const labelAngle = startAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+                
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.name, labelX, labelY);
+                
+                startAngle += sliceAngle;
+            });
+        }
+
+        // 绘制柱状图
+        function drawBarChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            
+            ctx.clearRect(0, 0, width, height);
+
+            const barWidth = (width - padding * 2) / data.length - 10;
+            const maxValue = Math.max(...data.map(item => item.value));
+            const colors = getRandomColors(data.length);
+
+            // 绘制坐标轴
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(padding, padding);
+            ctx.stroke();
+
+            // 绘制柱子
+            data.forEach((item, index) => {
+                const barHeight = ((height - padding * 2) * item.value) / maxValue;
+                const x = padding + index * (barWidth + 10);
+                const y = height - padding - barHeight;
+
+                ctx.fillStyle = colors[index];
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // 添加标签
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.name, x + barWidth/2, height - padding + 15);
+                ctx.fillText(item.value, x + barWidth/2, y - 5);
+            });
+        }
+
+        // 绘制环形图
+        function drawDoughnutChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const outerRadius = Math.min(width, height) / 2 - 20;
+            const innerRadius = outerRadius * 0.6;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            let startAngle = -Math.PI / 2;
+            const colors = getRandomColors(data.length);
+
+            data.forEach((item, index) => {
+                const sliceAngle = (2 * Math.PI * item.value) / total;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, outerRadius, startAngle, startAngle + sliceAngle);
+                ctx.arc(centerX, centerY, innerRadius, startAngle + sliceAngle, startAngle, true);
+                ctx.closePath();
+                
+                ctx.fillStyle = colors[index];
+                ctx.fill();
+                
+                // 添加标签
+                const labelAngle = startAngle + sliceAngle / 2;
+                const labelRadius = (outerRadius + innerRadius) / 2;
+                const labelX = centerX + Math.cos(labelAngle) * labelRadius;
+                const labelY = centerY + Math.sin(labelAngle) * labelRadius;
+                
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.name, labelX, labelY);
+                
+                startAngle += sliceAngle;
+            });
+        }
+
+        // 绘制漏斗图
+        function drawFunnelChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            const colors = getRandomColors(data.length);
+            const levelHeight = (height - padding * 2) / data.length;
+
+            data.forEach((item, index) => {
+                const topWidth = width * (1 - index / data.length);
+                const bottomWidth = width * (1 - (index + 1) / data.length);
+                const y = padding + index * levelHeight;
+
+                ctx.beginPath();
+                ctx.moveTo((width - topWidth) / 2, y);
+                ctx.lineTo((width + topWidth) / 2, y);
+                ctx.lineTo((width + bottomWidth) / 2, y + levelHeight);
+                ctx.lineTo((width - bottomWidth) / 2, y + levelHeight);
+                ctx.closePath();
+
+                ctx.fillStyle = colors[index];
+                ctx.fill();
+
+                // 添加标签
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${item.name} (${Math.round(item.value/total*100)}%)`, 
+                    width/2, y + levelHeight/2);
+            });
+        }
+
+        // 绘制雷达图
+        function drawRadarChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 40;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const angleStep = (Math.PI * 2) / data.length;
+            const maxValue = Math.max(...data.map(item => item.value));
+            
+            // 绘制背景网格
+            for (let r = 0.2; r <= 1; r += 0.2) {
+                ctx.beginPath();
+                data.forEach((_, index) => {
+                    const angle = -Math.PI/2 + angleStep * index;
+                    const x = centerX + radius * r * Math.cos(angle);
+                    const y = centerY + radius * r * Math.sin(angle);
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.closePath();
+                ctx.strokeStyle = '#ddd';
+                ctx.stroke();
+            }
+
+            // 绘制数据线
+            ctx.beginPath();
+            data.forEach((item, index) => {
+                const value = item.value / maxValue;
+                const angle = -Math.PI/2 + angleStep * index;
+                const x = centerX + radius * value * Math.cos(angle);
+                const y = centerY + radius * value * Math.sin(angle);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+
+                // 添加标签
+                const labelX = centerX + (radius + 20) * Math.cos(angle);
+                const labelY = centerY + (radius + 20) * Math.sin(angle);
+                ctx.fillStyle = '#000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(item.name, labelX, labelY);
+            });
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 99, 132, 0.2)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgb(255, 99, 132)';
+            ctx.stroke();
+        }
+
+        // 生成所有图表
+        function generateCharts() {
+            const data = getData();
+            if (data.length < 2) {
+                alert('请至少输入两组数据！');
+                return;
+            }
+
+            const width = parseInt(document.getElementById('canvasWidth').value);
+            const height = parseInt(document.getElementById('canvasHeight').value);
+
+            const canvases = document.getElementsByTagName('canvas');
+            for (let canvas of canvases) {
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            drawPieChart(document.getElementById('pieChart'), data);
+            drawBarChart(document.getElementById('barChart'), data);
+            drawDoughnutChart(document.getElementById('doughnutChart'), data);
+            drawFunnelChart(document.getElementById('funnelChart'), data);
+            drawRadarChart(document.getElementById('radarChart'), data);
+        }
+
+        // 初始化添加5个输入框
+        for (let i = 0; i < 4; i++) {
+            addInput();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>力矩单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .input-group label {
+            width: 120px;
+            display: inline-block;
+        }
+        input {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .unit {
+            color: #666;
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>力矩单位换算器</h1>
+        
+        <div class="section">
+            <div class="section-title">公制</div>
+            <div class="input-group">
+                <label>微牛米</label>
+                <input type="text" id="microNewtonMeter" oninput="convert(this)">
+                <span class="unit">(μN·m)</span>
+            </div>
+            <div class="input-group">
+                <label>毫牛米</label>
+                <input type="text" id="milliNewtonMeter" oninput="convert(this)">
+                <span class="unit">(mN·m)</span>
+            </div>
+            <div class="input-group">
+                <label>千牛米</label>
+                <input type="text" id="kiloNewtonMeter" oninput="convert(this)">
+                <span class="unit">(kN·m)</span>
+            </div>
+            <div class="input-group">
+                <label>兆牛米</label>
+                <input type="text" id="megaNewtonMeter" oninput="convert(this)">
+                <span class="unit">(MN·m)</span>
+            </div>
+            <div class="input-group">
+                <label>千克力米</label>
+                <input type="text" id="kgfMeter1" oninput="convert(this)">
+                <span class="unit">(kgf·m)</span>
+            </div>
+            <div class="input-group">
+                <label>公斤力米</label>
+                <input type="text" id="kgfMeter2" oninput="convert(this)">
+                <span class="unit">(kgf·m)</span>
+            </div>
+            <div class="input-group">
+                <label>米千克力</label>
+                <input type="text" id="kgfMeter3" oninput="convert(this)">
+                <span class="unit">(kgf·m)</span>
+            </div>
+            <div class="input-group">
+                <label>达因厘米</label>
+                <input type="text" id="dyneCentimeter" oninput="convert(this)">
+                <span class="unit">(dyn·cm)</span>
+            </div>
+            <div class="input-group">
+                <label>牛米</label>
+                <input type="text" id="newtonMeter" oninput="convert(this)">
+                <span class="unit">(N·m)</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">英制</div>
+            <div class="input-group">
+                <label>英尺磅</label>
+                <input type="text" id="footPound1" oninput="convert(this)">
+                <span class="unit">(lbf·ft)</span>
+            </div>
+            <div class="input-group">
+                <label>磅力英尺</label>
+                <input type="text" id="footPound2" oninput="convert(this)">
+                <span class="unit">(lbf·ft)</span>
+            </div>
+            <div class="input-group">
+                <label>英寸磅</label>
+                <input type="text" id="inchPound1" oninput="convert(this)">
+                <span class="unit">(lbf·in)</span>
+            </div>
+            <div class="input-group">
+                <label>磅力英寸</label>
+                <input type="text" id="inchPound2" oninput="convert(this)">
+                <span class="unit">(lbf·in)</span>
+            </div>
+            <div class="input-group">
+                <label>盎司力英尺</label>
+                <input type="text" id="ounceFootForce" oninput="convert(this)">
+                <span class="unit">(ozf·ft)</span>
+            </div>
+            <div class="input-group">
+                <label>盎司力英寸</label>
+                <input type="text" id="ounceInchForce" oninput="convert(this)">
+                <span class="unit">(ozf·in)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function convert(input) {
+            // 获取输入值
+            let value = parseFloat(input.value);
+            if (isNaN(value)) {
+                clearAll();
+                return;
+            }
+
+            // 先转换为牛米(N·m)作为基准单位
+            let newtonMeter;
+            switch(input.id) {
+                case 'microNewtonMeter':
+                    newtonMeter = value * 1e-6;
+                    break;
+                case 'milliNewtonMeter':
+                    newtonMeter = value * 1e-3;
+                    break;
+                case 'kiloNewtonMeter':
+                    newtonMeter = value * 1e3;
+                    break;
+                case 'megaNewtonMeter':
+                    newtonMeter = value * 1e6;
+                    break;
+                case 'kgfMeter1':
+                case 'kgfMeter2':
+                case 'kgfMeter3':
+                    newtonMeter = value * 9.80665;
+                    break;
+                case 'dyneCentimeter':
+                    newtonMeter = value * 1e-7;
+                    break;
+                case 'newtonMeter':
+                    newtonMeter = value;
+                    break;
+                case 'footPound1':
+                case 'footPound2':
+                    newtonMeter = value * 1.355818;
+                    break;
+                case 'inchPound1':
+                case 'inchPound2':
+                    newtonMeter = value * 0.112985;
+                    break;
+                case 'ounceFootForce':
+                    newtonMeter = value * 0.084738;
+                    break;
+                case 'ounceInchForce':
+                    newtonMeter = value * 0.007061;
+                    break;
+            }
+
+            // 转换为所有其他单位
+            if (input.id !== 'microNewtonMeter') document.getElementById('microNewtonMeter').value = formatNumber(newtonMeter * 1e6);
+            if (input.id !== 'milliNewtonMeter') document.getElementById('milliNewtonMeter').value = formatNumber(newtonMeter * 1e3);
+            if (input.id !== 'kiloNewtonMeter') document.getElementById('kiloNewtonMeter').value = formatNumber(newtonMeter * 1e-3);
+            if (input.id !== 'megaNewtonMeter') document.getElementById('megaNewtonMeter').value = formatNumber(newtonMeter * 1e-6);
+            if (input.id !== 'kgfMeter1') document.getElementById('kgfMeter1').value = formatNumber(newtonMeter / 9.80665);
+            if (input.id !== 'kgfMeter2') document.getElementById('kgfMeter2').value = formatNumber(newtonMeter / 9.80665);
+            if (input.id !== 'kgfMeter3') document.getElementById('kgfMeter3').value = formatNumber(newtonMeter / 9.80665);
+            if (input.id !== 'dyneCentimeter') document.getElementById('dyneCentimeter').value = formatNumber(newtonMeter * 1e7);
+            if (input.id !== 'newtonMeter') document.getElementById('newtonMeter').value = formatNumber(newtonMeter);
+            if (input.id !== 'footPound1') document.getElementById('footPound1').value = formatNumber(newtonMeter / 1.355818);
+            if (input.id !== 'footPound2') document.getElementById('footPound2').value = formatNumber(newtonMeter / 1.355818);
+            if (input.id !== 'inchPound1') document.getElementById('inchPound1').value = formatNumber(newtonMeter / 0.112985);
+            if (input.id !== 'inchPound2') document.getElementById('inchPound2').value = formatNumber(newtonMeter / 0.112985);
+            if (input.id !== 'ounceFootForce') document.getElementById('ounceFootForce').value = formatNumber(newtonMeter / 0.084738);
+            if (input.id !== 'ounceInchForce') document.getElementById('ounceInchForce').value = formatNumber(newtonMeter / 0.007061);
+        }
+
+        function formatNumber(num) {
+            // 避免使用科学计数法，同时限制小数位数
+            return Number(num.toFixed(12)).toString();
+        }
+
+        function clearAll() {
+            const inputs = document.getElementsByTagName('input');
+            for(let input of inputs) {
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

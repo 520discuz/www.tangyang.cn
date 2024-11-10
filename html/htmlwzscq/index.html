@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>HTML文章生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin: 0;
+        }
+        .editor-container {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .toolbar {
+            padding: 10px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0 10px;
+            border-right: 1px solid #ddd;
+        }
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+        .toolbar button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            min-width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toolbar button:hover {
+            background: #f0f0f0;
+        }
+        .toolbar select {
+            width: auto;
+            padding: 4px;
+        }
+        #editor-content {
+            min-height: 400px;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .generate-btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .generate-btn:hover {
+            background: #45a049;
+        }
+        #colorPicker {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .preview {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML文章生成器（测试版，编辑器暂时无效）</h1>
+        
+        <div class="form-group">
+            <label for="title">文章标题</label>
+            <input type="text" id="title" placeholder="请输入文章标题">
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="show-date">
+            <label for="show-date">显示发布时间</label>
+            <input type="text" id="date" style="display: none;" placeholder="YYYY-MM-DD">
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="show-author">
+            <label for="show-author">显示作者</label>
+            <input type="text" id="author" style="display: none;" placeholder="请输入作者名称">
+        </div>
+
+        <div class="form-group">
+            <label>文章内容</label>
+            <div class="editor-container">
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <select onChange="execCommand('fontName', this.value)">
+                            <option value="">字体</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="微软雅黑">微软雅黑</option>
+                            <option value="宋体">宋体</option>
+                            <option value="黑体">黑体</option>
+                            <option value="楷体">楷体</option>
+                        </select>
+                        <select onChange="execCommand('fontSize', this.value)">
+                            <option value="">字号</option>
+                            <option value="1">特小</option>
+                            <option value="2">小</option>
+                            <option value="3">正常</option>
+                            <option value="4">大</option>
+                            <option value="5">较大</option>
+                            <option value="6">特大</option>
+                            <option value="7">超大</option>
+                        </select>
+                        <input type="color" id="colorPicker" onChange="execCommand('foreColor', this.value)">
+                    </div>
+                    <div class="toolbar-group">
+                        <button onClick="execCommand('bold')" title="粗体"><b>B</b></button>
+                        <button onClick="execCommand('italic')" title="斜体"><i>I</i></button>
+                        <button onClick="execCommand('underline')" title="下划线"><u>U</u></button>
+                        <button onClick="execCommand('strikeThrough')" title="删除线"><strike>S</strike></button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onClick="execCommand('justifyLeft')" title="左对齐">左</button>
+                        <button onClick="execCommand('justifyCenter')" title="居中">中</button>
+                        <button onClick="execCommand('justifyRight')" title="右对齐">右</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button onClick="execCommand('insertOrderedList')" title="有序列表">1.</button>
+                        <button onClick="execCommand('insertUnorderedList')" title="无序列表">?</button>
+                        <button onClick="execCommand('createLink')" title="插入链接">??</button>
+                        <button onClick="execCommand('removeFormat')" title="清除格式">清除</button>
+                    </div>
+                </div>
+                <div id="editor-content" contenteditable="true"></div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="generate-btn" onClick="generateAndDownload()">生成并下载HTML</button>
+        </div>
+
+        <div class="preview" id="preview"></div>
+    </div>
+
+    <script>
+        // 编辑器命令执行函数
+        function execCommand(command, value = null) {
+            if (command === 'createLink') {
+                const url = prompt('请输入链接地址：', 'http://');
+                if (url) {
+                    document.execCommand(command, false, url);
+                }
+            } else {
+                document.execCommand(command, false, value);
+            }
+        }
+
+        // 显示/隐藏日期输入框
+        document.getElementById('show-date').addEventListener('change', function() {
+            document.getElementById('date').style.display = this.checked ? 'inline-block' : 'none';
+            if (this.checked) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                document.getElementById('date').value = `${year}-${month}-${day}`;
+            }
+        });
+
+        // 显示/隐藏作者输入框
+        document.getElementById('show-author').addEventListener('change', function() {
+            document.getElementById('author').style.display = this.checked ? 'inline-block' : 'none';
+        });
+
+        // 生成HTML并下载
+        function generateAndDownload() {
+            const title = document.getElementById('title').value || '无标题文章';
+            const showDate = document.getElementById('show-date').checked;
+            const date = document.getElementById('date').value;
+            const showAuthor = document.getElementById('show-author').checked;
+            const author = document.getElementById('author').value;
+            const content = document.getElementById('editor-content').innerHTML;
+
+            let html = `<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>${title}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .article-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .article-meta {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .article-content {
+            margin-top: 20px;
+        }
+        .article-meta span {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <h1 class="article-title">${title}</h1>
+        <div class="article-meta">`;
+
+            if (showDate) {
+                html += `\n            <span class="article-date">发布时间：${date}</span>`;
+            }
+            if (showAuthor) {
+                html += `\n            <span class="article-author">作者：${author}</span>`;
+            }
+
+            html += `
+        </div>
+        <div class="article-content">
+            ${content}
+        </div>
+    </article>
+</body>
+</html>`;
+
+            // 创建Blob对象
+            const blob = new Blob([html], { type: 'text/html;charset=gbk' });
+            
+            // 创建下载链接
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = `${title}.html`;
+            
+            // 触发下载
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // 更新预览
+            document.getElementById('preview').innerHTML = content;
+            document.getElementById('preview').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<head>
+    <title>玻璃重量计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>玻璃重量计算器</h1>
+    <label for="width">宽度 (米):</label>
+    <input type="number" id="width" placeholder="宽度" step="0.01" oninput="calculateWeight()">
+
+    <label for="height">高度 (米):</label>
+    <input type="number" id="height" placeholder="高度" step="0.01" oninput="calculateWeight()">
+
+    <label for="thickness">厚度 (厘米):</label>
+    <input type="number" id="thickness" placeholder="厚度" step="0.1" oninput="calculateWeight()">
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateWeight() {
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const thicknessCM = parseFloat(document.getElementById('thickness').value);
+
+            // 验证输入
+            if (isNaN(width) || isNaN(height) || isNaN(thicknessCM) || width <= 0 || height <= 0 || thicknessCM <= 0) {
+                document.getElementById('result').innerText = '请输入有效的数值!';
+                return;
+            }
+
+            // 将厚度从厘米转换为米
+            const thicknessM = thicknessCM / 100; // 厚度以米为单位
+
+            // 计算体积（立方米）
+            const volume = width * height * thicknessM; // 体积
+
+            // 钢化玻璃的密度
+            const density = 2500; // 单位：千克/立方米
+
+            // 计算重量
+            const weightInKg = volume * density; // 重量（千克）
+
+            // 转换为公斤（1千克 = 1公斤）
+            const weightInKgFormatted = weightInKg.toFixed(2); // 保留两位小数
+
+            // 显示结果
+            document.getElementById('result').innerText = `玻璃重量大约为: ${weightInKgFormatted} 公斤`;
+        }
+    </script>
+
+</body>
+</html>

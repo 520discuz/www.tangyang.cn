@@ -1,0 +1,59 @@
+<head>
+    <title>几天前后是几月几日</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>几天前后是几月几日</h1>
+    <input type="number" id="daysInput" placeholder="输入天数" oninput="updateDate()">
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function updateDate() {
+            const days = parseInt(document.getElementById('daysInput').value);
+            const resultDiv = document.getElementById('result');
+            const today = new Date(); // 获取当前日期
+            
+            // 计算未来和过去的日期
+            const futureDate = new Date(today);
+            const pastDate = new Date(today);
+            
+            if (!isNaN(days)) {
+                futureDate.setDate(today.getDate() + days);
+                pastDate.setDate(today.getDate() - days);
+                
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const futureDateStr = futureDate.toLocaleDateString('zh-CN', options);
+                const pastDateStr = pastDate.toLocaleDateString('zh-CN', options);
+                
+                resultDiv.innerHTML = `${days}天前是：${pastDateStr}<br>${days}天后是：${futureDateStr}`;
+            } else {
+                resultDiv.innerHTML = ''; // 清空结果
+            }
+        }
+    </script>
+
+</body>
+</html>

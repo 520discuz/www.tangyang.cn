@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>功能热单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .unit-row input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .unit-row label {
+            min-width: 140px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>功能热单位换算器（未完善版）</h1>
+        <h1>本换算器为临时非正式版，已确认在某些情况下转换数据会出错，请谨慎使用！</h1>
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>度 (kW·h):</label>
+            <input type="text" id="kwh1" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>千瓦·时 (kW·h):</label>
+            <input type="text" id="kwh2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>焦耳 (J):</label>
+            <input type="text" id="j" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>千焦 (kJ):</label>
+            <input type="text" id="kj" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>卡 (cal):</label>
+            <input type="text" id="cal1" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>千卡 (kcal):</label>
+            <input type="text" id="kcal" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>米制马力·时 (ps·h):</label>
+            <input type="text" id="psh" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公斤·米 (kg·m):</label>
+            <input type="text" id="kgm" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>瓦·秒 (W·s):</label>
+            <input type="text" id="ws" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>瓦·时 (W·h):</label>
+            <input type="text" id="wh" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>卡路里 (cal):</label>
+            <input type="text" id="cal2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>兆卡 (th):</label>
+            <input type="text" id="th" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>尔格 (erg):</label>
+            <input type="text" id="erg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>电子伏特 (eV):</label>
+            <input type="text" id="ev" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>英热单位 (btu):</label>
+            <input type="text" id="btu" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英制马力·时 (hp·h):</label>
+            <input type="text" id="hph" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英尺·磅 (ft·lb):</label>
+            <input type="text" id="ftlb" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <script>
+        // 所有单位换算到焦耳(J)的系数
+        const units = {
+            // 公制
+            'kwh1': 3600000, // 度
+            'kwh2': 3600000, // 千瓦时
+            'j': 1, // 焦耳
+            'kj': 1000, // 千焦
+            'cal1': 4.1868, // 卡
+            'kcal': 4186.8, // 千卡
+            'psh': 2647795.5, // 米制马力时
+            'kgm': 9.80665, // 公斤米
+            'ws': 1, // 瓦秒
+            'wh': 3600, // 瓦时
+            'cal2': 4.1868, // 卡路里
+            'th': 4186800, // 兆卡
+            'erg': 0.0000001, // 尔格
+            'ev': 1.602176634e-19, // 电子伏特
+
+            // 英制
+            'btu': 1055.05585262, // 英热单位
+            'hph': 2684519.5368, // 英制马力时
+            'ftlb': 1.3558179483314004 // 英尺磅
+        };
+
+        function convert(fromUnit, value) {
+            if (value === '') {
+                clearAll();
+                return;
+            }
+
+            // 移除非数字字符（保留小数点和负号）
+            value = value.replace(/[^\d.-]/g, '');
+            
+            // 转换为数字
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) {
+                return;
+            }
+
+            // 先转换为焦耳
+            const joules = numValue * units[fromUnit];
+
+            // 更新所有输入框
+            for (let unit in units) {
+                if (unit !== fromUnit) {
+                    const element = document.getElementById(unit);
+                    if (element) {
+                        // 转换到目标单位并格式化
+                        const convertedValue = joules / units[unit];
+                        // 使用toFixed来避免科学计数法，但需要去掉末尾的0
+                        element.value = convertedValue.toFixed(20).replace(/\.?0+$/, '');
+                    }
+                }
+            }
+        }
+
+        function clearAll() {
+            for (let unit in units) {
+                const element = document.getElementById(unit);
+                if (element) {
+                    element.value = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

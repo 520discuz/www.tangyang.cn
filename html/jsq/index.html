@@ -1,0 +1,74 @@
+<head>
+    <title>在线计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: auto;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .calculator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 400px;
+            padding: 10px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .result {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="calculators-container">
+        <div class="calculator">
+            <input type="text" class="expression" placeholder="输入表达式" oninput="calculate(this)">
+            <div class="result">答案: </div>
+        </div>
+    </div>
+
+    <button onclick="addCalculator()">新建计算器</button>
+
+    <script>
+        function calculate(inputElement) {
+            const expression = inputElement.value;
+            const resultDiv = inputElement.nextElementSibling; // 获取下一个结果div
+            try {
+                const result = eval(expression); // 注意：eval 在这里用来简单处理表达式计算
+                resultDiv.innerHTML = '答案: ' + result;
+            } catch (e) {
+                resultDiv.innerHTML = '答案: 输入中';
+            }
+        }
+
+        function addCalculator() {
+            // 创建新的计算器容器
+            const calculatorsContainer = document.getElementById('calculators-container');
+            const newCalculator = document.createElement('div');
+            newCalculator.classList.add('calculator');
+            newCalculator.innerHTML = `
+                <input type="text" class="expression" placeholder="输入表达式" oninput="calculate(this)">
+                <div class="result">答案: </div>
+            `;
+            calculatorsContainer.appendChild(newCalculator);
+        }
+    </script>
+
+</body>
+</html>

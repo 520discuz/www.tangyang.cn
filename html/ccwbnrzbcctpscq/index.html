@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>超长文本内容转变超长图片生成器</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            z-index: 100;
+        }
+        .content {
+            margin-top: 180px;
+        }
+        .control-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+        }
+        #textInput {
+            width: 100%;
+            min-height: 200px;
+            resize: both;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            overflow: auto;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input[type="color"] {
+            padding: 0;
+            width: 50px;
+            height: 30px;
+        }
+        input[type="number"] {
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="control-group">
+            <label>字体:</label>
+            <select id="fontFamily">
+                <option value="Arial">Arial</option>
+                <option value="宋体">宋体</option>
+                <option value="黑体">黑体</option>
+                <option value="微软雅黑">微软雅黑</option>
+                <option value="楷体">楷体</option>
+            </select>
+            <label>字体大小:</label>
+            <input type="number" id="fontSize" value="16" min="8" max="72">px
+        </div>
+        <div class="control-group">
+            <label>字体颜色:</label>
+            <input type="color" id="textColor" value="#000000">
+            <label>背景颜色:</label>
+            <input type="color" id="bgColor" value="#ffffff">
+        </div>
+        <div class="control-group">
+            <label>字符间距:</label>
+            <input type="number" id="letterSpacing" value="0" min="-5" max="20">px
+            <label>行高:</label>
+            <input type="number" id="lineHeight" value="1.5" min="1" max="5" step="0.1">
+        </div>
+        <div class="control-group">
+            <label>输入框宽度:</label>
+            <input type="number" id="boxWidth" value="800" min="200" max="2000">px
+            <label>输入框高度:</label>
+            <input type="number" id="boxHeight" value="400" min="100" max="2000">px
+        </div>
+        <button onClick="saveAsImage()">保存为图片</button>　友情提示：如果生成后的图片右边不完整，把宽度调大再保存，如果下面不完整，可以在内容末尾处多加几个回车换行再保存。
+    </div>
+
+    <div class="content">
+        <div id="textInput" contenteditable="true" style="border: 1px solid #ccc;">在这里输入文字...</div>
+    </div>
+
+    <script>
+        // 获取所有控制元素
+        const controls = {
+            fontFamily: document.getElementById('fontFamily'),
+            fontSize: document.getElementById('fontSize'),
+            textColor: document.getElementById('textColor'),
+            bgColor: document.getElementById('bgColor'),
+            letterSpacing: document.getElementById('letterSpacing'),
+            lineHeight: document.getElementById('lineHeight'),
+            boxWidth: document.getElementById('boxWidth'),
+            boxHeight: document.getElementById('boxHeight')
+        };
+
+        const textInput = document.getElementById('textInput');
+
+        // 应用样式更改
+        function applyStyles() {
+            textInput.style.fontFamily = controls.fontFamily.value;
+            textInput.style.fontSize = controls.fontSize.value + 'px';
+            textInput.style.color = controls.textColor.value;
+            textInput.style.backgroundColor = controls.bgColor.value;
+            textInput.style.letterSpacing = controls.letterSpacing.value + 'px';
+            textInput.style.lineHeight = controls.lineHeight.value;
+            textInput.style.width = controls.boxWidth.value + 'px';
+            textInput.style.minHeight = controls.boxHeight.value + 'px';
+        }
+
+        // 为所有控制元素添加事件监听器
+        Object.values(controls).forEach(control => {
+            control.addEventListener('input', applyStyles);
+        });
+
+        // 初始应用样式
+        applyStyles();
+
+        // 保存为图片
+        function saveAsImage() {
+            // 创建一个新的canvas
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            // 设置canvas尺寸为内容区域的实际大小
+            canvas.width = textInput.offsetWidth;
+            canvas.height = textInput.scrollHeight;
+
+            // 绘制背景
+            context.fillStyle = controls.bgColor.value;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 设置文本样式
+            context.fillStyle = controls.textColor.value;
+            context.font = `${controls.fontSize.value}px ${controls.fontFamily.value}`;
+            context.textBaseline = 'top';
+
+            // 获取文本内容并按行分割
+            const text = textInput.innerText;
+            const lines = text.split('\n');
+            
+            // 计算行高
+            const lineHeightPx = parseFloat(controls.fontSize.value) * parseFloat(controls.lineHeight.value);
+            
+            // 绘制每一行文本
+            let y = 10; // 起始y坐标，添加一些padding
+            for (let line of lines) {
+                // 处理字符间距
+                const letterSpacing = parseFloat(controls.letterSpacing.value);
+                let x = 10; // 起始x坐标，添加一些padding
+                
+                for (let char of line) {
+                    context.fillText(char, x, y);
+                    x += context.measureText(char).width + letterSpacing;
+                }
+                
+                y += lineHeightPx;
+            }
+
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = 'text-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>

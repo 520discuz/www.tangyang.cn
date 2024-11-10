@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>加油金额式油费查询工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .result p {
+            margin: 5px 0;
+            color: #333;
+        }
+        .result span {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>加油金额式油费查询工具</h2>
+        <div class="input-group">
+            <label>当前油价（元/升）：</label>
+            <input type="number" id="fuelPrice" step="0.01" placeholder="请输入当前油价" oninput="calculate()">
+        </div>
+        <div class="input-group">
+            <label>加油金额（元）：</label>
+            <input type="number" id="totalCost" step="0.01" placeholder="请输入加油总金额" oninput="calculate()">
+        </div>
+        <div class="input-group">
+            <label>行驶里程（公里）：</label>
+            <input type="number" id="distance" step="0.1" placeholder="请输入行驶里程" oninput="calculate()">
+        </div>
+        <div class="result">
+            <p>加油升数：<span id="totalLiters">0</span> 升</p>
+            <p>百公里油耗：<span id="consumption">0</span> 升/100公里</p>
+            <p>每公里油费：<span id="costPerKm">0</span> 元</p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const fuelPrice = parseFloat(document.getElementById('fuelPrice').value) || 0;
+            const totalCost = parseFloat(document.getElementById('totalCost').value) || 0;
+            const distance = parseFloat(document.getElementById('distance').value) || 0;
+
+            if (fuelPrice && totalCost && distance) {
+                // 计算加油升数
+                const totalLiters = totalCost / fuelPrice;
+                // 计算百公里油耗
+                const consumption = (totalLiters / distance) * 100;
+                // 计算每公里油费
+                const costPerKm = totalCost / distance;
+
+                document.getElementById('totalLiters').textContent = totalLiters.toFixed(2);
+                document.getElementById('consumption').textContent = consumption.toFixed(2);
+                document.getElementById('costPerKm').textContent = costPerKm.toFixed(2);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>存储单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .input-group input {
+            width: 200px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .input-group label {
+            width: 100px;
+        }
+        .unit {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>存储单位换算器</h2>
+        <div class="input-group">
+            <label>比特</label>
+            <input type="text" id="bit" placeholder="输入数值">
+            <span class="unit">(bit)</span>
+        </div>
+        <div class="input-group">
+            <label>字节</label>
+            <input type="text" id="byte" placeholder="输入数值">
+            <span class="unit">(B)</span>
+        </div>
+        <div class="input-group">
+            <label>千字节</label>
+            <input type="text" id="kb" placeholder="输入数值">
+            <span class="unit">(KB)</span>
+        </div>
+        <div class="input-group">
+            <label>兆字节</label>
+            <input type="text" id="mb" placeholder="输入数值">
+            <span class="unit">(MB)</span>
+        </div>
+        <div class="input-group">
+            <label>千兆字节</label>
+            <input type="text" id="gb" placeholder="输入数值">
+            <span class="unit">(GB)</span>
+        </div>
+        <div class="input-group">
+            <label>太字节</label>
+            <input type="text" id="tb" placeholder="输入数值">
+            <span class="unit">(TB)</span>
+        </div>
+        <div class="input-group">
+            <label>拍字节</label>
+            <input type="text" id="pb" placeholder="输入数值">
+            <span class="unit">(PB)</span>
+        </div>
+        <div class="input-group">
+            <label>艾字节</label>
+            <input type="text" id="eb" placeholder="输入数值">
+            <span class="unit">(EB)</span>
+        </div>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('input');
+        const units = ['bit', 'byte', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb'];
+        
+        // 转换系数（相对于比特）
+        const factors = {
+            'bit': 1,
+            'byte': 8,
+            'kb': 8 * 1024,
+            'mb': 8 * 1024 * 1024,
+            'gb': 8 * 1024 * 1024 * 1024,
+            'tb': 8 * 1024 * 1024 * 1024 * 1024,
+            'pb': 8 * 1024 * 1024 * 1024 * 1024 * 1024,
+            'eb': 8 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024
+        };
+
+        // 数字格式化函数
+        function formatNumber(num) {
+            if (num === 0) return '0';
+            if (Math.abs(num) < 0.000001 || Math.abs(num) > 1e15) {
+                return num.toString();
+            }
+            return num.toLocaleString('fullwide', {
+                useGrouping: false,
+                maximumFractionDigits: 6
+            });
+        }
+
+        // 转换函数
+        function convert(value, fromUnit) {
+            if (value === '') return;
+            const bits = value * factors[fromUnit];
+            
+            units.forEach(unit => {
+                const input = document.getElementById(unit);
+                if (input !== document.activeElement) {
+                    const converted = bits / factors[unit];
+                    input.value = formatNumber(converted);
+                }
+            });
+        }
+
+        // 为每个输入框添加事件监听器
+        inputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value.replace(/,/g, '')) || 0;
+                convert(value, e.target.id);
+            });
+        });
+    </script>
+</body>
+</html>
