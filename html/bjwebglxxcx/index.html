@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>本机WebGL信息查询</title>
+</head>
+<body>
+    <h1>本机WebGL信息</h1>
+    <p>WebGL版本: <span id="webglVersion"></span></p>
+    <p>WebGL渲染器: <span id="webglRenderer"></span></p>
+    <p>WebGL供应商: <span id="webglVendor"></span></p>
+
+    <script>
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl');
+
+        document.getElementById("webglVersion").innerText = gl.getParameter(gl.VERSION);
+        document.getElementById("webglRenderer").innerText = gl.getParameter(gl.RENDERER);
+        document.getElementById("webglVendor").innerText = gl.getParameter(gl.VENDOR);
+    </script>
+</body>
+</html>

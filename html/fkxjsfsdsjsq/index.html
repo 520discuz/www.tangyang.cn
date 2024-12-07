@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+    <title>非科学计数法式大数计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        .input-group input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: right;
+            min-width: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>非科学计数法式大数计算器</h1>
+        <div class="input-group">
+            <input type="text" id="expression" placeholder="请输入表达式" oninput="calculateExpression()" maxlength="200">
+        </div>
+        <div class="result">
+            <span id="result">0</span>
+        </div>
+    </div>
+
+    <script>
+        function calculateExpression() {
+            const expression = document.getElementById('expression').value;
+            try {
+                const result = calculateWithPrecision(expression);
+                document.getElementById('result').textContent = result;
+                adjustInputWidth();
+            } catch (error) {
+                document.getElementById('result').textContent = '����';
+            }
+        }
+
+        function calculateWithPrecision(expression) {
+            const parts = expression.split(/([+\-*\/])/);
+            let result = BigInt(parts[0].trim());
+
+            for (let i = 1; i < parts.length; i += 2) {
+                const operator = parts[i];
+                const operand = BigInt(parts[i + 1].trim());
+
+                switch (operator) {
+                    case '+':
+                        result += operand;
+                        break;
+                    case '-':
+                        result -= operand;
+                        break;
+                    case '*':
+                        result *= operand;
+                        break;
+                    case '/':
+                        result /= operand;
+                        break;
+                }
+            }
+
+            return result.toString();
+        }
+
+        function adjustInputWidth() {
+            const expression = document.getElementById('expression');
+            expression.style.width = `${Math.max(expression.value.length * 10, 20)}px`;
+        }
+
+        adjustInputWidth();
+    </script>
+</body>
+</html>

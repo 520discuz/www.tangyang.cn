@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>本机浏览器信息查询</title>
+</head>
+<body>
+    <h1>本机浏览器信息</h1>
+    <p>应用程序版本: <span id="appVersion"></span></p>
+    <p>应用程序名称: <span id="appName"></span></p>
+
+    <script>
+        document.getElementById("appVersion").innerText = navigator.appVersion;
+        document.getElementById("appName").innerText = navigator.appName;
+    </script>
+</body>
+</html>

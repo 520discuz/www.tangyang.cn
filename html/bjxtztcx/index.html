@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>本机系统字体查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>用户系统字体信息</h1>
+    <table>
+        <tr>
+            <th>系统字体</th>
+            <th>信息</th>
+        </tr>
+        <tr>
+            <td>已安装字体</td>
+            <td id="systemFonts"></td>
+        </tr>
+    </table>
+
+    <script>
+        function getSystemFonts() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const fonts = [];
+            // 系统字体列表
+            const systemFonts = [
+                'Arial', 'Times New Roman', 'Verdana', 'Georgia', 'Courier New',
+                'Lucida Console', 'Tahoma', 'Trebuchet MS', 'Arial Black', 'Comic Sans MS'
+            ];
+            // 检查每个系统字体是否可用
+            for (const font of systemFonts) {
+                context.font = '72px "' + font + '", sans-serif';
+                const measure = context.measureText('QW?qw?');
+                if (measure.width !== 0 && measure.width !== 144) {
+                    fonts.push(font);
+                }
+            }
+            return fonts;
+        }
+
+        const systemFonts = getSystemFonts();
+        document.getElementById("systemFonts").innerText = systemFonts.join(', ');
+    </script>
+</body>
+</html>

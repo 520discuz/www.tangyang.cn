@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN" charset="GBK">
+<head>
+  <meta charset="GBK">
+  <title>网站ICO图标生成器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    input[type="file"] {
+      margin: 10px 0;
+    }
+    canvas {
+      max-width: 100%;
+      border: 1px solid #ccc;
+    }
+    button {
+      font-size: 16px;
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>网站专用ICO图标生成器(16*16像素)</h1>
+  <input type="file" id="fileInput" accept="image/*">
+  <canvas id="iconCanvas" width="16" height="16"></canvas><p>
+  <button onClick="downloadIcon()">点击下载 ICO 图标</button>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const iconCanvas = document.getElementById('iconCanvas');
+    const ctx = iconCanvas.getContext('2d');
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const img = new Image();
+      img.onload = () => {
+        // 调整图片大小到 16x16
+        iconCanvas.width = 16;
+        iconCanvas.height = 16;
+        ctx.drawImage(img, 0, 0, 16, 16);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    function downloadIcon() {
+      const dataURL = iconCanvas.toDataURL('image/x-icon');
+      const link = document.createElement('a');
+      link.download = 'icon.ico';
+      link.href = dataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

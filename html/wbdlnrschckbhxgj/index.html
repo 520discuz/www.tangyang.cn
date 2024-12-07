@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本段落内容删除回车空白换行工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: left; /* 左对齐 */
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            resize: none;
+        }
+        .result-container {
+            width: 100%;
+            height: auto; /* 自适应高度 */
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            padding: 5px;
+            white-space: pre-wrap; /* 保留空格和换行 */
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>文本段落内容删除回车空白换行工具</h1>
+    
+    <textarea id="inputText" placeholder="在这里输入文本..."></textarea><br>
+    <button onClick="removeEmptyLines()">删除空白行</button>
+
+    <h2>处理后的文本</h2>
+    <div id="resultContainer" class="result-container"></div>
+
+    <h3 id="lineCounts" style="margin-top: 20px;"></h3>
+    
+    <button id="copyButton" onClick="copyToClipboard()" style="display: none;">一键复制</button>
+
+    <script>
+        function removeEmptyLines() {
+            const inputText = document.getElementById("inputText").value;
+
+            const originalLines = inputText.split('\n'); // 原始文本的行
+            const originalLineCount = originalLines.length; // 删除前行数
+
+            // 使用正则表达式替换只包含空格的行
+            const processedText = originalLines
+                .filter(line => line.trim() !== '') // 过滤非空行
+                .join('\n'); // 重新连接为字符串
+
+            const processedLines = processedText.split('\n'); // 处理后文本的行
+            const processedLineCount = processedLines.length; // 删除后行数
+            const deletedLineCount = originalLineCount - processedLineCount; // 删除的行数
+
+            // 显示处理后的文本
+            const resultContainer = document.getElementById("resultContainer");
+            resultContainer.textContent = processedText; // 使用 textContent 可以避免 HTML 解析
+
+            // 显示行数统计
+            document.getElementById("lineCounts").innerText = `删除前行数: ${originalLineCount} | 删除后行数: ${processedLineCount} | 删除的行数: ${deletedLineCount}`;
+
+            // 显示复制按钮
+            document.getElementById("copyButton").style.display = 'inline';
+        }
+
+        function copyToClipboard() {
+            const resultText = document.getElementById("resultContainer").textContent; // 只取处理后的文本
+            
+            // 创建一个临时 textarea 元素用来进行复制
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = resultText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select(); // 选中内容
+
+            try {
+                document.execCommand('copy'); // 执行复制操作
+                alert('已复制到剪贴板！');
+            } catch (err) {
+                alert('复制失败，请手动复制。');
+            }
+
+            // 清除选择和临时元素
+            window.getSelection().removeAllRanges();
+            document.body.removeChild(tempTextArea);
+        }
+    </script>
+</body>
+</html>

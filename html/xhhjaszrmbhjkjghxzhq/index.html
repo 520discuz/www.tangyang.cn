@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>现货黄金盎司转人民币黄金克价格互相转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            width: 100%;
+            font-size: 24px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>现货黄金盎司转人民币黄金克价格互相转换器</h1>
+    <h3>友情提示：计算公式为现货黄金价格*汇率/31.1035=人民币黄金价格</h3>
+    <!-- 现货黄金价格转换 -->
+    <h2>现货黄金价格（美元/盎司）转人民币黄金（元/克）</h2>
+    <label for="goldPrice">现货黄金价格（美元/盎司）：</label>
+    <input type="number" id="goldPrice" placeholder="输入当前现货黄金价格" />
+
+    <label for="exchangeRate">当前汇率（美元/人民币）：</label>
+    <input type="number" id="exchangeRate" placeholder="输入当前汇率" />
+
+    <div class="result" id="resultDisplayGoldToCNY"></div>
+
+    <!-- 人民币黄金价格转换 -->
+    <br><br><br>
+	<h2>人民币黄金（元/克）转现货黄金价格（美元/盎司）</h2>
+    <label for="cnyGoldPrice">人民币黄金价格（元/克）：</label>
+    <input type="number" id="cnyGoldPrice" placeholder="输入当前人民币黄金价格" />
+
+    <label for="exchangeRateReverse">当前汇率（人民币/美元）：</label>
+    <input type="number" id="exchangeRateReverse" placeholder="输入当前汇率" />
+
+    <div class="result" id="resultDisplayCNYToGold"></div>
+
+    <script>
+        const goldPriceInput = document.getElementById("goldPrice");
+        const exchangeRateInput = document.getElementById("exchangeRate");
+        const resultDisplayGoldToCNY = document.getElementById("resultDisplayGoldToCNY");
+
+        const cnyGoldPriceInput = document.getElementById("cnyGoldPrice");
+        const exchangeRateReverseInput = document.getElementById("exchangeRateReverse");
+        const resultDisplayCNYToGold = document.getElementById("resultDisplayCNYToGold");
+
+        // 现货黄金价格转人民币黄金
+        function calculateGoldToCNY() {
+            const goldPrice = parseFloat(goldPriceInput.value);
+            const exchangeRate = parseFloat(exchangeRateInput.value);
+
+            if (!isNaN(goldPrice) && !isNaN(exchangeRate)) {
+                const priceInCNY = (goldPrice * exchangeRate) / 31.1035;
+                resultDisplayGoldToCNY.innerText = `人民币黄金价格：${priceInCNY.toFixed(2)} 元/克`;
+            } else {
+                resultDisplayGoldToCNY.innerText = "请输入有效的价格和汇率";
+            }
+        }
+
+        // 人民币黄金转现货黄金价格
+        function calculateCNYToGold() {
+            const cnyGoldPrice = parseFloat(cnyGoldPriceInput.value);
+            const exchangeRateReverse = parseFloat(exchangeRateReverseInput.value);
+
+            if (!isNaN(cnyGoldPrice) && !isNaN(exchangeRateReverse)) {
+                const goldPriceInUSD = (cnyGoldPrice * 31.1035) / exchangeRateReverse;
+                resultDisplayCNYToGold.innerText = `现货黄金价格：${goldPriceInUSD.toFixed(2)} 美元/盎司`;
+            } else {
+                resultDisplayCNYToGold.innerText = "请输入有效的价格和汇率";
+            }
+        }
+
+        // 添加事件监听器
+        goldPriceInput.addEventListener("input", calculateGoldToCNY);
+        exchangeRateInput.addEventListener("input", calculateGoldToCNY);
+        cnyGoldPriceInput.addEventListener("input", calculateCNYToGold);
+        exchangeRateReverseInput.addEventListener("input", calculateCNYToGold);
+    </script>
+</body>
+</html>
