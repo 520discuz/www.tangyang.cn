@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>几分之几连续成功失败几率计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>几分之几连续成功失败几率计算器</h1>
+    <div>
+        <label>分子:</label>
+        <input type="number" id="numerator" value="1" min="1">
+        <label>分母:</label>
+        <input type="number" id="denominator" value="2" min="1">
+    </div>
+    <button onClick="calculateSuccessRate()">计算连续成功几率</button>
+    <button onClick="resetFields()">全部重置</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        let attemptCount = 0;
+
+        function calculateSuccessRate() {
+            const numerator = parseFloat(document.getElementById('numerator').value) || 1;
+            const denominator = parseFloat(document.getElementById('denominator').value) || 2;
+            const successProbability = numerator / denominator; // 计算成功概率
+
+            attemptCount++;
+            const successRate = Math.pow(successProbability, attemptCount); // 计算连续成功的几率
+            const resultDiv = document.getElementById('result');
+
+            // 在结果前面插入新的结果，精确到小数点后20位
+            resultDiv.innerHTML = `<p>第 ${attemptCount} 次连续成功几率: ${(successRate * 100).toFixed(20)}%</p>` + resultDiv.innerHTML;
+        }
+
+        function resetFields() {
+            document.getElementById('numerator').value = 1;
+            document.getElementById('denominator').value = 2;
+            document.getElementById('result').innerHTML = '';
+            attemptCount = 0; // 重置尝试计数
+        }
+    </script>
+</body>
+</html>

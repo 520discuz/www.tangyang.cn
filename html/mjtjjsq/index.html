@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面积体积计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>面积体积计算器</h1>
+
+    <h2>计算矩形面积</h2>
+    <div>
+        <label>长:</label>
+        <input type="number" id="length" placeholder="输入长" oninput="calculateArea()">
+        <label>宽:</label>
+        <input type="number" id="width" placeholder="输入宽" oninput="calculateArea()">
+    </div>
+    <div class="result" id="areaResult"></div>
+
+    <h2>计算长方体体积</h2>
+    <div>
+        <label>长:</label>
+        <input type="number" id="boxLength" placeholder="输入长" oninput="calculateVolume()">
+        <label>宽:</label>
+        <input type="number" id="boxWidth" placeholder="输入宽" oninput="calculateVolume()">
+        <label>高:</label>
+        <input type="number" id="height" placeholder="输入高" oninput="calculateVolume()">
+    </div>
+    <div class="result" id="volumeResult"></div>
+
+    <script>
+        function calculateArea() {
+            const length = parseFloat(document.getElementById('length').value) || 0;
+            const width = parseFloat(document.getElementById('width').value) || 0;
+            const area = length * width; // 计算面积
+            const areaResultDiv = document.getElementById('areaResult');
+            areaResultDiv.innerHTML = `矩形面积: ${area}`;
+        }
+
+        function calculateVolume() {
+            const boxLength = parseFloat(document.getElementById('boxLength').value) || 0;
+            const boxWidth = parseFloat(document.getElementById('boxWidth').value) || 0;
+            const height = parseFloat(document.getElementById('height').value) || 0;
+            const volume = boxLength * boxWidth * height; // 计算体积
+            const volumeResultDiv = document.getElementById('volumeResult');
+            volumeResultDiv.innerHTML = `长方体体积: ${volume}`;
+        }
+    </script>
+</body>
+</html>

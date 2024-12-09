@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>次数成功失败率计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>次数成功失败率计算器</h1>
+    <div>
+        <label for="totalAttempts">总次数:</label>
+        <input type="number" id="totalAttempts" placeholder="总次数" oninput="calculateRates()">
+    </div>
+    <div>
+        <label for="successful">成功次数:</label>
+        <input type="number" id="successful" placeholder="成功次数" oninput="calculateRates()">
+    </div>
+    <div>
+        <label for="failed">失败次数:</label>
+        <input type="number" id="failed" placeholder="失败次数" oninput="calculateRates()">
+    </div>
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateRates() {
+            const total = parseFloat(document.getElementById('totalAttempts').value) || 0;
+            const successful = parseFloat(document.getElementById('successful').value) || 0;
+            const failed = parseFloat(document.getElementById('failed').value) || 0;
+
+            // 计算成功次数和失败次数
+            const effectiveSuccess = successful || (total - failed);
+            const effectiveFailed = failed || (total - successful);
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // 清空结果
+
+            if (total > 0) {
+                const successRate = (effectiveSuccess / total * 100).toFixed(2);
+                const failRate = (effectiveFailed / total * 100).toFixed(2);
+                
+                resultDiv.innerHTML = `成功率: ${successRate}%<br>失败率: ${failRate}%`;
+            } else {
+                resultDiv.innerHTML = '请输入有效的总次数。';
+            }
+        }
+    </script>
+</body>
+</html>

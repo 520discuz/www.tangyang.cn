@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字占用百分百份额计算工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .inputGroup {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>数字占用百分百份额计算工具</h1>
+    <div id="inputContainer">
+        <!-- 默认的输入框 -->
+        <div class="inputGroup">
+            <label>输入框 1:</label>
+            <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+        </div>
+        <div class="inputGroup">
+            <label>输入框 2:</label>
+            <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+        </div>
+        <div class="inputGroup">
+            <label>输入框 3:</label>
+            <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+        </div>
+        <div class="inputGroup">
+            <label>输入框 4:</label>
+            <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+        </div>
+        <div class="inputGroup">
+            <label>输入框 5:</label>
+            <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+        </div>
+    </div>
+    <button onclick="addInput()">新增输入框</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculatePercentages() {
+            const inputs = document.querySelectorAll('.inputValue');
+            let total = 0;
+            const values = [];
+
+            // 计算总和
+            inputs.forEach(input => {
+                const value = parseFloat(input.value) || 0; // 处理非数字输入
+                values.push(value);
+                total += value;
+            });
+
+            // 计算百分比
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = ''; // 清空结果
+
+            if (total > 0) {
+                values.forEach((value, index) => {
+                    const percentage = ((value / total) * 100).toFixed(2);
+                    resultDiv.innerHTML += `输入框 ${index + 1}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${value} 占 ${percentage}%<br>`;
+                });
+            } else {
+                resultDiv.innerHTML = '请输入有效数字。';
+            }
+        }
+
+        function addInput() {
+            const inputContainer = document.getElementById('inputContainer');
+            const inputCount = inputContainer.children.length + 1; // 计算当前输入框数量
+
+            // 创建新的输入框
+            const newInputGroup = document.createElement('div');
+            newInputGroup.className = 'inputGroup';
+            newInputGroup.innerHTML = `
+                <label>输入框 ${inputCount}:</label>
+                <input type="number" class="inputValue" placeholder="输入数字" oninput="calculatePercentages()">
+            `;
+            inputContainer.appendChild(newInputGroup);
+        }
+    </script>
+</body>
+</html>
