@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>万元转亿元转换工具</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    #container {
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>万元转亿元转换工具</h1>
+    <input type="number" id="inputNumber" min="0" step="any" placeholder="请输入金额（万元）">
+    <button onclick="convert()">提交</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function convert() {
+      var input = document.getElementById("inputNumber").value;
+      var result = input * 10000*0.00000001;
+      document.getElementById("result").innerHTML = input + " 万元等于 " + result + " 亿元";
+    }
+  </script>
+</body>
+</html>

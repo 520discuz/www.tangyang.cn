@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硬盘分区实际输入数值查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 200px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>硬盘分区实际输入数值查询器</h1>
+    <div>
+        <label>输入想要的分区大小 (GB):</label>
+        <input type="number" id="partitionSize" placeholder="输入大小" oninput="calculateInputSize()">
+    </div>
+    <div class="result" id="inputSizeResult"></div>
+
+    <script>
+        function calculateInputSize() {
+            const sizeGB = parseFloat(document.getElementById('partitionSize').value) || 0;
+            const sizeMB = sizeGB * 1024; // 将 GB 转换为 MB
+            
+            const inputSizeResultDiv = document.getElementById('inputSizeResult');
+            inputSizeResultDiv.innerHTML = `需要输入: ${sizeMB.toFixed(0)} MB`;
+        }
+    </script>
+</body>
+</html>

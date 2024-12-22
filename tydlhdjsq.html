@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="GBK">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通用电量耗电计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f2f2f2;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    input {
+      width: 200px;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .time-select {
+      display: flex;
+      align-items: center;
+    }
+    .time-select label {
+      margin-right: 5px;
+    }
+    .time-select input[type="number"] {
+      width: 80px;
+      margin-left: 5px;
+    }
+    .time-select select {
+      width: 120px;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>通用电量耗电计算器</h1>
+  <div class="form-container">
+    <div class="form-group">
+      <label for="power">设备功率 (瓦特):</label>
+      <input type="number" id="power" name="power" min="1" oninput="calculateResults()" required>
+    </div>
+    <div class="form-group">
+      <label for="price">每度电价格 (元):</label>
+      <input type="number" id="price" name="price" min="0.01" step="0.01" oninput="calculateResults()" required>
+    </div>
+    <div class="form-group time-select">
+      <label>计算时间:</label>
+      <input type="number" id="time-value" name="time-value" min="1" value="1" oninput="calculateResults()" required>
+      <select id="time-unit" onChange="calculateResults()">
+        <option value="hour">小时</option>
+        <option value="day">天</option>
+        <option value="year">年</option>
+      </select>
+    </div>
+  </div>
+  <div class="result">
+    <p>设备耗电 <span id="electricity-consumption"></span> 度, 电费为 <span id="electricity-cost"></span> 元</p>
+  </div>
+
+  <script>
+    function calculateResults() {
+      const power = parseFloat(document.getElementById('power').value);
+      const price = parseFloat(document.getElementById('price').value);
+      const timeUnit = document.getElementById('time-unit').value;
+      const timeValue = parseFloat(document.getElementById('time-value').value);
+
+      let electricityConsumption, electricityCost;
+      if (timeUnit === 'hour') {
+        electricityConsumption = (power * timeValue) / 1000;
+        electricityCost = electricityConsumption * price;
+      } else if (timeUnit === 'day') {
+        electricityConsumption = (power * timeValue * 24) / 1000;
+        electricityCost = electricityConsumption * price;
+      } else { // timeUnit === 'year'
+        electricityConsumption = (power * timeValue * 8760) / 1000;
+        electricityCost = electricityConsumption * price;
+      }
+
+      document.getElementById('electricity-consumption').textContent = electricityConsumption.toFixed(2);
+      document.getElementById('electricity-cost').textContent = electricityCost.toFixed(2);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>子女身高预测器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .input-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        label {
+            width: 120px;
+            color: #444;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .result-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        .result-title {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .result-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .empty-notice {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        .note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3e0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>子女身高预测器</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="fatherHeight">父亲身高 (cm):</label>
+                <input type="number" id="fatherHeight" step="0.1" placeholder="请输入" oninput="calculateHeight()">
+            </div>
+            <div class="input-group">
+                <label for="motherHeight">母亲身高 (cm):</label>
+                <input type="number" id="motherHeight" step="0.1" placeholder="请输入" oninput="calculateHeight()">
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="result-title">预测结果</div>
+            <div id="emptyNotice" class="empty-notice">请输入父母身高进行预测</div>
+            <div id="resultContent" style="display: none;">
+                <div class="result-item" id="boyResult">
+                    男孩预测身高范围：<span id="boyHeightRange"></span>
+                </div>
+                <div class="result-item" id="girlResult">
+                    女孩预测身高范围：<span id="girlHeightRange"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            注意事项：
+            <ul>
+                <li>此计算器仅供参考，实际身高会受到多种因素影响</li>
+                <li>预测范围考虑了遗传因素和一定的浮动空间</li>
+                <li>影响身高的因素还包括：营养状况、生活习惯、运动情况等</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculateHeight() {
+            // 获取输入值
+            const fatherHeight = parseFloat(document.getElementById('fatherHeight').value);
+            const motherHeight = parseFloat(document.getElementById('motherHeight').value);
+            
+            const emptyNotice = document.getElementById('emptyNotice');
+            const resultContent = document.getElementById('resultContent');
+            
+            // 检查是否有有效输入
+            if (!fatherHeight || !motherHeight) {
+                emptyNotice.style.display = 'block';
+                resultContent.style.display = 'none';
+                return;
+            }
+
+            // 显示结果区域
+            emptyNotice.style.display = 'none';
+            resultContent.style.display = 'block';
+
+            // 计算男孩身高预测范围
+            const boyBaseHeight = (fatherHeight + motherHeight) * 0.54;
+            const boyMinHeight = (boyBaseHeight - 5).toFixed(1);
+            const boyMaxHeight = (boyBaseHeight + 5).toFixed(1);
+
+            // 计算女孩身高预测范围
+            const girlBaseHeight = (fatherHeight * 0.923 + motherHeight) / 2;
+            const girlMinHeight = (girlBaseHeight - 5).toFixed(1);
+            const girlMaxHeight = (girlBaseHeight + 5).toFixed(1);
+
+            // 显示结果
+            document.getElementById('boyHeightRange').textContent = 
+                `${boyMinHeight} ~ ${boyMaxHeight} 厘米`;
+            document.getElementById('girlHeightRange').textContent = 
+                `${girlMinHeight} ~ ${girlMaxHeight} 厘米`;
+        }
+    </script>
+</body>
+</html>

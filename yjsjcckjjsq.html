@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硬件实际存储空间计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 200px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>硬件实际存储空间计算器</h1>
+	    <h2>可以输入您的硬盘容量、SD存储卡容量、手机存储容量查看实际可用多少</h2>
+    <div>
+        <label>输入硬件存储空间容量 (GB):</label>
+        <input type="number" id="storageCapacity" placeholder="输入容量" oninput="calculateAvailableSpace()">
+    </div>
+    <div class="result" id="availableSpaceResult"></div>
+
+    <script>
+        function calculateAvailableSpace() {
+            const capacity = parseFloat(document.getElementById('storageCapacity').value) || 0;
+            const availableSpaceGB = 0.931 * capacity; // 计算实际可用空间（GB）
+            const availableSpaceMB = availableSpaceGB * 1024; // 转换为MB
+            
+            const availableSpaceResultDiv = document.getElementById('availableSpaceResult');
+            availableSpaceResultDiv.innerHTML = `实际可用空间: ${availableSpaceGB.toFixed(2)} GB (${availableSpaceMB.toFixed(2)} MB)`;
+        }
+    </script>
+</body>
+</html>

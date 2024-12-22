@@ -1,0 +1,73 @@
+<html>
+<head>
+    <title>文本内容统计工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+        .stats {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>文本内容统计工具</h1>
+    <textarea id="inputText" placeholder="在这里输入文本..."></textarea>
+    <div class="stats">
+        <h3>统计结果：</h3>
+        <p>总行数: <span id="lineCount">0</span></p>
+        <p> <span id="byteCount"></span></p>
+        <p>汉字数: <span id="chineseCount">0</span></p>
+        <p>字母数: <span id="letterCount">0</span></p>
+        <p>数字数: <span id="digitCount">0</span></p>
+        <p>逗号数: <span id="commaCount">0</span></p>
+        <p>句号数: <span id="periodCount">0</span></p>
+        <p>空格数: <span id="spaceCount">0</span></p>
+        <p>问号数: <span id="questionCount">0</span></p>
+        <p>叹号数: <span id="exclamationCount">0</span></p>
+    </div>
+
+    <script>
+        document.getElementById('inputText').addEventListener('input', function() {
+            const text = this.value;
+
+            const lines = text.split('\n').length;
+            const bytes = new Blob([text]).size;
+            const chinesePattern = /[\u4e00-\u9fa5]/g;  // 汉字
+            const lettersPattern = /[a-zA-Z]/g;        // 字母
+            const digitsPattern = /\d/g;               // 数字
+            const commaPattern = /[,，]/g;             // 英文和中文逗号
+            const periodPattern = /[.。]/g;            // 英文和中文句号
+            const spacePattern = /\s/g;
+            const questionPattern = /[?？]/g;          // 英文和中文问号
+            const exclamationPattern = /[!！]/g;       // 英文和中文叹号
+
+            const chineseCount = (text.match(chinesePattern) || []).length;
+            const letterCount = (text.match(lettersPattern) || []).length;
+            const digitCount = (text.match(digitsPattern) || []).length;
+            const commaCount = (text.match(commaPattern) || []).length;
+            const periodCount = (text.match(periodPattern) || []).length;
+            const spaceCount = (text.match(spacePattern) || []).length - (text.match(/\n/g) || []).length; // 减去换行符
+            const questionCount = (text.match(questionPattern) || []).length;
+            const exclamationCount = (text.match(exclamationPattern) || []).length;
+
+            // 更新统计结果
+            document.getElementById('lineCount').innerText = lines;
+
+            document.getElementById('chineseCount').innerText = chineseCount;
+            document.getElementById('letterCount').innerText = letterCount;
+            document.getElementById('digitCount').innerText = digitCount;
+            document.getElementById('commaCount').innerText = commaCount;
+            document.getElementById('periodCount').innerText = periodCount;
+            document.getElementById('spaceCount').innerText = spaceCount;
+            document.getElementById('questionCount').innerText = questionCount;
+            document.getElementById('exclamationCount').innerText = exclamationCount;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!-- 保持 head 部分完全相同 -->
+<head>
+    <!-- 相同的 meta 和 style 代码 -->
+    <meta charset="GBK">
+    <title>UBB代码预览器</title>
+    <style>
+    /* 保持所有样式完全相同 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .toolbar {
+        background: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .toolbar button {
+        padding: 6px 12px;
+        margin: 0 5px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .toolbar button:hover {
+        background: #45a049;
+    }
+    .quick-tags {
+        margin: 10px 0;
+        padding: 10px;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .tag-btn {
+        padding: 4px 8px;
+        margin: 2px;
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .tag-btn:hover {
+        background: #e1e1e1;
+    }
+    .workspace {
+        display: flex;
+        gap: 20px;
+        height: calc(100vh - 250px);
+    }
+    .editor-panel, .preview-panel {
+        flex: 1;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    .panel-header {
+        padding: 10px;
+        background: #333;
+        color: white;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+    #ubbEditor {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        resize: none;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    #previewArea {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #fff;
+    }
+    .template-select {
+        padding: 6px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+    </style>
+</head>
+<body>
+    <!-- 保持 HTML 结构完全相同 -->
+    <div class="container">
+        <h1>UBB代码预览器</h1>
+        
+        <div class="toolbar">
+            <select class="template-select" id="templateSelect">
+                <option value="blank">空白模板</option>
+                <option value="basic">基础模板</option>
+                <option value="post">论坛帖子模板</option>
+                <option value="signature">论坛签名模板</option>
+                <option value="size-test">字体大小测试</option>
+            </select>
+            <button onclick="updatePreview()">预览</button>
+            <button onclick="clearCode()">清空</button>
+            <button onclick="copyHTML()">复制HTML</button>
+        </div>
+
+        <div class="quick-tags">
+            <button class="tag-btn" onclick="insertTag('b')">粗体</button>
+            <button class="tag-btn" onclick="insertTag('i')">斜体</button>
+            <button class="tag-btn" onclick="insertTag('u')">下划线</button>
+            <button class="tag-btn" onclick="insertTag('color')">颜色</button>
+            <button class="tag-btn" onclick="insertTag('size')">大小</button>
+            <button class="tag-btn" onclick="insertTag('url')">链接</button>
+            <button class="tag-btn" onclick="insertTag('img')">图片</button>
+            <button class="tag-btn" onclick="insertTag('quote')">引用</button>
+            <button class="tag-btn" onclick="insertTag('code')">代码</button>
+            <button class="tag-btn" onclick="insertTag('list')">列表</button>
+            <button class="tag-btn" onclick="insertTag('table')">表格</button>
+        </div>
+
+        <div class="workspace">
+            <div class="editor-panel">
+                <div class="panel-header">UBB代码编辑区</div>
+                <textarea id="ubbEditor" spellcheck="false" oninput="updatePreview()"></textarea>
+            </div>
+            <div class="preview-panel">
+                <div class="panel-header">预览区</div>
+                <div id="previewArea"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 保持所有变量和函数定义完全相同
+        const templates = {
+            blank: '',
+            basic: `[b]标题[/b]\n[i]副标题[/i]\n\n正文内容...\n\n[url=https://example.com]链接文本[/url]`,
+            post: `[size=5][b]帖子标题[/b][/size]\n\n[color=#333333]发表时间：2024-01-01[/color]\n\n[quote]引用内容[/quote]\n\n正文内容...\n\n[img]https://example.com/image.jpg[/img]\n\n[size=2][color=#666666]签名：xxx[/color][/size]`,
+            signature: `[center][size=4][color=#FF0000]★[/color] 个性签名 [color=#FF0000]★[/color][/size]\n[img]https://example.com/avatar.jpg[/img]\n[color=#0000FF]座右铭：xxx[/color][/center]`,
+            'size-test': `[size=1]大小1测试[/size]\n[size=2]大小2测试[/size]\n[size=3]大小3测试[/size]\n[size=4]大小4测试[/size]\n[size=5]大小5测试[/size]\n[size=6]大小6测试[/size]\n[size=7]大小7测试[/size]`
+        };
+
+        const sizeMap = {
+            1: '12px',
+            2: '14px',
+            3: '16px',
+            4: '18px',
+            5: '24px',
+            6: '32px',
+            7: '48px'
+        };
+
+        function insertTag(tag) {
+            const editor = document.getElementById('ubbEditor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            let insertText = '';
+            switch(tag) {
+                case 'url':
+                    insertText = '[url=http://]' + (selectedText || '链接文本') + '[/url]';
+                    break;
+                case 'img':
+                    insertText = '[img]' + (selectedText || 'http://') + '[/img]';
+                    break;
+                case 'color':
+                    insertText = '[color=#000000]' + (selectedText || '文本') + '[/color]';
+                    break;
+                case 'size':
+                    insertText = '[size=4]' + (selectedText || '文本') + '[/size]';
+                    break;
+                case 'list':
+                    insertText = '[list]\n[*]列表项1\n[*]列表项2\n[*]列表项3\n[/list]';
+                    break;
+                case 'table':
+                    insertText = '[table]\n[tr]\n[td]单元格1[/td]\n[td]单元格2[/td]\n[/tr]\n[/table]';
+                    break;
+                case 'quote':
+                    insertText = '[quote]' + (selectedText || '引用内容') + '[/quote]';
+                    break;
+                case 'code':
+                    insertText = '[code]' + (selectedText || '代码内容') + '[/code]';
+                    break;
+                default:
+                    insertText = '[' + tag + ']' + (selectedText || '文本') + '[/' + tag + ']';
+            }
+            
+            editor.value = editor.value.substring(0, start) + insertText + editor.value.substring(end);
+            editor.focus();
+            editor.selectionStart = start + insertText.length;
+            editor.selectionEnd = editor.selectionStart;
+            updatePreview(); // 添加这一行以在插入标签后立即更新预览
+        }
+
+        function updatePreview() {
+            let content = document.getElementById('ubbEditor').value;
+            
+            content = content
+                .replace(/\[b\](.*?)\[\/b\]/g, '<strong>$1</strong>')
+                .replace(/\[i\](.*?)\[\/i\]/g, '<em>$1</em>')
+                .replace(/\[u\](.*?)\[\/u\]/g, '<u>$1</u>')
+                .replace(/\[color=(.*?)\](.*?)\[\/color\]/g, '<span style="color:$1">$2</span>')
+                .replace(/\[size=(\d+)\](.*?)\[\/size\]/g, function(match, size, content) {
+                    const fontSize = sizeMap[size] || '16px';
+                    return `<span style="font-size:${fontSize}">${content}</span>`;
+                })
+                .replace(/\[url=(.*?)\](.*?)\[\/url\]/g, '<a href="$1" target="_blank">$2</a>')
+                .replace(/\[url\](.*?)\[\/url\]/g, '<a href="$1" target="_blank">$1</a>')
+                .replace(/\[img\](.*?)\[\/img\]/g, '<img src="$1" style="max-width:100%" alt="图片">')
+                .replace(/\[quote\](.*?)\[\/quote\]/g, '<blockquote style="margin:10px 0;padding:10px;background:#f5f5f5;border-left:4px solid #ccc">$1</blockquote>')
+                .replace(/\[code\](.*?)\[\/code\]/g, '<pre style="background:#f8f8f8;padding:10px;border-radius:4px;overflow-x:auto">$1</pre>')
+                .replace(/\[center\](.*?)\[\/center\]/g, '<div style="text-align:center">$1</div>')
+                .replace(/\[right\](.*?)\[\/right\]/g, '<div style="text-align:right">$1</div>')
+                .replace(/\[list\](.*?)\[\/list\]/gs, function(match, content) {
+                    return '<ul style="margin-left:20px">' + 
+                           content.replace(/\[\*\](.*?)(?=\[\*\]|\[\/list\])/g, '<li>$1</li>') +
+                           '</ul>';
+                })
+                .replace(/\[table\](.*?)\[\/table\]/gs, '<table style="width:100%;border-collapse:collapse">')
+                .replace(/\[tr\](.*?)\[\/tr\]/g, '<tr>')
+                .replace(/\[td\](.*?)\[\/td\]/g, '<td style="border:1px solid #ddd;padding:8px">')
+                .replace(/\n/g, '<br>');
+
+            document.getElementById('previewArea').innerHTML = content;
+        }
+
+        function clearCode() {
+            if (confirm('确定要清空当前内容吗？')) {
+                document.getElementById('ubbEditor').value = '';
+                document.getElementById('previewArea').innerHTML = '';
+            }
+        }
+
+        function copyHTML() {
+            const previewHTML = document.getElementById('previewArea').innerHTML;
+            navigator.clipboard.writeText(previewHTML).then(() => {
+                alert('HTML代码已复制到剪贴板！');
+            }).catch(err => {
+                alert('复制失败：' + err);
+            });
+        }
+
+        document.getElementById('templateSelect').addEventListener('change', function() {
+            document.getElementById('ubbEditor').value = templates[this.value];
+            updatePreview();
+        });
+
+        // 初始化
+        document.getElementById('ubbEditor').value = templates['size-test'];
+        updatePreview();
+    </script>
+</body>
+</html>

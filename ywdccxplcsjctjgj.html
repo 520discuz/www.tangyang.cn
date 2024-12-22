@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>英文单词出现频率次数检测统计工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 100px);
+        }
+        .input-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .result-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        textarea {
+            width: 100%;
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: none;
+            box-sizing: border-box;
+        }
+        .stats {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #e0f7fa;
+            padding: 2px;
+            margin: 0 2px;
+            border-radius: 3px;
+        }
+        .word-list {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .error {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>英文单词出现频率次数检测统计工具</h1>
+    <div class="main-container">
+        <div class="input-section">
+            <h2 class="section-title">输入区域</h2>
+            <textarea id="input" placeholder="在此输入英文文本..."></textarea>
+        </div>
+        
+        <div class="result-section">
+            <h2 class="section-title">分析结果</h2>
+            <div class="stats" id="stats"></div>
+            <div class="word-list" id="wordList"></div>
+        </div>
+    </div>
+
+    <script>
+        function analyzeText() {
+            const text = document.getElementById('input').value;
+            
+            // 使用正则表达式提取英文单词
+            const words = text.match(/\b[A-Za-z]+\b/g) || [];
+            const wordCount = words.length;
+            
+            // 统计单词频率
+            const wordFreq = {};
+            words.forEach(word => {
+                const lowercaseWord = word.toLowerCase();
+                wordFreq[lowercaseWord] = (wordFreq[lowercaseWord] || 0) + 1;
+            });
+            
+            // 找出最长和最短的单词
+            const longestWord = words.reduce((longest, current) => 
+                current.length > longest.length ? current : longest, '');
+            const shortestWord = words.reduce((shortest, current) => 
+                (!shortest || current.length < shortest.length) ? current : shortest, '');
+            
+            // 更新统计信息
+            const stats = document.getElementById('stats');
+            stats.innerHTML = `
+                <h3>基本统计：</h3>
+                <p>总单词数：${wordCount}</p>
+                <p>不同单词数：${Object.keys(wordFreq).length}</p>
+                <p>最长单词：<span class="highlight">${longestWord}</span> (${longestWord.length}个字母)</p>
+                <p>最短单词：<span class="highlight">${shortestWord}</span> (${shortestWord.length}个字母)</p>
+            `;
+            
+            // 显示单词列表和频率
+            const wordList = document.getElementById('wordList');
+            if (wordCount > 0) {
+                const sortedWords = Object.entries(wordFreq)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                wordList.innerHTML = `
+                    <h3>词频统计：</h3>
+                    ${sortedWords.map(([word, freq]) => 
+                        `<p><span class="highlight">${word}</span>: ${freq}次</p>`
+                    ).join('')}
+                `;
+            } else {
+                wordList.innerHTML = '<p class="error">未检测到英文单词</p>';
+            }
+        }
+
+        // 添加输入监听器
+        document.getElementById('input').addEventListener('input', analyzeText);
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<head>
+    <title>宽带下载速度查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>宽带下载速度查询</h1>
+    <input type="number" id="bandwidth" placeholder="输入宽带 (M)" min="1" oninput="calculateSpeed()">
+    
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateSpeed() {
+            const bandwidthM = document.getElementById('bandwidth').value;
+            const resultDiv = document.getElementById('result');
+
+            if (bandwidthM < 1) {
+                resultDiv.innerText = '请输入有效的宽带值!';
+                return;
+            }
+
+            // 根据 1 Mbps = 128 KB/s 的计算
+            const downloadSpeed = (bandwidthM * 1024) / 8; // KB/s
+
+            resultDiv.innerHTML = `您的最大下载速度预计为: ${downloadSpeed.toFixed(2)} KB/s`;
+        }
+    </script>
+
+</body>
+</html>

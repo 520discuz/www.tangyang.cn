@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>新能源电动车电费计算查询工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+        }
+        .result p {
+            margin: 10px 0;
+            color: #333;
+            font-size: 15px;
+        }
+        .result span {
+            font-weight: bold;
+            color: #4a90e2;
+            margin-left: 5px;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .charging-type {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .section-title {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>新能源电动车电费计算查询工具</h2>
+        
+        <div class="input-group">
+            <label>选择充电方式：</label>
+            <select id="chargingType" oninput="calculate()">
+                <option value="home">家用充电</option>
+                <option value="public">公共充电桩</option>
+                <option value="supercharge">快充站</option>
+            </select>
+        </div>
+
+        <div id="homeCharging" class="charging-type">
+            <div class="input-group">
+                <label>家用电费单价（元/度）：</label>
+                <input type="number" id="homeRate" step="0.01" min="0" value="0.5" placeholder="请输入家用电费单价" oninput="calculate()">
+                <div class="hint">峰谷时段可输入平均电价</div>
+            </div>
+        </div>
+
+        <div id="publicCharging" class="charging-type">
+            <div class="input-group">
+                <label>公共充电桩电费（元/度）：</label>
+                <input type="number" id="publicRate" step="0.01" min="0" value="1.2" placeholder="请输入充电桩电费" oninput="calculate()">
+            </div>
+            <div class="input-group">
+                <label>服务费（元/度）：</label>
+                <input type="number" id="serviceRate" step="0.01" min="0" value="0.5" placeholder="请输入服务费" oninput="calculate()">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>车辆百公里耗电量（度）：</label>
+            <input type="number" id="consumption" step="0.1" min="0" value="15" placeholder="请输入百公里耗电量" oninput="calculate()">
+            <div class="hint">可查看车辆仪表盘显示的平均耗电量</div>
+        </div>
+
+        <div class="input-group">
+            <label>充电效率（%）：</label>
+            <input type="number" id="efficiency" step="1" min="0" max="100" value="90" placeholder="请输入充电效率" oninput="calculate()">
+            <div class="hint">考虑充电损耗，一般在85-95%之间</div>
+        </div>
+
+        <div class="result">
+            <p>实际耗电量（含损耗）：<span id="actualConsumption">0</span> 度/100公里</p>
+            <p>每公里电费：<span id="costPerKm">0</span> 元</p>
+            <p>每100公里电费：<span id="costPer100Km">0</span> 元</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化时隐藏不相关的充电类型
+        document.getElementById('publicCharging').style.display = 'none';
+
+        function updateChargingFields() {
+            const chargingType = document.getElementById('chargingType').value;
+            document.getElementById('homeCharging').style.display = 
+                chargingType === 'home' ? 'block' : 'none';
+            document.getElementById('publicCharging').style.display = 
+                (chargingType === 'public' || chargingType === 'supercharge') ? 'block' : 'none';
+        }
+
+        function calculate() {
+            updateChargingFields();
+
+            // 获取基本参数
+            const chargingType = document.getElementById('chargingType').value;
+            const consumption = parseFloat(document.getElementById('consumption').value) || 0;
+            const efficiency = parseFloat(document.getElementById('efficiency').value) || 0;
+
+            // 计算实际耗电量（考虑充电效率）
+            const actualConsumption = consumption * (100 / efficiency);
+
+            // 根据充电类型计算费用
+            let ratePerKwh = 0;
+            if (chargingType === 'home') {
+                ratePerKwh = parseFloat(document.getElementById('homeRate').value) || 0;
+            } else {
+                const publicRate = parseFloat(document.getElementById('publicRate').value) || 0;
+                const serviceRate = parseFloat(document.getElementById('serviceRate').value) || 0;
+                ratePerKwh = publicRate + serviceRate;
+            }
+
+            // 计算结果
+            const costPer100Km = actualConsumption * ratePerKwh;
+            const costPerKm = costPer100Km / 100;
+
+            // 更新显示
+            document.getElementById('actualConsumption').textContent = actualConsumption.toFixed(2);
+            document.getElementById('costPerKm').textContent = costPerKm.toFixed(3);
+            document.getElementById('costPer100Km').textContent = costPer100Km.toFixed(2);
+        }
+
+        // 初始计算
+        calculate();
+    </script>
+</body>
+</html>

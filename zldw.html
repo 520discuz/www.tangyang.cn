@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>质量单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .unit-row input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .unit-row label {
+            min-width: 120px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>质量单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>千克 (kg):</label>
+            <input type="text" id="kg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>克 (g):</label>
+            <input type="text" id="g" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>毫克 (mg):</label>
+            <input type="text" id="mg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>微克 (μg):</label>
+            <input type="text" id="ug" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>吨 (t):</label>
+            <input type="text" id="t" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公担 (q):</label>
+            <input type="text" id="q" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>纳克 (ng):</label>
+            <input type="text" id="ng" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>皮克 (pg):</label>
+            <input type="text" id="pg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>飞克 (fg):</label>
+            <input type="text" id="fg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>阿克 (ag):</label>
+            <input type="text" id="ag" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>介克 (zg):</label>
+            <input type="text" id="zg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>仄克 (zg):</label>
+            <input type="text" id="zg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>攸克 (yg):</label>
+            <input type="text" id="yg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>幺克 (yg):</label>
+            <input type="text" id="yg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>洛克 (rg):</label>
+            <input type="text" id="rg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>夸克 (qg):</label>
+            <input type="text" id="qg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>奎克 (Qg):</label>
+            <input type="text" id="Qg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>罗克 (Rg):</label>
+            <input type="text" id="Rg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>佑克 (Yg):</label>
+            <input type="text" id="Yg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>尧克 (Yg):</label>
+            <input type="text" id="Yg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>皆克 (Zg):</label>
+            <input type="text" id="Zg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>泽克 (Zg):</label>
+            <input type="text" id="Zg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>艾克 (Eg):</label>
+            <input type="text" id="Eg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>拍克 (Pg):</label>
+            <input type="text" id="Pg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>兆克 (Tg):</label>
+            <input type="text" id="Tg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>太克 (Tg):</label>
+            <input type="text" id="Tg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>吉克 (Gg):</label>
+            <input type="text" id="Gg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公吨 (Mg):</label>
+            <input type="text" id="Mg" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>百万克 (Mg):</label>
+            <input type="text" id="Mg2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公斤 (kg):</label>
+            <input type="text" id="kg2" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>磅 (lb):</label>
+            <input type="text" id="lb" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>盎司 (oz):</label>
+            <input type="text" id="oz" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>克拉 (ct):</label>
+            <input type="text" id="ct" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>格令 (gr):</label>
+            <input type="text" id="gr" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>长吨 (lt):</label>
+            <input type="text" id="lt" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>短吨 (st):</label>
+            <input type="text" id="st" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英担:</label>
+            <input type="text" id="cwt" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>美担:</label>
+            <input type="text" id="cwt_us" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>英石 (st):</label>
+            <input type="text" id="stone" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>打兰 (dr):</label>
+            <input type="text" id="dr" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>市制</h2>
+        <div class="unit-row">
+            <label>担:</label>
+            <input type="text" id="dan" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>斤:</label>
+            <input type="text" id="jin" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>两:</label>
+            <input type="text" id="liang" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>钱:</label>
+            <input type="text" id="qian" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>分:</label>
+            <input type="text" id="fen" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <script>
+        // 所有单位换算到克的系数
+        const units = {
+            // 公制
+            'kg': 1000,
+            'g': 1,
+            'mg': 0.001,
+            'ug': 0.000001,
+            't': 1000000,
+            'q': 100000,
+            'ng': 0.000000001,
+            'pg': 0.000000000001,
+            'fg': 0.000000000000001,
+            'ag': 0.000000000000000001,
+            'zg': 0.000000000000000000001,
+            'zg2': 0.000000000000000000001,
+            'yg': 0.000000000000000000000001,
+            'yg2': 0.000000000000000000000001,
+            'rg': 0.000000000000000000000000001,
+            'qg': 0.000000000000000000000000000001,
+            'Qg': 1e30,
+            'Rg': 1e27,
+            'Yg': 1e24,
+            'Yg2': 1e24,
+            'Zg': 1e21,
+            'Zg2': 1e21,
+            'Eg': 1e18,
+            'Pg': 1e15,
+            'Tg': 1e12,
+            'Tg2': 1e12,
+            'Gg': 1e9,
+            'Mg': 1e6,
+            'Mg2': 1e6,
+            'kg2': 1000,
+
+            // 英制
+            'lb': 453.59237,
+            'oz': 28.349523125,
+            'ct': 0.2,
+            'gr': 0.0647989,
+            'lt': 1016046.9088,
+            'st': 907184.74,
+            'cwt': 50802.34544,
+            'cwt_us': 45359.237,
+            'stone': 6350.29318,
+            'dr': 1.7718451953125,
+
+            // 市制
+            'dan': 50000,
+            'jin': 500,
+            'liang': 50,
+            'qian': 5,
+            'fen': 0.5
+        };
+
+        function convert(fromUnit, value) {
+            if (value === '') {
+                clearAll();
+                return;
+            }
+
+            // 移除非数字字符（保留小数点和负号）
+            value = value.replace(/[^\d.-]/g, '');
+            
+            // 转换为数字
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) {
+                return;
+            }
+
+            // 先转换为克
+            const grams = numValue * units[fromUnit];
+
+            // 更新所有输入框
+            for (let unit in units) {
+                if (unit !== fromUnit) {
+                    const element = document.getElementById(unit);
+                    if (element) {
+                        // 转换到目标单位并格式化
+                        const convertedValue = grams / units[unit];
+                        // 使用toFixed来避免科学计数法，但需要去掉末尾的0
+                        element.value = convertedValue.toFixed(20).replace(/\.?0+$/, '');
+                    }
+                }
+            }
+        }
+
+        function clearAll() {
+            for (let unit in units) {
+                const element = document.getElementById(unit);
+                if (element) {
+                    element.value = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

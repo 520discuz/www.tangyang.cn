@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>行程油费查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-with-unit {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .unit-label {
+            color: #666;
+            min-width: 80px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2196F3;
+            font-size: 18px;
+        }
+        .cost-highlight {
+            font-weight: bold;
+            color: #e53935;
+            font-size: 24px;
+        }
+        .invalid {
+            border-color: #ff5252;
+        }
+        .error-message {
+            color: #ff5252;
+            font-size: 0.9em;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .details {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>行程油费查询器</h2>
+        <div class="input-group">
+            <label for="fuelPrice">油价:</label>
+            <div class="input-with-unit">
+                <input type="number" id="fuelPrice" min="0" step="0.01" placeholder="请输入当前油价" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">元/升</span>
+            </div>
+            <div id="fuelPrice-error" class="error-message">请输入有效的油价</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="fuelConsumption">百公里油耗:</label>
+            <div class="input-with-unit">
+                <input type="number" id="fuelConsumption" min="0" step="0.1" placeholder="请输入百公里油耗" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">升/100公里</span>
+            </div>
+            <div id="fuelConsumption-error" class="error-message">请输入有效的油耗数值</div>
+        </div>
+
+        <div class="input-group">
+            <label for="distance">行驶距离:</label>
+            <div class="input-with-unit">
+                <input type="number" id="distance" min="0" step="0.1" placeholder="请输入行驶距离" oninput="updateResult()" onChange="validateInput(this)">
+                <span class="unit-label">公里</span>
+            </div>
+            <div id="distance-error" class="error-message">请输入有效的距离</div>
+        </div>
+
+        <div id="result" class="result">
+            <h3>预计花费:</h3>
+            <p>总金额: <span id="cost-result" class="cost-highlight">0.00</span> 元</p>
+            
+            <div class="details">
+                <p>油价: <span id="price-display" class="highlight">0.00</span> 元/升</p>
+                <p>油耗: <span id="consumption-display" class="highlight">0.0</span> 升/100公里</p>
+                <p>距离: <span id="distance-display" class="highlight">0.0</span> 公里</p>
+                <p>预计用油: <span id="total-fuel-display" class="highlight">0.00</span> 升</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateInput(input) {
+            const value = parseFloat(input.value);
+            const errorElement = document.getElementById(input.id + '-error');
+            
+            if (isNaN(value) || value < 0) {
+                input.classList.add('invalid');
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                input.classList.remove('invalid');
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        function updateResult() {
+            const fuelPriceInput = document.getElementById('fuelPrice');
+            const fuelConsumptionInput = document.getElementById('fuelConsumption');
+            const distanceInput = document.getElementById('distance');
+            
+            const fuelPrice = parseFloat(fuelPriceInput.value) || 0;
+            const fuelConsumption = parseFloat(fuelConsumptionInput.value) || 0;
+            const distance = parseFloat(distanceInput.value) || 0;
+
+            // 验证输入
+            const isPriceValid = validateInput(fuelPriceInput);
+            const isConsumptionValid = validateInput(fuelConsumptionInput);
+            const isDistanceValid = validateInput(distanceInput);
+
+            if (isPriceValid && isConsumptionValid && isDistanceValid) {
+                // 计算总用油量（升）
+                const totalFuel = (distance * fuelConsumption) / 100;
+                // 计算总花费（元）
+                const totalCost = totalFuel * fuelPrice;
+                
+                // 更新显示结果
+                document.getElementById('cost-result').textContent = totalCost.toFixed(2);
+                document.getElementById('price-display').textContent = fuelPrice.toFixed(2);
+                document.getElementById('consumption-display').textContent = fuelConsumption.toFixed(1);
+                document.getElementById('distance-display').textContent = distance.toFixed(1);
+                document.getElementById('total-fuel-display').textContent = totalFuel.toFixed(2);
+            }
+        }
+
+        // 页面加载时初始化显示
+        updateResult();
+    </script>
+</body>
+</html>
