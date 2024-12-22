@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>汉字转拼音缩略首字母提取工具</title>
+    <!-- 引入pinyin-pro库 -->
+    <script src="../hzzpyslszmtqgj/index.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .converter {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            min-height: 100px;
+            resize: vertical;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+        }
+        .result-group {
+            margin-bottom: 15px;
+        }
+        .result-group h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        .result-content {
+            line-height: 1.6;
+            color: #333;
+            word-wrap: break-word;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .copy-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            float: right;
+        }
+        .copy-btn:hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <div class="converter">
+        <h2>汉字转拼音缩略首字母提取工具</h2>
+        
+        <div class="input-group">
+            <label>请输入汉字：</label>
+            <textarea id="inputText" placeholder="请在此输入需要转换的汉字" oninput="convert()"></textarea>
+            <div class="hint">支持中文、英文混合输入</div>
+        </div>
+
+        <div class="result">
+            <div class="result-group">
+                <h3>拼音结果：<button class="copy-btn" onClick="copyText('pinyinResult')">复制</button></h3>
+                <div id="pinyinResult" class="result-content"></div>
+            </div>
+            
+            <div class="result-group">
+                <h3>拼音首字母：<button class="copy-btn" onClick="copyText('initialResult')">复制</button></h3>
+                <div id="initialResult" class="result-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function convert() {
+            const text = document.getElementById('inputText').value;
+            if (!text) {
+                document.getElementById('pinyinResult').innerText = '';
+                document.getElementById('initialResult').innerText = '';
+                return;
+            }
+
+            try {
+                // 转换完整拼音
+                const pinyinResult = pinyinPro.pinyin(text, {
+                    toneType: 'none',
+                    type: 'string',
+                    separator: ' '
+                });
+                document.getElementById('pinyinResult').innerText = pinyinResult;
+
+                // 转换首字母
+                const initialResult = pinyinPro.pinyin(text, {
+                    pattern: 'first',
+                    toneType: 'none',
+                    type: 'string',
+                    separator: ''
+                });
+                document.getElementById('initialResult').innerText = initialResult;
+            } catch (error) {
+                console.error('转换出错：', error);
+            }
+        }
+
+        // 复制功能
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            if (text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('已复制到剪贴板！');
+                }).catch(err => {
+                    console.error('复制失败：', err);
+                    alert('复制失败，请手动复制。');
+                });
+            }
+        }
+
+        // 页面加载完成后自动转换示例
+        window.onload = function() {
+            const exampleText = "你好世界";
+            document.getElementById('inputText').value = exampleText;
+            convert();
+        };
+    </script>
+</body>
+</html>
