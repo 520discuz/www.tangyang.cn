@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>汉字文字字数词频统计工具</title>
+    <style>
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .input-section {
+            flex: 1;
+        }
+        .result-section {
+            flex: 1;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #result {
+            font-family: monospace;
+            white-space: pre-line;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            min-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>汉字文字字数词频统计工具</h1>
+    <div class="container">
+        <div class="input-section">
+            <h2>请输入文字：</h2>
+            <textarea id="input" placeholder="在此输入文字..."></textarea>
+        </div>
+        <div class="result-section">
+            <h2>统计结果：</h2>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function countCharacters(text) {
+            const charCount = new Map();
+            
+            // 将文本分割成字符数组并统计
+            [...text].forEach(char => {
+                // 使用Unicode范围检查是否为中文字符
+                if (/[\u4e00-\u9fa5]/.test(char)) {
+                    charCount.set(char, (charCount.get(char) || 0) + 1);
+                }
+            });
+
+            // 转换成数组并排序
+            const sortedCounts = [...charCount.entries()]
+                .sort((a, b) => b[1] - a[1]);
+
+            // 生成结果字符串
+            return sortedCounts
+                .map(([char, count]) => `${char}: ${count}次`)
+                .join('\n');
+        }
+
+        const inputArea = document.getElementById('input');
+        const resultDiv = document.getElementById('result');
+
+        // 添加输入事件监听器
+        inputArea.addEventListener('input', () => {
+            const text = inputArea.value;
+            const result = countCharacters(text);
+            resultDiv.textContent = result || '尚未输入文字';
+        });
+    </script>
+</body>
+</html>

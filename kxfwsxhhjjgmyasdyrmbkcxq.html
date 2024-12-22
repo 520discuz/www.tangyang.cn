@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可选范围式现货黄金价格美元盎司对应人民币克查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>可选范围式现货黄金价格美元盎司对应人民币克查询器</h1>
+    <label for="exchangeRate">输入汇率 (美元/人民币)：</label>
+    <input type="number" id="exchangeRate" placeholder="例如: 7.27663" step="0.01">
+    <br><br>
+    
+    <label for="minPrice">显示范围：从</label>
+    <input type="number" id="minPrice" placeholder=" " step="0.01">
+    <select id="minUnit" onchange="syncUnits('min')">
+        <option value="USD">美元</option>
+        <option value="CNY">人民币</option>
+    </select>
+
+    <label for="maxPrice">到</label>
+    <input type="number" id="maxPrice" placeholder=" " step="0.01">
+    <select id="maxUnit" onchange="syncUnits('max')">
+        <option value="USD">美元</option>
+        <option value="CNY">人民币</option>
+    </select>
+    <br><br>
+    <p>友情提示：如果不填写范围，默认查询显示出9999个结果<p>
+    <button onclick="calculateGoldPrice()">点击查询</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>美元/盎司</th>
+                <th>人民币/克</th>
+            </tr>
+        </thead>
+        <tbody id="resultTable">
+            <!-- 结果将插入这里 -->
+        </tbody>
+    </table>
+
+    <script>
+        function syncUnits(type) {
+            const minUnit = document.getElementById('minUnit');
+            const maxUnit = document.getElementById('maxUnit');
+
+            if (type === 'min') {
+                maxUnit.value = minUnit.value; // 同步最大值单位
+            } else {
+                minUnit.value = maxUnit.value; // 同步最小值单位
+            }
+        }
+
+        function calculateGoldPrice() {
+            const exchangeRate = parseFloat(document.getElementById('exchangeRate').value);
+            const minPrice = parseFloat(document.getElementById('minPrice').value);
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value);
+            const minUnit = document.getElementById('minUnit').value;
+            const maxUnit = document.getElementById('maxUnit').value;
+            const resultTable = document.getElementById('resultTable');
+            resultTable.innerHTML = ''; // 清空之前的结果
+
+            if (!isNaN(exchangeRate) && exchangeRate > 0) {
+                for (let i = 1; i <= 9999; i++) {
+                    const pricePerOunce = i; // 美元/盎司
+                    const pricePerGram = (pricePerOunce * exchangeRate) / 31.1035; // 人民币/克
+
+                    // 筛选条件
+                    let isInRange = true;
+
+                    if (minUnit === "CNY") {
+                        isInRange = isInRange && (isNaN(minPrice) || pricePerGram >= minPrice);
+                    } else {
+                        isInRange = isInRange && (isNaN(minPrice) || pricePerOunce >= minPrice);
+                    }
+
+                    if (maxUnit === "CNY") {
+                        isInRange = isInRange && (isNaN(maxPrice) || pricePerGram <= maxPrice);
+                    } else {
+                        isInRange = isInRange && (isNaN(maxPrice) || pricePerOunce <= maxPrice);
+                    }
+
+                    if (isInRange) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${pricePerOunce.toFixed(2)}</td><td>${pricePerGram.toFixed(4)}</td>`;
+                        resultTable.appendChild(row);
+                    }
+                }
+            } else {
+                alert('请输入有效的汇率');
+            }
+        }
+    </script>
+
+</body>
+</html>

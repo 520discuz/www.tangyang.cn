@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>角度单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .input-group label {
+            width: 120px;
+            display: inline-block;
+        }
+        input {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .unit {
+            color: #666;
+            min-width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>角度单位换算器</h1>
+        <div class="input-group">
+            <label>圆周</label>
+            <input type="text" id="circle" oninput="convert(this)">
+            <span class="unit">(circle)</span>
+        </div>
+        <div class="input-group">
+            <label>直角</label>
+            <input type="text" id="rightAngle" oninput="convert(this)">
+            <span class="unit"></span>
+        </div>
+        <div class="input-group">
+            <label>百分度</label>
+            <input type="text" id="gon" oninput="convert(this)">
+            <span class="unit">(gon)</span>
+        </div>
+        <div class="input-group">
+            <label>度</label>
+            <input type="text" id="degree" oninput="convert(this)">
+            <span class="unit">(°)</span>
+        </div>
+        <div class="input-group">
+            <label>分</label>
+            <input type="text" id="minute" oninput="convert(this)">
+            <span class="unit">(′)</span>
+        </div>
+        <div class="input-group">
+            <label>秒</label>
+            <input type="text" id="second" oninput="convert(this)">
+            <span class="unit">(")</span>
+        </div>
+        <div class="input-group">
+            <label>弧度</label>
+            <input type="text" id="radian" oninput="convert(this)">
+            <span class="unit">(rad)</span>
+        </div>
+        <div class="input-group">
+            <label>毫弧度</label>
+            <input type="text" id="milliradian" oninput="convert(this)">
+            <span class="unit">(mrad)</span>
+        </div>
+        <div class="input-group">
+            <label>角度制</label>
+            <input type="text" id="gradian" oninput="convert(this)">
+            <span class="unit"></span>
+        </div>
+        <div class="input-group">
+            <label>毫秒</label>
+            <input type="text" id="mas" oninput="convert(this)">
+            <span class="unit">(mas)</span>
+        </div>
+        <div class="input-group">
+            <label>微秒</label>
+            <input type="text" id="uas" oninput="convert(this)">
+            <span class="unit">(μas)</span>
+        </div>
+    </div>
+
+    <script>
+        function convert(input) {
+            // 获取输入值
+            let value = parseFloat(input.value);
+            if (isNaN(value)) {
+                clearAll();
+                return;
+            }
+
+            // 先转换为度
+            let degrees;
+            switch(input.id) {
+                case 'circle':
+                    degrees = value * 360;
+                    break;
+                case 'rightAngle':
+                    degrees = value * 90;
+                    break;
+                case 'gon':
+                    degrees = value * 0.9;
+                    break;
+                case 'degree':
+                    degrees = value;
+                    break;
+                case 'minute':
+                    degrees = value / 60;
+                    break;
+                case 'second':
+                    degrees = value / 3600;
+                    break;
+                case 'radian':
+                    degrees = value * (180 / Math.PI);
+                    break;
+                case 'milliradian':
+                    degrees = value * (180 / Math.PI) / 1000;
+                    break;
+                case 'gradian':
+                    degrees = value * 0.9;
+                    break;
+                case 'mas':
+                    degrees = value / 3600 / 1000;
+                    break;
+                case 'uas':
+                    degrees = value / 3600 / 1000000;
+                    break;
+            }
+
+            // 从度转换为其他单位
+            if (input.id !== 'circle') document.getElementById('circle').value = formatNumber(degrees / 360);
+            if (input.id !== 'rightAngle') document.getElementById('rightAngle').value = formatNumber(degrees / 90);
+            if (input.id !== 'gon') document.getElementById('gon').value = formatNumber(degrees / 0.9);
+            if (input.id !== 'degree') document.getElementById('degree').value = formatNumber(degrees);
+            if (input.id !== 'minute') document.getElementById('minute').value = formatNumber(degrees * 60);
+            if (input.id !== 'second') document.getElementById('second').value = formatNumber(degrees * 3600);
+            if (input.id !== 'radian') document.getElementById('radian').value = formatNumber(degrees * (Math.PI / 180));
+            if (input.id !== 'milliradian') document.getElementById('milliradian').value = formatNumber(degrees * (Math.PI / 180) * 1000);
+            if (input.id !== 'gradian') document.getElementById('gradian').value = formatNumber(degrees / 0.9);
+            if (input.id !== 'mas') document.getElementById('mas').value = formatNumber(degrees * 3600 * 1000);
+            if (input.id !== 'uas') document.getElementById('uas').value = formatNumber(degrees * 3600 * 1000000);
+        }
+
+        function formatNumber(num) {
+            // 避免使用科学计数法，同时限制小数位数
+            return Number(num.toFixed(12)).toString();
+        }
+
+        function clearAll() {
+            const inputs = document.getElementsByTagName('input');
+            for(let input of inputs) {
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

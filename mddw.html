@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>密度单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1>密度单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>千克/立方厘米:</label>
+            <input type="number" id="kgcm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(kg/cm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>千克/立方分米:</label>
+            <input type="number" id="kgdm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(kg/dm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>千克/立方米:</label>
+            <input type="number" id="kgm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(kg/m3)</span>
+        </div>
+        <div class="unit-row">
+            <label>克/立方厘米:</label>
+            <input type="number" id="gcm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(g/cm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>克/立方分米:</label>
+            <input type="number" id="gdm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(g/dm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>克/立方米:</label>
+            <input type="number" id="gm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(g/m3)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫克/立方厘米:</label>
+            <input type="number" id="mgcm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(mg/cm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫克/立方分米:</label>
+            <input type="number" id="mgdm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(mg/dm3)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫克/立方米:</label>
+            <input type="number" id="mgm3" step="any" oninput="convert(this.id, this.value)">
+            <span>(mg/m3)</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>磅/立方英寸:</label>
+            <input type="number" id="lbin3" step="any" oninput="convert(this.id, this.value)">
+            <span>(lb/in3)</span>
+        </div>
+        <div class="unit-row">
+            <label>磅/立方英尺:</label>
+            <input type="number" id="lbft3" step="any" oninput="convert(this.id, this.value)">
+            <span>(lb/ft3)</span>
+        </div>
+        <div class="unit-row">
+            <label>磅/美加仑:</label>
+            <input type="number" id="lbusgal" step="any" oninput="convert(this.id, this.value)">
+            <span>(lb/gal)</span>
+        </div>
+        <div class="unit-row">
+            <label>磅/英加仑:</label>
+            <input type="number" id="lbukgal" step="any" oninput="convert(this.id, this.value)">
+            <span>(lb/gal)</span>
+        </div>
+        <div class="unit-row">
+            <label>磅/桶:</label>
+            <input type="number" id="lbbbl" step="any" oninput="convert(this.id, this.value)">
+            <span>(lb/bbl)</span>
+        </div>
+        <div class="unit-row">
+            <label>盎司/加仑:</label>
+            <input type="number" id="ozgal" step="any" oninput="convert(this.id, this.value)">
+            <span>(oz/gal)</span>
+        </div>
+    </div>
+
+    <script>
+        function convert(sourceId, value) {
+            if (value === '') return;
+            // 将输入值转换为基准单位（kg/m3）
+            let kgm3Value = toKGM3(sourceId, parseFloat(value));
+            
+            // 更新所有输入框
+            updateAllInputs(kgm3Value, sourceId);
+        }
+
+        function toKGM3(unit, value) {
+            switch(unit) {
+                // 公制
+                case 'kgcm3': return value * 1000000;
+                case 'kgdm3': return value * 1000;
+                case 'kgm3': return value;
+                case 'gcm3': return value * 1000;
+                case 'gdm3': return value;
+                case 'gm3': return value / 1000;
+                case 'mgcm3': return value;
+                case 'mgdm3': return value / 1000;
+                case 'mgm3': return value / 1000000;
+                // 英制
+                case 'lbin3': return value * 27679.9047;
+                case 'lbft3': return value * 16.0185;
+                case 'lbusgal': return value * 119.826427;
+                case 'lbukgal': return value * 99.776373;
+                case 'lbbbl': return value * 2.85316;
+                case 'ozgal': return value * 7.489152;
+                default: return value;
+            }
+        }
+
+        function fromKGM3(unit, kgm3Value) {
+            switch(unit) {
+                // 公制
+                case 'kgcm3': return kgm3Value / 1000000;
+                case 'kgdm3': return kgm3Value / 1000;
+                case 'kgm3': return kgm3Value;
+                case 'gcm3': return kgm3Value / 1000;
+                case 'gdm3': return kgm3Value;
+                case 'gm3': return kgm3Value * 1000;
+                case 'mgcm3': return kgm3Value;
+                case 'mgdm3': return kgm3Value * 1000;
+                case 'mgm3': return kgm3Value * 1000000;
+                // 英制
+                case 'lbin3': return kgm3Value / 27679.9047;
+                case 'lbft3': return kgm3Value / 16.0185;
+                case 'lbusgal': return kgm3Value / 119.826427;
+                case 'lbukgal': return kgm3Value / 99.776373;
+                case 'lbbbl': return kgm3Value / 2.85316;
+                case 'ozgal': return kgm3Value / 7.489152;
+                default: return kgm3Value;
+            }
+        }
+
+        function updateAllInputs(kgm3Value, sourceId) {
+            document.querySelectorAll('input').forEach(input => {
+                if (input.id !== sourceId) {
+                    let convertedValue = fromKGM3(input.id, kgm3Value);
+                    // 使用toLocaleString避免科学计数法
+                    if (Math.abs(convertedValue) >= 1e-6 && Math.abs(convertedValue) < 1e21) {
+                        input.value = convertedValue.toLocaleString('fullwide', {useGrouping: false, maximumFractionDigits: 10});
+                    } else {
+                        input.value = convertedValue;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

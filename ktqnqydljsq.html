@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="GBK">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>空调取暖器用电量计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #f2f2f2;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    input {
+      width: 200px;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>空调取暖器用电量计算器</h1>
+    <h2>友情提示:设备通常都不会满载运行，所以计算结果会比实际结果高很多</h2>
+  <div class="form-container">
+    <div class="form-group">
+      <label>设备功率 (W):</label>
+      <input type="number" id="power" name="power" min="1" oninput="calculateResults()" required>
+    </div>
+    <div class="form-group">
+      <label>每度电价格 (元):</label>
+      <input type="number" id="price" name="price" min="0.01" step="0.01" oninput="calculateResults()" required>
+    </div>
+    <div class="form-group">
+      <label>每天使用时长 (小时):</label>
+      <input type="number" id="daily-hours" name="daily-hours" min="1" oninput="calculateResults()" required>
+    </div>
+  </div>
+  <div class="result">
+    <p>每天用电 <span id="daily-electricity"></span> 度, 花费 <span id="daily-cost"></span> 元</p>
+    <p>每周用电 <span id="weekly-electricity"></span> 度, 花费 <span id="weekly-cost"></span> 元</p>
+    <p>每月用电 <span id="monthly-electricity"></span> 度, 花费 <span id="monthly-cost"></span> 元</p>
+    <p>每季用电 <span id="quarterly-electricity"></span> 度, 花费 <span id="quarterly-cost"></span> 元</p>
+    <p>每年用电 <span id="yearly-electricity"></span> 度, 花费 <span id="yearly-cost"></span> 元</p>
+  </div>
+
+  <script>
+    function calculateResults() {
+      const power = parseFloat(document.getElementById('power').value);
+      const price = parseFloat(document.getElementById('price').value);
+      const dailyHours = parseFloat(document.getElementById('daily-hours').value);
+
+      const dailyElectricity = (power * dailyHours) / 1000;
+      const dailyCost = dailyElectricity * price;
+
+      const weeklyElectricity = dailyElectricity * 7;
+      const weeklyCost = weeklyElectricity * price;
+
+      const monthlyElectricity = dailyElectricity * 30;
+      const monthlyCost = monthlyElectricity * price;
+
+      const quarterlyElectricity = monthlyElectricity * 3;
+      const quarterlyCost = quarterlyElectricity * price;
+
+      const yearlyElectricity = dailyElectricity * 365;
+      const yearlyCost = yearlyElectricity * price;
+
+      document.getElementById('daily-electricity').textContent = dailyElectricity.toFixed(2);
+      document.getElementById('daily-cost').textContent = dailyCost.toFixed(2);
+      document.getElementById('weekly-electricity').textContent = weeklyElectricity.toFixed(2);
+      document.getElementById('weekly-cost').textContent = weeklyCost.toFixed(2);
+      document.getElementById('monthly-electricity').textContent = monthlyElectricity.toFixed(2);
+      document.getElementById('monthly-cost').textContent = monthlyCost.toFixed(2);
+      document.getElementById('quarterly-electricity').textContent = quarterlyElectricity.toFixed(2);
+      document.getElementById('quarterly-cost').textContent = quarterlyCost.toFixed(2);
+      document.getElementById('yearly-electricity').textContent = yearlyElectricity.toFixed(2);
+      document.getElementById('yearly-cost').textContent = yearlyCost.toFixed(2);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>面积单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .unit-row input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .unit-row label {
+            min-width: 120px;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>面积单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>平方千米 (km2):</label>
+            <input type="text" id="km2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公顷 (ha):</label>
+            <input type="text" id="ha" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>公亩 (are):</label>
+            <input type="text" id="are" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方米 (㎡):</label>
+            <input type="text" id="m2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方分米 (dm2):</label>
+            <input type="text" id="dm2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方厘米 (cm2):</label>
+            <input type="text" id="cm2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方毫米 (mm2):</label>
+            <input type="text" id="mm2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方公里 (km2):</label>
+            <input type="text" id="km2_2" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方百米 (hm2):</label>
+            <input type="text" id="hm2" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>英亩 (acre):</label>
+            <input type="text" id="acre" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方英里 (sq.mi):</label>
+            <input type="text" id="sqmi" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方码 (sq.yd):</label>
+            <input type="text" id="sqyd" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方英尺 (sq.ft):</label>
+            <input type="text" id="sqft" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方英寸 (sq.in):</label>
+            <input type="text" id="sqin" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方竿 (sq.rd):</label>
+            <input type="text" id="sqrd" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>市制</h2>
+        <div class="unit-row">
+            <label>顷:</label>
+            <input type="text" id="qing" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>亩:</label>
+            <input type="text" id="mu" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>分:</label>
+            <input type="text" id="fen" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方尺:</label>
+            <input type="text" id="sqchi" oninput="convert(this.id, this.value)">
+        </div>
+        <div class="unit-row">
+            <label>平方寸:</label>
+            <input type="text" id="sqcun" oninput="convert(this.id, this.value)">
+        </div>
+    </div>
+
+    <script>
+        // 所有单位换算到平方米的系数
+        const units = {
+            // 公制
+            'km2': 1000000,
+            'ha': 10000,
+            'are': 100,
+            'm2': 1,
+            'dm2': 0.01,
+            'cm2': 0.0001,
+            'mm2': 0.000001,
+            'km2_2': 1000000,
+            'hm2': 10000,
+
+            // 英制
+            'acre': 4046.8564224,
+            'sqmi': 2589988.110336,
+            'sqyd': 0.836127,
+            'sqft': 0.092903,
+            'sqin': 0.00064516,
+            'sqrd': 25.29285264,
+
+            // 市制
+            'qing': 66666.67,
+            'mu': 666.6667,
+            'fen': 66.66667,
+            'sqchi': 0.11111,
+            'sqcun': 0.001111
+        };
+
+        function convert(fromUnit, value) {
+            if (value === '') {
+                clearAll();
+                return;
+            }
+
+            // 移除非数字字符（保留小数点和负号）
+            value = value.replace(/[^\d.-]/g, '');
+            
+            // 转换为数字
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) {
+                return;
+            }
+
+            // 先转换为平方米
+            const squareMeters = numValue * units[fromUnit];
+
+            // 更新所有输入框
+            for (let unit in units) {
+                if (unit !== fromUnit) {
+                    const element = document.getElementById(unit);
+                    if (element) {
+                        // 转换到目标单位并格式化
+                        const convertedValue = squareMeters / units[unit];
+                        // 使用toFixed来避免科学计数法，但需要去掉末尾的0
+                        element.value = convertedValue.toFixed(20).replace(/\.?0+$/, '');
+                    }
+                }
+            }
+        }
+
+        function clearAll() {
+            for (let unit in units) {
+                const element = document.getElementById(unit);
+                if (element) {
+                    element.value = '';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

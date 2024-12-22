@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>贵金属黄金价格计算器</title>
+    <style>
+ body {
+            font-family: Arial, sans-serif;
+            max-width: 400px; /* 调整页面最大宽度 */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            display: flex;
+            align-items: center; /* 垂直居中对齐 */
+            margin: 10px 0;
+        }
+        input {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 6px 0 0 6px; /* 左上和左下的圆角 */
+            font-size: 16px;
+            width: 60%; /* 调整输入框的宽度 */
+        }
+        select {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 0 6px 6px 0; /* 右上和右下的圆角 */
+            font-size: 16px;
+            width: 40%; /* 调整选择框的宽度 */
+            margin-left: 5px; /* 添加小间隙 */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>贵金属黄金价格计算器</h2>
+        
+        <div class="input-group">
+            <input type="number" id="weightValue" placeholder="输入重量" oninput="calculatePrice()" />
+            <select id="weightUnit" onchange="calculatePrice()">
+                <option value="milligrams">毫克</option>
+                <option value="grams" selected>克</option>
+                <option value="jin">斤</option>
+                <option value="kg">公斤</option>
+            </select>
+        </div>
+        
+        <label for="pricePerGram">每克价格（人民币）：</label>
+        <input type="number" id="pricePerGram" placeholder="输入每克价格" oninput="calculatePrice()" />
+        
+        <div class="result" id="resultDisplay">
+            总价格：<span id="totalPrice">0.00</span> 元
+        </div>
+    </div>
+
+    <script>
+        function calculatePrice() {
+            const weightValue = parseFloat(document.getElementById('weightValue').value) || 0;
+            const pricePerGram = parseFloat(document.getElementById('pricePerGram').value) || 0;
+            const weightUnit = document.getElementById('weightUnit').value;
+
+            let totalWeightInGrams;
+
+            switch (weightUnit) {
+                case 'milligrams':
+                    totalWeightInGrams = weightValue / 1000; // 毫克转克
+                    break;
+                case 'grams':
+                    totalWeightInGrams = weightValue; // 克
+                    break;
+                case 'jin':
+                    totalWeightInGrams = weightValue * 500; // 1 斤 = 500 克
+                    break;
+                case 'kg':
+                    totalWeightInGrams = weightValue * 1000; // 1 公斤 = 1000 克
+                    break;
+                default:
+                    totalWeightInGrams = 0;
+            }
+
+            const totalPrice = (totalWeightInGrams * pricePerGram).toFixed(2);
+            document.getElementById('totalPrice').innerText = totalPrice;
+        }
+    </script>
+</body>
+</html>

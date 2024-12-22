@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>净水器RO膜滤芯水质脱盐率寿命查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        h1 {
+            color: #006600;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .alert {
+            color: red;
+            margin-top: 10px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>净水器RO膜滤芯水质脱盐率寿命查询器</h1>
+	 <h1>根据B站视频给出公式设计https://www.bilibili.com/video/BV1yh4y197MG</h1>
+    <div>
+        <label for="inputTDS">原水 TDS:</label>
+        <input type="number" id="inputTDS" placeholder="请输入原水 TDS" oninput="calculateDesalinationRate()">
+    </div>
+    <div>
+        <label for="pureTDS">纯水 TDS:</label>
+        <input type="number" id="pureTDS" placeholder="请输入纯水 TDS" oninput="calculateDesalinationRate()">
+    </div>
+    <div class="result" id="result"></div>
+    <div class="alert" id="alert"></div>
+
+    <script>
+        function calculateDesalinationRate() {
+            const inputTDS = parseFloat(document.getElementById('inputTDS').value);
+            const pureTDS = parseFloat(document.getElementById('pureTDS').value);
+            const resultDiv = document.getElementById('result');
+            const alertDiv = document.getElementById('alert');
+
+            // 清空结果和警告
+            resultDiv.innerHTML = '';
+            alertDiv.innerHTML = '';
+
+            // 检查输入值
+            if (!isNaN(inputTDS) && !isNaN(pureTDS)) {
+                if (inputTDS > 0) {
+                    const desalinationRate = (inputTDS - pureTDS) / inputTDS;
+
+                    // 显示结果
+                    resultDiv.innerHTML = '脱盐率: ' + (desalinationRate * 100).toFixed(2) + '%';
+
+                    // 检查脱盐率
+                    if (desalinationRate < 0.9) {
+                        alertDiv.innerHTML = '提示：您的脱盐率已低于0.9，建议更换RO膜！';
+                    } else if (desalinationRate > 0.9) {
+                        alertDiv.innerHTML = '提示：您的脱盐率已高于0.9，暂时不建议更换RO膜。';
+                    }
+                } else {
+                    alertDiv.innerHTML = '原水 TDS 必须大于零。';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

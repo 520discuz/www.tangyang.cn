@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBK和UTF文件编码转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input {
+            margin: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>GBK和UTF文件编码转换器</h1>
+    <input type="file" id="fileInput">
+    <select id="encodingSelect">
+        <option value="utf-8">转换为 UTF-8</option>
+        <option value="gbk">转换为 GBK</option>
+    </select>
+    <button id="convertButton">转换并下载</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const encoding = document.getElementById('encodingSelect').value;
+
+            if (fileInput.files.length === 0) {
+                alert("请先选择一个文件。");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const originalText = event.target.result;
+
+                let convertedText;
+                if (encoding === 'utf-8') {
+                    convertedText = new TextDecoder('gbk').decode(new TextEncoder('utf-8').encode(originalText));
+                } else if (encoding === 'gbk') {
+                    convertedText = new TextDecoder('utf-8').decode(new TextEncoder('gbk').encode(originalText));
+                }
+
+                const blob = new Blob([convertedText], { type: 'text/plain;charset=' + encoding });
+                const url = URL.createObjectURL(blob);
+                
+                // 保持原始文件名
+                const originalFileName = file.name.split('.').slice(0, -1).join('.') + (encoding === 'utf-8' ? '.utf8.txt' : '.gbk.txt');
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = originalFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                document.getElementById('result').innerText = "文件已转换并下载。";
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+
+</body>
+</html>

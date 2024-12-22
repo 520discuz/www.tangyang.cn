@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>光照度单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            min-width: 280px;
+        }
+        input {
+            width: 180px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .label {
+            min-width: 150px;
+            font-size: 16px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>光照度单位换算器</h1>
+    
+    <h2>公制</h2>
+    <div class="container">
+        <div class="input-group">
+            <input type="number" id="ph" onInput="convert(this)">
+            <span class="label">厘米烛光 (ph)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="lx" onInput="convert(this)">
+            <span class="label">勒 (lx)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="lm_cm2" onInput="convert(this)">
+            <span class="label">流明/平方厘米 (lm/cm2)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="lm_m2" onInput="convert(this)">
+            <span class="label">流明/平方米 (lm/m2)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="ph2" onInput="convert(this)">
+            <span class="label">辐透 (ph)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="mlx" onInput="convert(this)">
+            <span class="label">毫勒克斯 (mlx)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="ulx" onInput="convert(this)">
+            <span class="label">微勒克斯 (μlx)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="klx" onInput="convert(this)">
+            <span class="label">千勒克斯 (klx)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="nox" onInput="convert(this)">
+            <span class="label">诺克斯 (nox)</span>
+        </div>
+    </div>
+
+    <h2>英制</h2>
+    <div class="container">
+        <div class="input-group">
+            <input type="number" id="lm_in2" onInput="convert(this)">
+            <span class="label">流明/平方英寸 (lm/in2)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="lm_ft2" onInput="convert(this)">
+            <span class="label">流明/平方英尺 (lm/ft2)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="fc" onInput="convert(this)">
+            <span class="label">英尺烛光 (fc)</span>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            // 如果数字非常大或非常小，使用固定小数位数而不是科学计数法
+            if (Math.abs(num) >= 1e-6 && Math.abs(num) < 1e12) {
+                return num.toFixed(6).replace(/\.?0+$/, '');
+            } else {
+                return num.toLocaleString('fullwide', { useGrouping: false });
+            }
+        }
+
+        function convert(input) {
+            // 获取输入的值和ID
+            let value = parseFloat(input.value);
+            let unit = input.id;
+            
+            // 如果输入为空或不是数字，清空所有输入框
+            if (isNaN(value)) {
+                document.querySelectorAll('input').forEach(input => input.value = '');
+                return;
+            }
+            
+            // 先转换为勒克斯(lx)作为基准单位
+            let lx = 0;
+            switch(unit) {
+                case 'ph2': lx = value * 10000; break;  // 1 辐透 = 10000 lx
+                case 'lx': lx = value; break;
+                case 'ph': lx = value * 10000; break;  // 1 ph = 10000 lx
+                case 'lm_cm2': lx = value * 10000; break;  // 1 lm/cm2 = 10000 lx
+                case 'lm_m2': lx = value; break;  // 1 lm/m2 = 1 lx
+                case 'mlx': lx = value * 0.001; break;  // 1 mlx = 0.001 lx
+                case 'ulx': lx = value * 0.000001; break;  // 1 μlx = 0.000001 lx
+                case 'klx': lx = value * 1000; break;  // 1 klx = 1000 lx
+                case 'nox': lx = value * 0.001; break;  // 1 nox = 0.001 lx
+                case 'lm_in2': lx = value * 1550.0031; break;  // 1 lm/in2 = 1550.0031 lx
+                case 'lm_ft2': lx = value * 10.7639; break;  // 1 lm/ft2 = 10.7639 lx
+                case 'fc': lx = value * 10.7639; break;  // 1 fc = 10.7639 lx
+            }
+            
+            // 从勒克斯转换为其他单位
+            if (unit !== 'ph2') document.getElementById('ph2').value = formatNumber(lx / 10000);
+            if (unit !== 'lx') document.getElementById('lx').value = formatNumber(lx);
+            if (unit !== 'ph') document.getElementById('ph').value = formatNumber(lx / 10000);
+            if (unit !== 'lm_cm2') document.getElementById('lm_cm2').value = formatNumber(lx / 10000);
+            if (unit !== 'lm_m2') document.getElementById('lm_m2').value = formatNumber(lx);
+            if (unit !== 'mlx') document.getElementById('mlx').value = formatNumber(lx * 1000);
+            if (unit !== 'ulx') document.getElementById('ulx').value = formatNumber(lx * 1000000);
+            if (unit !== 'klx') document.getElementById('klx').value = formatNumber(lx / 1000);
+            if (unit !== 'nox') document.getElementById('nox').value = formatNumber(lx * 1000);
+            if (unit !== 'lm_in2') document.getElementById('lm_in2').value = formatNumber(lx / 1550.0031);
+            if (unit !== 'lm_ft2') document.getElementById('lm_ft2').value = formatNumber(lx / 10.7639);
+            if (unit !== 'fc') document.getElementById('fc').value = formatNumber(lx / 10.7639);
+        }
+    </script>
+</body>
+</html>

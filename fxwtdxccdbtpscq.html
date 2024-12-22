@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>方形物体大小尺寸对比图片生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 10px;
+        }
+        
+        .controls label {
+            margin-right: 10px;
+        }
+        
+        input[type="number"] {
+            width: 80px;
+            margin-right: 10px;
+            padding: 5px;
+        }
+        
+        select {
+            margin-right: 10px;
+            padding: 5px;
+        }
+        
+        button {
+            padding: 5px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .workspace-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        #canvas {
+            background: white;
+            border: 1px solid #ccc;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .export-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .export-section button {
+            background: #27ae60;
+        }
+        
+        .export-section button:hover {
+            background: #219a52;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="control-group">
+            <label>背景宽度：</label>
+            <input type="number" id="canvasWidth" value="800" min="100" max="4000">
+            
+            <label>背景高度：</label>
+            <input type="number" id="canvasHeight" value="600" min="100" max="4000">
+            
+            <button onClick="updateCanvasSize()">设置背景大小</button>
+			 <button onClick="updateCanvasSize()">删除当前绿色辅助线</button>
+        </div>
+
+        <div class="control-group">
+            <label>物体宽度：</label>
+            <input type="number" id="width" min="0" step="0.1">
+            
+            <label>物体高度：</label>
+            <input type="number" id="height" min="0" step="0.1">
+            
+            <select id="unit">
+                <option value="mm">毫米</option>
+                <option value="cm" selected>厘米</option>
+                <option value="m">米</option>
+            </select>
+            
+            <label>颜色：</label>
+            <input type="color" id="color" value="#3498db">
+            
+            <button onClick="addItem()">添加物体</button>
+            
+            <button onClick="clearCanvas()" style="background: #e74c3c;">清空所有</button>
+        </div>
+        
+        <div class="control-group">
+            <label>缩放比例：</label>
+            <select id="scale" onChange="redrawCanvas()">
+                <option value="0.1">1:10</option>
+                <option value="0.2">1:5</option>
+                <option value="0.5">1:2</option>
+                <option value="1" selected>1:1</option>
+                <option value="2">2:1</option>
+                <option value="5">5:1</option>
+                <option value="10">10:1</option>
+            </select>
+            
+            <label>背景网格：</label>
+            <select id="gridSize" onChange="redrawCanvas()">
+                <option value="0">无</option>
+                <option value="10">10像素</option>
+                <option value="20">20像素</option>
+                <option value="50" selected>50像素</option>
+                <option value="100">100像素</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="workspace-container">
+        <canvas id="canvas"></canvas>
+    </div>
+    
+    <div class="export-section">
+        <button onClick="exportImage()">导出图片</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let items = [];
+        
+        function updateCanvasSize() {
+            const width = parseInt(document.getElementById('canvasWidth').value);
+            const height = parseInt(document.getElementById('canvasHeight').value);
+            
+            if (width < 1 || width > 99999999999999 || height < 1 || height > 99999999999999) {
+                alert('宽度高度如果太大有可能出错');
+                return;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            redrawCanvas();
+        }
+        updateCanvasSize();
+        
+        function getUnitMultiplier(unit) {
+            switch(unit) {
+                case 'mm': return 0.1;
+                case 'm': return 100;
+                default: return 1; // cm
+            }
+        }
+        
+        function drawGrid() {
+            const gridSize = parseInt(document.getElementById('gridSize').value);
+            if (gridSize === 0) return;
+            
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            
+            for (let x = gridSize; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = gridSize; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        function addItem() {
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const unit = document.getElementById('unit').value;
+            const color = document.getElementById('color').value;
+            
+            if (!width || !height) {
+                alert('请输入有效的宽度和高度！');
+                return;
+            }
+            
+            items.push({
+                width,
+                height,
+                unit,
+                color,
+                x: canvas.width / 2,
+                y: canvas.height / 2
+            });
+            
+            redrawCanvas();
+        }
+        
+        function clearCanvas() {
+            items = [];
+            redrawCanvas();
+        }
+        
+        function redrawCanvas(showSnapLines = false) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawGrid();
+            
+            const scale = parseFloat(document.getElementById('scale').value);
+            
+            // 先绘制所有图块
+            items.forEach(item => {
+                const multiplier = getUnitMultiplier(item.unit);
+                const displayWidth = item.width * multiplier * scale;
+                const displayHeight = item.height * multiplier * scale;
+                
+                ctx.fillStyle = item.color;
+                ctx.fillRect(item.x - displayWidth/2, item.y - displayHeight/2, displayWidth, displayHeight);
+                
+                ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(item.x - displayWidth/2, item.y - displayHeight/2, displayWidth, displayHeight);
+            });
+
+            // 如果正在拖动并启用了吸附线显示，绘制吸附指示线
+            if (showSnapLines && draggingItem) {
+                ctx.strokeStyle = '#00ff00';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                
+                snapLines.forEach(line => {
+                    ctx.beginPath();
+                    if (line.orientation === 'vertical') {
+                        ctx.moveTo(line.position, 0);
+                        ctx.lineTo(line.position, canvas.height);
+                    } else {
+                        ctx.moveTo(0, line.position);
+                        ctx.lineTo(canvas.width, line.position);
+                    }
+                    ctx.stroke();
+                });
+                
+                ctx.setLineDash([]);
+            }
+        }
+        
+        // 拖拽功能
+        let draggingItem = null;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let snapLines = [];
+        const SNAP_THRESHOLD = 10; // 吸附阈值（像素）
+        
+        // 获取图块的边界框
+        function getItemBounds(item) {
+            const scale = parseFloat(document.getElementById('scale').value);
+            const multiplier = getUnitMultiplier(item.unit);
+            const displayWidth = item.width * multiplier * scale;
+            const displayHeight = item.height * multiplier * scale;
+            
+            return {
+                left: item.x - displayWidth/2,
+                right: item.x + displayWidth/2,
+                top: item.y - displayHeight/2,
+                bottom: item.y + displayHeight/2,
+                centerX: item.x,
+                centerY: item.y,
+                width: displayWidth,
+                height: displayHeight
+            };
+        }
+        
+        // 检查吸附点
+        function checkSnapping(movingBounds, staticBounds) {
+            const snaps = [];
+            
+            // 垂直对齐检查点
+            const vAlignPoints = [
+                { moving: movingBounds.left, static: staticBounds.left, type: 'left' },
+                { moving: movingBounds.centerX, static: staticBounds.centerX, type: 'center' },
+                { moving: movingBounds.right, static: staticBounds.right, type: 'right' },
+                { moving: movingBounds.left, static: staticBounds.right, type: 'adjacent' },
+                { moving: movingBounds.right, static: staticBounds.left, type: 'adjacent' }
+            ];
+            
+            // 水平对齐检查点
+            const hAlignPoints = [
+                { moving: movingBounds.top, static: staticBounds.top, type: 'top' },
+                { moving: movingBounds.centerY, static: staticBounds.centerY, type: 'center' },
+                { moving: movingBounds.bottom, static: staticBounds.bottom, type: 'bottom' },
+                { moving: movingBounds.top, static: staticBounds.bottom, type: 'adjacent' },
+                { moving: movingBounds.bottom, static: staticBounds.top, type: 'adjacent' }
+            ];
+            
+            // 检查垂直对齐
+            vAlignPoints.forEach(point => {
+                const diff = Math.abs(point.moving - point.static);
+                if (diff < SNAP_THRESHOLD) {
+                    snaps.push({
+                        orientation: 'vertical',
+                        position: point.static,
+                        offset: point.static - point.moving,
+                        type: point.type
+                    });
+                }
+            });
+            
+            // 检查水平对齐
+            hAlignPoints.forEach(point => {
+                const diff = Math.abs(point.moving - point.static);
+                if (diff < SNAP_THRESHOLD) {
+                    snaps.push({
+                        orientation: 'horizontal',
+                        position: point.static,
+                        offset: point.static - point.moving,
+                        type: point.type
+                    });
+                }
+            });
+            
+            return snaps;
+        }
+        
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const scale = parseFloat(document.getElementById('scale').value);
+            
+            for (let i = items.length - 1; i >= 0; i--) {
+                const item = items[i];
+                const multiplier = getUnitMultiplier(item.unit);
+                const displayWidth = item.width * multiplier * scale;
+                const displayHeight = item.height * multiplier * scale;
+                
+                if (x >= item.x - displayWidth/2 && x <= item.x + displayWidth/2 &&
+                    y >= item.y - displayHeight/2 && y <= item.y + displayHeight/2) {
+                    draggingItem = item;
+                    dragStartX = x - item.x;
+                    dragStartY = y - item.y;
+                    break;
+                }
+            }
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (draggingItem) {
+                const rect = canvas.getBoundingClientRect();
+                let newX = e.clientX - rect.left - dragStartX;
+                let newY = e.clientY - rect.top - dragStartY;
+                
+                // 临时更新位置以计算移动边界
+                const originalX = draggingItem.x;
+                const originalY = draggingItem.y;
+                draggingItem.x = newX;
+                draggingItem.y = newY;
+                const movingBounds = getItemBounds(draggingItem);
+                
+                // 重置位置
+                draggingItem.x = originalX;
+                draggingItem.y = originalY;
+                
+                // 检查与其他图块的吸附
+                snapLines = [];
+                let bestSnapX = null;
+                let bestSnapY = null;
+                let minSnapDistX = SNAP_THRESHOLD;
+                let minSnapDistY = SNAP_THRESHOLD;
+                
+                items.forEach(item => {
+                    if (item === draggingItem) return;
+                    
+                    const staticBounds = getItemBounds(item);
+                    const snaps = checkSnapping(movingBounds, staticBounds);
+                    
+                    snaps.forEach(snap => {
+                        if (snap.orientation === 'vertical') {
+                            const snapDist = Math.abs(snap.offset);
+                            if (snapDist < minSnapDistX) {
+                                minSnapDistX = snapDist;
+                                bestSnapX = snap;
+                            }
+                        } else {
+                            const snapDist = Math.abs(snap.offset);
+                            if (snapDist < minSnapDistY) {
+                                minSnapDistY = snapDist;
+                                bestSnapY = snap;
+                            }
+                        }
+                        snapLines.push(snap);
+                    });
+                });
+                
+                // 应用最佳吸附
+                if (bestSnapX) {
+                    newX += bestSnapX.offset;
+                }
+                if (bestSnapY) {
+                    newY += bestSnapY.offset;
+                }
+                
+                draggingItem.x = newX;
+                draggingItem.y = newY;
+                
+                // 重绘画布，显示吸附线
+                redrawCanvas(snapLines.length > 0);
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            draggingItem = null;
+        });
+        
+        function exportImage() {
+            const link = document.createElement('a');
+            link.download = 'size-comparison.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>

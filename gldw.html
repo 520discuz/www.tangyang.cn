@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>功率单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            min-width: 200px;
+        }
+        input {
+            width: 150px;
+            padding: 5px;
+            margin-right: 5px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+        .label {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>功率单位换算器</h1>
+    
+    <h2>公制</h2>
+    <div class="container" id="metric">
+        <div class="input-group">
+            <input type="number" id="w" onInput="convert(this)">
+            <span class="label">瓦 (W)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="kw" onInput="convert(this)">
+            <span class="label">千瓦 (kW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="ps" onInput="convert(this)">
+            <span class="label">米制马力 (PS)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="kcals" onInput="convert(this)">
+            <span class="label">千卡/秒 (kcal/s)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="btus" onInput="convert(this)">
+            <span class="label">英热单位/秒 (Btu/s)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="kgms" onInput="convert(this)">
+            <span class="label">公斤·米/秒 (kg·m/s)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="js" onInput="convert(this)">
+            <span class="label">焦耳/秒 (J/s)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="nms" onInput="convert(this)">
+            <span class="label">牛顿·米/秒 (N·m/s)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="dw" onInput="convert(this)">
+            <span class="label">分瓦 (dW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="cw" onInput="convert(this)">
+            <span class="label">厘瓦 (cW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="mw" onInput="convert(this)">
+            <span class="label">毫瓦 (mW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="uw" onInput="convert(this)">
+            <span class="label">微瓦 (μW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="nw" onInput="convert(this)">
+            <span class="label">纳瓦 (nW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="pw" onInput="convert(this)">
+            <span class="label">皮瓦 (pW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="fw" onInput="convert(this)">
+            <span class="label">飞瓦 (fW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="aw" onInput="convert(this)">
+            <span class="label">阿瓦 (aW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="zw" onInput="convert(this)">
+            <span class="label">仄瓦 (zW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="yw" onInput="convert(this)">
+            <span class="label">幺瓦 (yW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="daw" onInput="convert(this)">
+            <span class="label">十瓦 (daW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="hw" onInput="convert(this)">
+            <span class="label">百瓦 (hW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="mww" onInput="convert(this)">
+            <span class="label">兆瓦 (MW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="gw" onInput="convert(this)">
+            <span class="label">吉瓦 (GW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="tw" onInput="convert(this)">
+            <span class="label">太瓦 (TW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="ppw" onInput="convert(this)">
+            <span class="label">帕瓦 (PW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="ew" onInput="convert(this)">
+            <span class="label">艾瓦 (EW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="zzw" onInput="convert(this)">
+            <span class="label">泽瓦 (ZW)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="yyw" onInput="convert(this)">
+            <span class="label">尧瓦 (YW)</span>
+        </div>
+    </div>
+
+    <h2>英制</h2>
+    <div class="container" id="imperial">
+        <div class="input-group">
+            <input type="number" id="hp" onInput="convert(this)">
+            <span class="label">英制马力 (hp)</span>
+        </div>
+    </div>
+
+    <script>
+        function convert(input) {
+            // 获取输入的值和ID
+            let value = parseFloat(input.value);
+            let unit = input.id;
+            
+            // 如果输入为空或不是数字，清空所有输入框
+            if (isNaN(value)) {
+                document.querySelectorAll('input').forEach(input => input.value = '');
+                return;
+            }
+            
+            // 先转换为瓦特
+            let watts = 0;
+            switch(unit) {
+                case 'w': watts = value; break;
+                case 'kw': watts = value * 1000; break;
+                case 'ps': watts = value * 735.49875; break;
+                case 'kcals': watts = value * 4184; break;
+                case 'btus': watts = value * 1055.06; break;
+                case 'kgms': watts = value * 9.80665; break;
+                case 'js': watts = value; break;
+                case 'nms': watts = value; break;
+                case 'dw': watts = value * 0.1; break;
+                case 'cw': watts = value * 0.01; break;
+                case 'mw': watts = value * 0.001; break;
+                case 'uw': watts = value * 1e-6; break;
+                case 'nw': watts = value * 1e-9; break;
+                case 'pw': watts = value * 1e-12; break;
+                case 'fw': watts = value * 1e-15; break;
+                case 'aw': watts = value * 1e-18; break;
+                case 'zw': watts = value * 1e-21; break;
+                case 'yw': watts = value * 1e-24; break;
+                case 'daw': watts = value * 10; break;
+                case 'hw': watts = value * 100; break;
+                case 'mww': watts = value * 1e6; break;
+                case 'gw': watts = value * 1e9; break;
+                case 'tw': watts = value * 1e12; break;
+                case 'ppw': watts = value * 1e15; break;
+                case 'ew': watts = value * 1e18; break;
+                case 'zzw': watts = value * 1e21; break;
+                case 'yyw': watts = value * 1e24; break;
+                case 'hp': watts = value * 745.7; break;
+            }
+            
+            // 从瓦特转换为其他单位
+            if (unit !== 'w') document.getElementById('w').value = watts.toString();
+            if (unit !== 'kw') document.getElementById('kw').value = (watts/1000).toString();
+            if (unit !== 'ps') document.getElementById('ps').value = (watts/735.49875).toString();
+            if (unit !== 'kcals') document.getElementById('kcals').value = (watts/4184).toString();
+            if (unit !== 'btus') document.getElementById('btus').value = (watts/1055.06).toString();
+            if (unit !== 'kgms') document.getElementById('kgms').value = (watts/9.80665).toString();
+            if (unit !== 'js') document.getElementById('js').value = watts.toString();
+            if (unit !== 'nms') document.getElementById('nms').value = watts.toString();
+            if (unit !== 'dw') document.getElementById('dw').value = (watts*10).toString();
+            if (unit !== 'cw') document.getElementById('cw').value = (watts*100).toString();
+            if (unit !== 'mw') document.getElementById('mw').value = (watts*1000).toString();
+            if (unit !== 'uw') document.getElementById('uw').value = (watts*1e6).toString();
+            if (unit !== 'nw') document.getElementById('nw').value = (watts*1e9).toString();
+            if (unit !== 'pw') document.getElementById('pw').value = (watts*1e12).toString();
+            if (unit !== 'fw') document.getElementById('fw').value = (watts*1e15).toString();
+            if (unit !== 'aw') document.getElementById('aw').value = (watts*1e18).toString();
+            if (unit !== 'zw') document.getElementById('zw').value = (watts*1e21).toString();
+            if (unit !== 'yw') document.getElementById('yw').value = (watts*1e24).toString();
+            if (unit !== 'daw') document.getElementById('daw').value = (watts/10).toString();
+            if (unit !== 'hw') document.getElementById('hw').value = (watts/100).toString();
+            if (unit !== 'mww') document.getElementById('mww').value = (watts/1e6).toString();
+            if (unit !== 'gw') document.getElementById('gw').value = (watts/1e9).toString();
+            if (unit !== 'tw') document.getElementById('tw').value = (watts/1e12).toString();
+            if (unit !== 'ppw') document.getElementById('ppw').value = (watts/1e15).toString();
+            if (unit !== 'ew') document.getElementById('ew').value = (watts/1e18).toString();
+            if (unit !== 'zzw') document.getElementById('zzw').value = (watts/1e21).toString();
+            if (unit !== 'yyw') document.getElementById('yyw').value = (watts/1e24).toString();
+            if (unit !== 'hp') document.getElementById('hp').value = (watts/745.7).toString();
+        }
+    </script>
+</body>
+</html>

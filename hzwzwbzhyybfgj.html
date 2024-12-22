@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>汉字文字文本转换语音播放工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #rate {
+            width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <h1>汉字文字文本转换语音播放工具</h1>
+    
+    <textarea id="textInput" rows="10" cols="100" placeholder="请输入文本..."></textarea>
+    <br>
+    
+    <label for="rate">语速:</label>
+    <input type="number" id="rate" value="1" step="0.1" min="0.1" max="10">
+    
+    <button onClick="playText()">播放</button>
+    <button onClick="pauseText()">暂停</button>
+    <button onClick="resumeText()">继续</button>
+    <button onClick="stopText()">重新播放</button>
+    <button onClick="toggleLoop()">打开循环</button>
+
+    <script>
+        let utterance;
+        let isLooping = false;
+
+        function playText() {
+            const text = document.getElementById('textInput').value;
+            const rate = parseFloat(document.getElementById('rate').value);
+            utterance = new SpeechSynthesisUtterance(text);
+
+            utterance.rate = rate; // 设置语速
+            
+            // 处理循环播放
+            if (isLooping) {
+                utterance.onend = () => {
+                    window.speechSynthesis.speak(utterance); // 重新播放
+                };
+            }
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function pauseText() {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.pause();
+            }
+        }
+
+        function resumeText() {
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+            }
+        }
+
+        function stopText() {
+            window.speechSynthesis.cancel(); // 停止播放
+            playText(); // 重新播放
+        }
+
+        function toggleLoop() {
+            isLooping = !isLooping; // 切换循环状态
+            const loopButton = document.querySelector('button[onclick="toggleLoop()"]');
+            loopButton.textContent = isLooping ? "取消循环播放" : "循环播放"; // 更新按钮文本
+        }
+    </script>
+	<p>
+友情提示：	<p>
+1.如果要使用循环功能，必须先点击打开循环，然后播放，否则无效。	<p>
+2.如果出现语速或播放时出现任何问题，可以点击重新播放就能修复。<p>
+3.如果出现播放无声音，可以点击重新播放就能修复。
+</body>
+</html>

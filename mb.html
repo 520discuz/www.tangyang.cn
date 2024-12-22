@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>可新建式秒表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .stopwatches-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: flex-start;
+        }
+        .new-stopwatch-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: #9c27b0;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .new-stopwatch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+        }
+        .stopwatch {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-width: 300px;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #666;
+        }
+        .display {
+            font-size: 2.5rem;
+            font-family: monospace;
+            margin: 1rem 0;
+            color: #333;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .start {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .stop {
+            background-color: #f44336;
+            color: white;
+        }
+        .pause {
+            background-color: #FF9800;
+            color: white;
+        }
+        .lap {
+            background-color: #2196F3;
+            color: white;
+        }
+        .reset {
+            background-color: #9E9E9E;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .lap-times {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+        }
+        .lap-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<h2>（因部分浏览器有内存节约机制，请勿把浏览器最小化，否则会出错！）</h1>
+    <div class="stopwatches-container" id="stopwatchesContainer"></div>
+    <button class="new-stopwatch-btn" id="newStopwatchBtn">新建秒表</button>
+
+    <script>
+        // Web Worker 代码模板
+        const workerCode = `
+            let startTime = 0;
+            let running = false;
+            let intervalId = null;
+            let pausedTime = 0;
+            let isPaused = false;
+
+            function updateTime() {
+                if (running && !isPaused) {
+                    const currentTime = Date.now();
+                    const elapsedTime = currentTime - startTime + pausedTime;
+                    postMessage({ type: 'update', time: elapsedTime });
+                }
+            }
+
+            self.onmessage = function(e) {
+                switch(e.data.command) {
+                    case 'start':
+                        running = true;
+                        isPaused = false;
+                        if (pausedTime === 0) {
+                            startTime = Date.now();
+                        } else {
+                            startTime = Date.now() - pausedTime;
+                        }
+                        intervalId = setInterval(updateTime, 10);
+                        break;
+                    case 'stop':
+                        running = false;
+                        isPaused = false;
+                        pausedTime = 0;
+                        if (intervalId) {
+                            clearInterval(intervalId);
+                            intervalId = null;
+                        }
+                        break;
+                    case 'pause':
+                        isPaused = true;
+                        pausedTime = Date.now() - startTime + pausedTime;
+                        break;
+                    case 'resume':
+                        isPaused = false;
+                        startTime = Date.now();
+                        break;
+                    case 'reset':
+                        running = false;
+                        isPaused = false;
+                        startTime = 0;
+                        pausedTime = 0;
+                        if (intervalId) {
+                            clearInterval(intervalId);
+                            intervalId = null;
+                        }
+                        postMessage({ type: 'update', time: 0 });
+                        break;
+                }
+            };
+        `;
+
+        // 格式化时间显示
+        function formatTime(ms) {
+            const date = new Date(ms);
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+            const milliseconds = date.getUTCMilliseconds().toString().padStart(3, '0');
+            return `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        // 创建新的秒表
+        class Stopwatch {
+            constructor(container) {
+                this.id = 'stopwatch-' + Date.now();
+                this.createStopwatchElement(container);
+                this.initializeWorker();
+                this.setupEventListeners();
+            }
+
+            createStopwatchElement(container) {
+                const stopwatch = document.createElement('div');
+                stopwatch.className = 'stopwatch';
+                stopwatch.id = this.id;
+                stopwatch.innerHTML = `
+                    <button class="close-btn">&times;</button>
+                    <div class="display">00:00.000</div>
+                    <div class="buttons">
+                        <button class="start">开始</button>
+                        <button class="pause">暂停</button>
+                        <button class="lap">计圈</button>
+                        <button class="reset">重置</button>
+                    </div>
+                    <div class="lap-times"></div>
+                `;
+                container.appendChild(stopwatch);
+
+                this.elements = {
+                    display: stopwatch.querySelector('.display'),
+                    startBtn: stopwatch.querySelector('.start'),
+                    pauseBtn: stopwatch.querySelector('.pause'),
+                    lapBtn: stopwatch.querySelector('.lap'),
+                    resetBtn: stopwatch.querySelector('.reset'),
+                    closeBtn: stopwatch.querySelector('.close-btn'),
+                    lapTimes: stopwatch.querySelector('.lap-times')
+                };
+            }
+
+            initializeWorker() {
+                const blob = new Blob([workerCode], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(blob);
+                this.worker = new Worker(workerUrl);
+                this.isRunning = false;
+                this.isPaused = false;
+                this.elapsedTime = 0;
+                this.lapCounter = 1;
+                this.lastLapTime = 0;
+
+                this.worker.onmessage = (e) => {
+                    if (e.data.type === 'update') {
+                        this.elapsedTime = e.data.time;
+                        this.elements.display.textContent = formatTime(this.elapsedTime);
+                    }
+                };
+            }
+
+            setupEventListeners() {
+                this.elements.startBtn.addEventListener('click', () => {
+                    if (!this.isRunning) {
+                        this.worker.postMessage({ command: 'start' });
+                        this.elements.startBtn.textContent = '停止';
+                        this.elements.startBtn.classList.remove('start');
+                        this.elements.startBtn.classList.add('stop');
+                        this.isPaused = false;
+                    } else {
+                        this.worker.postMessage({ command: 'stop' });
+                        this.elements.startBtn.textContent = '开始';
+                        this.elements.startBtn.classList.remove('stop');
+                        this.elements.startBtn.classList.add('start');
+                        this.isPaused = false;
+                    }
+                    this.isRunning = !this.isRunning;
+                });
+
+                this.elements.pauseBtn.addEventListener('click', () => {
+                    if (this.isRunning) {
+                        if (!this.isPaused) {
+                            this.worker.postMessage({ command: 'pause' });
+                            this.elements.pauseBtn.textContent = '继续';
+                        } else {
+                            this.worker.postMessage({ command: 'resume' });
+                            this.elements.pauseBtn.textContent = '暂停';
+                        }
+                        this.isPaused = !this.isPaused;
+                    }
+                });
+
+                this.elements.resetBtn.addEventListener('click', () => {
+                    this.worker.postMessage({ command: 'reset' });
+                    this.elapsedTime = 0;
+                    this.lastLapTime = 0;
+                    this.lapCounter = 1;
+                    this.elements.lapTimes.innerHTML = '';
+                    this.elements.startBtn.textContent = '开始';
+                    this.elements.startBtn.classList.remove('stop');
+                    this.elements.startBtn.classList.add('start');
+                    this.elements.pauseBtn.textContent = '暂停';
+                    this.isRunning = false;
+                    this.isPaused = false;
+                });
+
+                this.elements.lapBtn.addEventListener('click', () => {
+                    if (this.isRunning) {
+                        const lapTime = this.elapsedTime - this.lastLapTime;
+                        const lapItem = document.createElement('div');
+                        lapItem.className = 'lap-item';
+                        lapItem.textContent = `第 ${this.lapCounter} 圈: ${formatTime(lapTime)}`;
+                        this.elements.lapTimes.insertBefore(lapItem, this.elements.lapTimes.firstChild);
+                        this.lastLapTime = this.elapsedTime;
+                        this.lapCounter++;
+                    }
+                });
+
+                this.elements.closeBtn.addEventListener('click', () => {
+                    this.worker.terminate();
+                    document.getElementById(this.id).remove();
+                });
+            }
+        }
+
+        // 初始化应用
+        const container = document.getElementById('stopwatchesContainer');
+        const newStopwatchBtn = document.getElementById('newStopwatchBtn');
+
+        // 创建第一个秒表
+        new Stopwatch(container);
+
+        // 新建秒表按钮事件
+        newStopwatchBtn.addEventListener('click', () => {
+            new Stopwatch(container);
+        });
+    </script>
+</body>
+</html>

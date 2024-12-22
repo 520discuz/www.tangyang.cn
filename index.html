@@ -1,16 +1,17 @@
-ï»¿<html>
+
+<html>
 <head>
-  <title>å”é˜³ç½‘ç»œåˆ†äº«</title>
-  <meta name="description" content="æ¬¢è¿å…‰ä¸´ï¼Œå„ç§æœç´¢å¼•æ“é›†åˆåœ¨é¦–é¡µï¼Œæ—¨åœ¨æ–¹ä¾¿å¤§å®¶æœç´¢ã€‚åŒæ—¶ç½‘ç«™ä¹Ÿæä¾›å¾ˆå¤šé€šè¿‡AIç”Ÿæˆçš„å®ç”¨å°å·¥å…·ã€‚" />
+  <title>ÌÆÑôÍøÂç·ÖÏí</title>
+  <meta name="description" content="»¶Ó­¹âÁÙ£¬¸÷ÖÖËÑË÷ÒıÇæ¼¯ºÏÔÚÊ×Ò³£¬Ö¼ÔÚ·½±ã´ó¼ÒËÑË÷¡£Í¬Ê±ÍøÕ¾Ò²Ìá¹©ºÜ¶àÍ¨¹ıAIÉú³ÉµÄÊµÓÃĞ¡¹¤¾ß¡£" />
   <style>
-    /* å…¨å±€æ ·å¼ */
+    /* È«¾ÖÑùÊ½ */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
 
-    /* æœç´¢å®¹å™¨æ ·å¼ */
+    /* ËÑË÷ÈİÆ÷ÑùÊ½ */
     .search-container {
       padding: 20px;
       text-align: center;
@@ -53,7 +54,7 @@
       background-color: #cccccc;
     }
 
-    /* å“åº”å¼æ ·å¼ */
+    /* ÏìÓ¦Ê½ÑùÊ½ */
     @media (max-width: 767px) {
       .search-input {
         width: 90%;
@@ -68,102 +69,110 @@
   </style>
 </head>
 <body>
-  <center>æ¬¢è¿æ¥åˆ°å”é˜³ç½‘ç»œåˆ†äº«ï¼Œè¿™æ˜¯ä¸€ä¸ªå…¬ç›Šæ€§è´¨çš„ç½‘ç«™ï¼Œåˆ†äº«å„ç±»ç”µè„‘ç‰ˆå®ç”¨å°å·¥å…·ï¼Œæœ¬ç«™å°å·¥å…·å‡ä¸ºHTMLä»£ç ç¼–å†™ï¼Œå…¨éƒ¨å…è´¹å¼€æºæ— å¹¿å‘Šï¼Œç”¨ç”µè„‘é¼ æ ‡å³å‡»ç½‘é¡µé€‰æ‹©å¦å­˜ä¸ºå°±å¯æ°¸ä¹…ä¿å­˜åˆ°æœ¬åœ°ç”µè„‘ï¼</center>
-  <hr />
   <div class="search-container">
-    <h2><font color="#000">è¯·å…ˆè¾“å…¥æ‚¨è¦æœç´¢çš„å†…å®¹ï¼š</font></h2>
+    <h2><font color="#000">ÇëÏÈÊäÈëÄúÒªËÑË÷µÄÄÚÈİ£º</font></h2>
     
-    <input type="text" class="search-input" placeholder="ç‚¹å‡»æ­¤å¤„è¾“å…¥å…³é”®å­—" id="searchInput">
+    <input type="text" class="search-input" placeholder="µã»÷´Ë´¦ÊäÈë¹Ø¼ü×Ö" id="searchInput">
     <script>
       const input = document.getElementById('searchInput');
 
       input.addEventListener('focus', function() {
-        // å½“è¾“å…¥æ¡†è·å¾—ç„¦ç‚¹æ—¶ï¼Œæ¸…ç©ºå ä½ç¬¦
+        // µ±ÊäÈë¿ò»ñµÃ½¹µãÊ±£¬Çå¿ÕÕ¼Î»·û
         this.placeholder = '';
       });
 
       input.addEventListener('blur', function() {
-        // å½“è¾“å…¥æ¡†å¤±å»ç„¦ç‚¹ä¸”ä¸ºç©ºæ—¶ï¼Œæ¢å¤å ä½ç¬¦
+        // µ±ÊäÈë¿òÊ§È¥½¹µãÇÒÎª¿ÕÊ±£¬»Ö¸´Õ¼Î»·û
         if (this.value === '') {
-          this.placeholder = 'ç‚¹å‡»æ­¤å¤„è¾“å…¥å…³é”®å­—';
+          this.placeholder = 'µã»÷´Ë´¦ÊäÈë¹Ø¼ü×Ö';
         }
       });
     </script>
     
-    <h2><font color="#000">ç„¶åç‚¹å‡»ä¸‹é¢çš„æœç´¢å¼•æ“ï¼š</font></h2>
+    <h2><font color="#000">È»ºóµã»÷ÏÂÃæµÄËÑË÷ÒıÇæ£º</font></h2>
     <div class="search-buttons">
-      <!-- åŠ¨æ€ç”Ÿæˆæœç´¢æŒ‰é’® -->
+      <!-- ¶¯Ì¬Éú³ÉËÑË÷°´Å¥ -->
     </div>
   </div>
 
   <script>
-    // æœç´¢å¼•æ“é“¾æ¥é…ç½®
+    // ËÑË÷ÒıÇæÁ´½ÓÅäÖÃ
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
     
     var searchEngines = {
-      'baiduç™¾åº¦æœç´¢': {url: isMobileDevice() ? 'https://m.baidu.com/s?wd=' : 'https://www.baidu.com/s?wd=', extraParams: ''},
-      'bingå¿…åº”æœç´¢': {url: 'https://cn.bing.com/search?q=', extraParams: ''},
-      '360æœç´¢': {url: 'https://www.so.com/s?ie=utf-8&fr=360sou_newhome&src=360sou_newhome&ssid=e961692a196a4e7ca74fe089e0b53822&sp=a9a&cp=060a9a0007&nlpv=placeholder_test_zc_55&q=', extraParams: ''},
-      'sogouæœç‹—æœç´¢': {url: 'https://www.sogou.com/web?query=', extraParams: ''},
-      'toutiaoå¤´æ¡æœç´¢': {url: 'https://so.toutiao.com/search?dvpf=pc&source=input&keyword=', extraParams: ''},
-      'bilibiliå“”å“©å“”å“©æœç´¢': {url: 'https://search.bilibili.com/all?keyword=', extraParams: ''},
-      'douyinæŠ–éŸ³æœç´¢': {url: 'https://www.douyin.com/search/', extraParams: ''},
-      'kuaishouå¿«æ‰‹æœç´¢': {url: 'https://www.kuaishou.com/search/video?searchKey=', extraParams: ''},
-      'zhihuçŸ¥ä¹æœç´¢': {url: 'https://www.zhihu.com/search?type=content&q=', extraParams: ''},
-      'xhså°çº¢ä¹¦æœç´¢': {url: 'https://www.xiaohongshu.com/search_result?keyword=', extraParams: ''},
-      'weiboå¾®åšæœç´¢': {url: 'https://s.weibo.com/weibo?q=', extraParams: ''},
-      'youdaoæœ‰é“æœç´¢': {url: 'https://www.youdao.com/result?word=', extraParams: '&lang=en'},
-      'doubanè±†ç“£æœç´¢': {url: 'https://www.douban.com/search?source=suggest&q=', extraParams: ''},
-      'taobaoæ·˜å®æœç´¢': {url: 'https://s.taobao.com/search?commend=all&ie=utf8&initiative_id=tbindexz_20170306&localImgKey=&page=1&q=', extraParams: '&search_type=item&sourceId=tb.index&spm=a21bo.jianhua%2Fa.201856.d13&ssid=s5-e&tab=all'},
-      'tmallå¤©çŒ«æœç´¢': {url: 'https://s.taobao.com/search?fromTmallRedirect=true&localImgKey=&page=13&q=', extraParams: '&spm=a21bo.tmall%2Fa.201856.d13&tab=mall'},
-      'jdäº¬ä¸œæœç´¢': {url: 'https://search.jd.com/Search?keyword=', extraParams: ''},
-      'pddæ‹¼å¤šå¤šæœç´¢': {url: 'https://mobile.yangkeduo.com/search_result.html?search_key=', extraParams: ''},
-      '1688é˜¿é‡Œå·´å·´æœç´¢': {url: 'https://p4psearch.1688.com/page.html?hpageId=old-sem-pc-list&keywords=', extraParams: ''},
-      'amazonäºšé©¬é€Šæœç´¢': {url: 'https://www.amazon.com/s?k=', extraParams: ''},
-      'goofishé—²é±¼æœç´¢': {url: 'https://www.goofish.com/search?q=', extraParams: ''},
-      '163ç½‘æ˜“æœç´¢': {url: 'https://www.163.com/search?keyword=', extraParams: ''},
-      'sohuæœç‹æœç´¢': {url: 'https://search.sohu.com/?queryType=outside&keyword=', extraParams: ''},
-      'sinaæ–°æµªæœç´¢': {url: 'https://search.sina.com.cn/?c=news&q=', extraParams: ''},
-      'qqè…¾è®¯æœç´¢': {url: 'https://new.qq.com/search?query=', extraParams: ''}
+      'baidu°Ù¶ÈËÑË÷': {url: isMobileDevice() ? 'https://m.baidu.com/s?wd=' : 'https://www.baidu.com/s?wd=', extraParams: ''},
+      'bing±ØÓ¦ËÑË÷': {url: 'https://cn.bing.com/search?q=', extraParams: ''},
+      '360ËÑË÷': {url: 'https://www.so.com/s?ie=utf-8&fr=360sou_newhome&src=360sou_newhome&ssid=e961692a196a4e7ca74fe089e0b53822&sp=a9a&cp=060a9a0007&nlpv=placeholder_test_zc_55&q=', extraParams: ''},
+      'sogouËÑ¹·ËÑË÷': {url: 'https://www.sogou.com/web?query=', extraParams: ''},
+      'toutiaoÍ·ÌõËÑË÷': {url: 'https://so.toutiao.com/search?dvpf=pc&source=input&keyword=', extraParams: ''},
+      'bilibilißÙÁ¨ßÙÁ¨ËÑË÷': {url: 'https://search.bilibili.com/all?keyword=', extraParams: ''},
+      'douyin¶¶ÒôËÑË÷': {url: 'https://www.douyin.com/search/', extraParams: ''},
+      'kuaishou¿ìÊÖËÑË÷': {url: 'https://www.kuaishou.com/search/video?searchKey=', extraParams: ''},
+	  'youkuÓÅ¿áËÑË÷': {url: 'https://so.youku.com/search_video/q_', extraParams: ''},
+	  'tudouÍÁ¶¹ËÑË÷': {url: 'https://search.tudou.com/search_video/q_', extraParams: ''},
+      'iqiyi°®ÆæÒÕËÑË÷': {url: 'https://www.kuaishou.com/search/video?searchKey=', extraParams: ''},
+	  'mgtvÃ¢¹ûTVËÑË÷': {url: 'https://so.mgtv.com/so?k=', extraParams: ''},
+      'zhihuÖªºõËÑË÷': {url: 'https://www.zhihu.com/search?type=content&q=', extraParams: ''},
+      'xhsĞ¡ºìÊéËÑË÷': {url: 'https://www.xiaohongshu.com/search_result?keyword=', extraParams: ''},
+      'weiboÎ¢²©ËÑË÷': {url: 'https://s.weibo.com/weibo?q=', extraParams: ''},
+      'youdaoÓĞµÀËÑË÷': {url: 'https://www.youdao.com/result?word=', extraParams: '&lang=en'},
+      'douban¶¹°êËÑË÷': {url: 'https://www.douban.com/search?source=suggest&q=', extraParams: ''},
+      'taobaoÌÔ±¦ËÑË÷': {url: 'https://s.taobao.com/search?commend=all&ie=utf8&initiative_id=tbindexz_20170306&localImgKey=&page=1&q=', extraParams: '&search_type=item&sourceId=tb.index&spm=a21bo.jianhua%2Fa.201856.d13&ssid=s5-e&tab=all'},
+      'tmallÌìÃ¨ËÑË÷': {url: 'https://s.taobao.com/search?fromTmallRedirect=true&localImgKey=&page=13&q=', extraParams: '&spm=a21bo.tmall%2Fa.201856.d13&tab=mall'},
+      'jd¾©¶«ËÑË÷': {url: 'https://search.jd.com/Search?keyword=', extraParams: ''},
+      'pddÆ´¶à¶àËÑË÷': {url: 'https://mobile.yangkeduo.com/search_result.html?search_key=', extraParams: ''},
+      '1688°¢Àï°Í°ÍËÑË÷': {url: 'https://p4psearch.1688.com/page.html?hpageId=old-sem-pc-list&keywords=', extraParams: ''},
+      'amazonÑÇÂíÑ·ËÑË÷': {url: 'https://www.amazon.com/s?k=', extraParams: ''},
+      'goofishÏĞÓãËÑË÷': {url: 'https://www.goofish.com/search?q=', extraParams: ''},
+      '163ÍøÒ×ËÑË÷': {url: 'https://www.163.com/search?keyword=', extraParams: ''},
+      'sohuËÑºüËÑË÷': {url: 'https://search.sohu.com/?queryType=outside&keyword=', extraParams: ''},
+      'sinaĞÂÀËËÑË÷': {url: 'https://search.sina.com.cn/?c=news&q=', extraParams: ''},
+      'qqÌÚÑ¶ËÑË÷': {url: 'https://new.qq.com/search?query=', extraParams: ''},
+	  'ifeng·ï»ËËÑË÷': {url: 'https://so.ifeng.com/?q=', extraParams: ''}
     };
 
-    // åŠ¨æ€ç”Ÿæˆæœç´¢æŒ‰é’®
+    // ¶¯Ì¬Éú³ÉËÑË÷°´Å¥
     var searchButtonsContainer = document.querySelector('.search-buttons');
     for (var engine in searchEngines) {
 var buttonHtml = `<a href="#" class="search-btn" data-engine="${engine}" style="color: ${
-    engine === 'baiduç™¾åº¦æœç´¢' ? '#3235e5' : // 
-    engine === 'bingå¿…åº”æœç´¢' ? '#297bbf' : // 
-    engine === '360æœç´¢' ? '#3ab261' : // 
-    engine === 'sogouæœç‹—æœç´¢' ? '#f78c1a' : // 
-    engine === 'toutiaoå¤´æ¡æœç´¢' ? '#e63e3d' : // 
-    engine === 'bilibiliå“”å“©å“”å“©æœç´¢' ? '#3cafee' : // 
-    engine === 'douyinæŠ–éŸ³æœç´¢' ? '#000000' : // 
-    engine === 'kuaishouå¿«æ‰‹æœç´¢' ? '#f43a00' : // 
-    engine === 'zhihuçŸ¥ä¹æœç´¢' ? '#3373fa' : // 
-    engine === 'xhså°çº¢ä¹¦æœç´¢' ? '#f41e3d' : // 
-    engine === 'weiboå¾®åšæœç´¢' ? '#cc2925' : // 
-    engine === 'youdaoæœ‰é“æœç´¢' ? '#f10007' : // 
-    engine === 'doubanè±†ç“£æœç´¢' ? '#217700' : // 
-    engine === 'yahooé›…è™æœç´¢' ? '#74029b' : // 
-    engine === 'taobaoæ·˜å®æœç´¢' ? '#f44c00' : // 
-    engine === 'tmallå¤©çŒ«æœç´¢' ? '#f40030' : // 
-    engine === 'jdäº¬ä¸œæœç´¢' ? '#bf0f1c' : // 
-    engine === 'pddæ‹¼å¤šå¤šæœç´¢' ? '#d72b1b' : // 
-    engine === '1688é˜¿é‡Œå·´å·´æœç´¢' ? '#f67100' : // 
-    engine === 'amazonäºšé©¬é€Šæœç´¢' ? '#040505' : // 
-    engine === 'goofishé—²é±¼æœç´¢' ? '#f9e201' : // 
-    engine === '163ç½‘æ˜“æœç´¢' ? '#b9262a' : // 
-    engine === 'sohuæœç‹æœç´¢' ? '#fad000' : // 
-    engine === 'sinaæ–°æµªæœç´¢' ? '#de3035' : // 
-    engine === 'qqè…¾è®¯æœç´¢' ? '#2153d4' : // 
-    'black' // é»˜è®¤é¢œè‰²
+    engine === 'baidu°Ù¶ÈËÑË÷' ? '#3235e5' : // 
+    engine === 'bing±ØÓ¦ËÑË÷' ? '#297bbf' : // 
+    engine === '360ËÑË÷' ? '#3ab261' : // 
+    engine === 'sogouËÑ¹·ËÑË÷' ? '#f78c1a' : // 
+    engine === 'toutiaoÍ·ÌõËÑË÷' ? '#e63e3d' : // 
+    engine === 'bilibilißÙÁ¨ßÙÁ¨ËÑË÷' ? '#3cafee' : // 
+    engine === 'douyin¶¶ÒôËÑË÷' ? '#000000' : // 
+    engine === 'kuaishou¿ìÊÖËÑË÷' ? '#f43a00' : // 
+	engine === 'youkuÓÅ¿áËÑË÷' ? '#4094ff' : // 
+	engine === 'tudouÍÁ¶¹ËÑË÷' ? '#f56400' : // 
+	engine === 'iqiyi°®ÆæÒÕËÑË÷' ? '#45da52' : // 
+	engine === 'mgtvÃ¢¹ûTVËÑË÷' ? '#f55d00' : // 
+    engine === 'zhihuÖªºõËÑË÷' ? '#3373fa' : // 
+    engine === 'xhsĞ¡ºìÊéËÑË÷' ? '#f41e3d' : // 
+    engine === 'weiboÎ¢²©ËÑË÷' ? '#cc2925' : // 
+    engine === 'youdaoÓĞµÀËÑË÷' ? '#f10007' : // 
+    engine === 'douban¶¹°êËÑË÷' ? '#217700' : // 
+    engine === 'yahooÑÅ»¢ËÑË÷' ? '#74029b' : // 
+    engine === 'taobaoÌÔ±¦ËÑË÷' ? '#f44c00' : // 
+    engine === 'tmallÌìÃ¨ËÑË÷' ? '#f40030' : // 
+    engine === 'jd¾©¶«ËÑË÷' ? '#bf0f1c' : // 
+    engine === 'pddÆ´¶à¶àËÑË÷' ? '#d72b1b' : // 
+    engine === '1688°¢Àï°Í°ÍËÑË÷' ? '#f67100' : // 
+    engine === 'amazonÑÇÂíÑ·ËÑË÷' ? '#040505' : // 
+    engine === 'goofishÏĞÓãËÑË÷' ? '#f9e201' : // 
+    engine === '163ÍøÒ×ËÑË÷' ? '#b9262a' : // 
+    engine === 'sohuËÑºüËÑË÷' ? '#fad000' : // 
+    engine === 'sinaĞÂÀËËÑË÷' ? '#de3035' : // 
+    engine === 'qqÌÚÑ¶ËÑË÷' ? '#2153d4' : // 
+	engine === 'ifeng·ï»ËËÑË÷' ? '#eb403e' : // 
+    'black' // Ä¬ÈÏÑÕÉ«
 }">${engine}</a>`;
       searchButtonsContainer.innerHTML += buttonHtml;
     }
 
-    // ä¸ºæ¯ä¸ªæœç´¢æŒ‰é’®æ·»åŠ äº‹ä»¶ç›‘å¬å™¨
+    // ÎªÃ¿¸öËÑË÷°´Å¥Ìí¼ÓÊÂ¼ş¼àÌıÆ÷
     var searchButtons = document.querySelectorAll('.search-btn');
     searchButtons.forEach(function(button) {
       button.addEventListener('click', function() {
@@ -177,130 +186,174 @@ var buttonHtml = `<a href="#" class="search-btn" data-engine="${engine}" style="
   <hr />
   <center>
 
-    <h2>å®ç”¨å°å·¥å…·ï¼š</h2>
+    <h2>ÊµÓÃĞ¡¹¤¾ß£º</h2>
 </center>
 <p>
-ã€è®¡ç®—ç±»ã€‘
-<a href="../html/jsq/" target="_blank"><strong>åœ¨çº¿è®¡ç®—å™¨</strong></a>ã€
-<a href="../html/xljg/" target="_blank">æ–°è€ä»·æ ¼ç™¾åˆ†æ¯”è®¡ç®—å™¨</a>ã€
-<a href="../html/fwgt/" target="_blank">æˆ¿å±‹å…¬æ‘Šé¢ç§¯è®¡</a>ã€
-<a href="../html/bsjsq" target="_blank">å€æ•°è®¡ç®—å™¨</a>ã€
-<a href="../html/bfbjsq" target="_blank">ç™¾åˆ†æ¯”è®¡ç®—å™¨</a>ã€
-<a href="../html/szfblsd" target="_blank"><strong>æ•°å­—å€æ•°æ¯”ä¾‹é”å®šå™¨</strong></a>ã€
-<a href="../html/bcjjsq" target="_blank"><strong>è®¢é˜…å¥—é¤ä¸šåŠ¡è¡¥å·®ä»·è®¡ç®—å™¨</strong></a>ã€
-<a href="../html/nhjsq" target="_blank">å¹´åŒ–æ”¶ç›Šç‡æŸ¥è¯¢å·¥å…·</a>ã€
-<a href="../html/fljsq" target="_blank"><strong>å­˜æ¬¾åˆ©æ¯å¤åˆ©å›æŠ¥ç‡è®¡ç®—å™¨</strong></a>ã€
-<a href="../html/bl" target="_blank">ç»ç’ƒé‡é‡è®¡ç®—å™¨</a>ã€
-<a href="../html/wtzl" target="_blank">ç‰©ä½“é‡é‡è®¡ç®—å™¨</a>ã€
-<a href="../html/wpjg" target="_blank">ç‰©å“å°ºå¯¸ä»·æ ¼è®¡ç®—å™¨</a>ã€
-<a href="../html/hjgpjj" target="_blank"><strong>é»„é‡‘è‚¡ç¥¨åŸºé‡‘ç›ˆäºè®¡ç®—å™¨</strong></a>ã€
-<a href="../html/pjzjsq" target="_blank">å¹³å‡åˆ†æ•°å€¼è®¡ç®—å™¨</a>ã€
-<a href="../html/cgsbsjjljsq" target="_blank">æˆåŠŸå¤±è´¥å®é™…å‡ ç‡è®¡ç®—å™¨</a>ã€
-<a href="../html/ztzglmnq" target="_blank">æ·éª°å­æ¦‚ç‡æ¨¡æ‹Ÿå™¨</a>ã€
-<a href="../html/csljsq" target="_blank">å‡ºæ°´é‡è®¡ç®—å™¨</a>ã€
-
-<div>
-<p>
-ã€æ±½è½¦ç±»ã€‘
-<a href="../html/yfch" target="_blank"><strong>è¡Œç¨‹æ²¹è´¹æŸ¥è¯¢å™¨</strong></a>ã€
-<a href="../html/xsjlcx" target="_blank">è¡Œé©¶è·ç¦»é¢„æµ‹æŸ¥è¯¢å·¥å…·</a>ã€
-<a href="../html/mglyh" target="_blank"><strong>æ¯å…¬é‡Œæ²¹è€—æ²¹è´¹æŸ¥è¯¢å·¥å…·</strong></a>ã€
-<a href="../html/jyjesyfcxgj" target="_blank">åŠ æ²¹é‡‘é¢å¼æ²¹è´¹æŸ¥è¯¢å·¥å…·</a>ã€
-<a href="../html/xhylsyjcxgj" target="_blank">æ¶ˆè€—æ²¹é‡å¼æ²¹ä»·æŸ¥è¯¢å·¥å…·</a>ã€
-<a href="../html/xnyddc" target="_blank"><strong>æ–°èƒ½æºç”µåŠ¨è½¦ç”µè´¹è®¡ç®—æŸ¥è¯¢å·¥å…·</strong></a>ã€
-<a href="../html/xssjcx" target="_blank">è¡Œé©¶æ—¶é—´é¢„æµ‹æŸ¥è¯¢å·¥å…·</a>ã€
-<p>
-ã€å…¶ä»–ç±»ã€‘
-<a href="../html/huanse/" target="_blank">ç½‘é¡µè‡ªç”±æ¢è‰²</a>ã€
-<a href="../html/beijing/" target="_blank">çº¯è‰²èƒŒæ™¯ç½‘é¡µ</a>ã€
-<a href="../html/smjdt/" target="_blank">ç”Ÿå‘½è¿›åº¦æ¡</a>ã€
-<a href="../html/md5" target="_blank">md5åŠ å¯†</a>ã€
-<a href="../html/sjmmsc" target="_blank">éšæœºå¯†ç ç”Ÿæˆå™¨</a>ã€
-<a href="../html/zdymmscq" target="_blank"><strong>è‡ªå®šä¹‰å¯†ç ç”Ÿæˆå™¨</strong></a>ã€
-<a href="../html/pmbh" target="_blank">è·‘é©¬ç¯å¼å±å¹•ä¿æŠ¤ç¨‹åº</a>ã€
-<a href="../html/drspmbhcx" target="_blank">æ·¡å…¥å¼å±å¹•ä¿æŠ¤ç¨‹åº</a>ã€
-<a href="../html/ppi" target="_blank">PPIæŸ¥è¯¢</a>ã€
-<a href="../html/xzsd" target="_blank">å®½å¸¦ä¸‹è½½é€Ÿåº¦æŸ¥è¯¢</a>ã€
-<a href="../html/xzsj" target="_blank"><strong>æ–‡ä»¶ä¸‹è½½æ—¶é—´æŸ¥è¯¢</strong></a>ã€
-<a href="../html/kdll" target="_blank">å®½å¸¦ä¸‹è½½æµé‡æ¶ˆè€—æŸ¥è¯¢å™¨</a>ã€
-<a href="../html/wbnr" target="_blank">æ–‡æœ¬å†…å®¹ç»Ÿè®¡å·¥å…·</a>ã€
-<a href="../html/sjc" target="_blank">æ—¶é—´æˆ³è½¬æ¢å™¨</a>ã€
-<a href="../html/zjtj" target="_blank">å­—èŠ‚ç»Ÿè®¡å·¥å…·</a>ã€
-<a href="../html/sbdjcstj" target="_blank">é¼ æ ‡ç‚¹å‡»æ¬¡æ•°ç»Ÿè®¡</a>ã€
-<a href="../html/jpajcstj" target="_blank">é”®ç›˜æŒ‰é”®æ¬¡æ•°ç»Ÿè®¡</a>ã€
-<a href="../html/uuid" target="_blank">UUIDç”Ÿæˆå™¨</a>ã€
-<a href="../html/wzzbase64zhq" target="_blank">æ–‡å­—è½¬BASE64è½¬æ¢å™¨</a>ã€
-<a href="../html/tpzbase64zhq" target="_blank">å›¾ç‰‡è½¬BASE64è½¬æ¢å™¨</a>ã€
-<a href="../html/htmlwzscq" target="_blank">HTMLæ–‡ç« ç”Ÿæˆå™¨</a>ã€
-<a href="../html/urlbjmgj" target="_blank">URLç¼–è§£ç å·¥å…·</a>ã€
-<a href="../html/wbqzgj" target="_blank">æ–‡æœ¬å»é‡å·¥å…·</a>ã€
-
-<p>
-ã€å›¾ç‰‡ç±»ã€‘
-<a href="../html/tpwjys" target="_blank"><strong>å›¾ç‰‡æ–‡ä»¶å¤§å°å‹ç¼©å·¥å…·</strong></a>ã€
-<a href="../html/tpdxxg" target="_blank">å›¾ç‰‡å¤§å°ä¿®æ”¹å™¨</a>ã€
-<a href="../html/tpwzsytj" target="_blank">å›¾ç‰‡æ–‡å­—æ°´å°æ·»åŠ å™¨</a>ã€
-<a href="../html/tppj" target="_blank">å›¾ç‰‡æ‹¼æ¥å™¨</a>ã€
-<a href="../html/tptjtjsy" target="_blank">å›¾ç‰‡æ·»åŠ å›¾ç‰‡æ°´å°å·¥å…·</a>ã€
-<a href="../html/tptmd" target="_blank">å›¾ç‰‡é€æ˜åº¦è°ƒèŠ‚å™¨</a>ã€
-<a href="../html/jggtpscq" target="_blank">ä¹å®«æ ¼å›¾ç‰‡ç”Ÿæˆå™¨</a>ã€
-<a href="../html/tpxzgj" target="_blank">å›¾ç‰‡æ—‹è½¬å·¥å…·</a>ã€
-<a href="../html/zdydggtpscq" target="_blank"><strong>è‡ªå®šä¹‰å¤šå®«æ ¼å›¾ç‰‡ç”Ÿæˆå™¨</strong></a>ã€
-<a href="../html/tpyjclgj" target="_blank">å›¾ç‰‡åœ†è§’å¤„ç†å·¥å…·</a>ã€
-<a href="../html/wzztp" target="_blank">æ–‡å­—è½¬å›¾ç‰‡å·¥å…·</a>ã€
-<a href="../html/qsq" target="_blank">RGBå–è‰²å™¨</a>ã€
-<a href="../html/csjb" target="_blank">å½©è‰²æ¸å˜æ¡†</a>ã€
-<a href="../html/ccwbnrzbcctpscq" target="_blank">è¶…é•¿æ–‡æœ¬å†…å®¹è½¬å˜è¶…é•¿å›¾ç‰‡ç”Ÿæˆå™¨</a>ã€
-<a href="../html/ktjscstpbhbgj" target="_blank">å¯è°ƒèŠ‚å¼å½©è‰²å›¾ç‰‡å˜é»‘ç™½å·¥å…·</a>ã€
-<a href="../html/tpfgzhq" target="_blank">å›¾ç‰‡é£æ ¼è½¬æ¢å™¨</a>ã€
-
-<p>
-ã€å•ä½ç±»ã€‘
-<a href="../html/cddw" target="_blank"><strong>é•¿åº¦å•ä½æ¢ç®—å™¨</strong></a>ã€
-<a href="../html/ldw" target="_blank">åŠ›å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/mddw" target="_blank">å¯†åº¦å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/mjdw" target="_blank">é¢ç§¯å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/sddw" target="_blank">é€Ÿåº¦å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/tjdw" target="_blank">ä½“ç§¯å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/yqdw" target="_blank">å‹å¼ºå•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/zldw" target="_blank"><strong>è´¨é‡å•ä½æ¢ç®—å™¨</strong></a>ã€
-<a href="../html/ccdw" target="_blank">å­˜å‚¨å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/dldw" target="_blank">ç”µæµå•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/dydw" target="_blank">ç”µå‹å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/jddw" target="_blank">è§’åº¦å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/ljdw" target="_blank">åŠ›çŸ©å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/sjdw" target="_blank">æ—¶é—´å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/wddw" target="_blank">æ¸©åº¦å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/gldw" target="_blank">åŠŸç‡å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/dzdw" target="_blank">ç”µé˜»å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/gnrdw" target="_blank">åŠŸèƒ½çƒ­å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/rmbdw" target="_blank">äººæ°‘å¸å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/gzddw" target="_blank">å…‰ç…§åº¦å•ä½æ¢ç®—å™¨</a>ã€
-<a href="../html/wyzyy/" target="_blank">ä¸‡å…ƒè½¬äº¿å…ƒè½¬æ¢å·¥å…·</a>ã€
-
-<p>
-ã€ç”Ÿæ´»ç±»ã€‘
-<a href="../html/mb" target="_blank">å¯æ–°å»ºå¼ç§’è¡¨</a>ã€
-<a href="../html/tsjsq" target="_blank">å¤©æ•°è®¡ç®—å™¨</a>ã€
-<a href="../html/qhtjs" target="_blank">å‰åå¤©è®¡ç®—å™¨</a>ã€
-<a href="../html/jt" target="_blank"><strong>å‡ å¤©å‰åæ˜¯å‡ æœˆå‡ æ—¥</strong></a>ã€
-<a href="../html/dbbj" target="_blank">å¾…åŠäº‹é¡¹ä¾¿ç¬º</a>ã€
-<a href="../html/djs" target="_blank">è‡ªå®šä¹‰å£°éŸ³å¼å€’è®¡æ—¶å™¨</a>ã€
-<a href="../html/bmncxq" target="_blank">æœ¬å‘½å¹´æŸ¥è¯¢å™¨</a>ã€
-<a href="../html/sjgd" target="_blank">ä¸–ç•Œå„åœ°æ—¶é—´</a>ã€
-<a href="../html/wbdb" target="_blank">æ–‡æœ¬å¯¹æ¯”å·¥å…·</a>ã€
-<a href="../html/bzqjsq" target="_blank">ä¿è´¨æœŸè®¡ç®—å™¨</a>ã€
-<a href="../html/bzztjbltscq" target="_blank">é¥¼æŸ±çŠ¶ç»Ÿè®¡æ¯”ä¾‹å›¾ç”Ÿæˆå™¨</a>ã€
-<a href="../html/hxldldtjbltscq" target="_blank">ç¯å½¢æ¼æ–—é›·è¾¾ç»Ÿè®¡æ¯”ä¾‹å›¾ç”Ÿæˆå™¨</a>ã€
-<a href="../html/nntzjkdbmicxq" target="_blank">ç”·å¥³ä½“é‡å¥åº·åº¦BMIæŸ¥è¯¢å™¨</a>ã€
-<a href="../html/znsgycq" target="_blank">å­å¥³èº«é«˜é¢„æµ‹å™¨</a>ã€
-
-<p>
+<div style="margin:2%">
+1:<a href="../jsq.html" target="_blank">Êı×ÖÖĞÎÄÓïÒô¼ÆËãÆ÷</a>¡¢
+2:<a href="../fkxjsfsdsjsq.html" target="_blank">·Ç¿ÆÑ§¼ÆÊı·¨Ê½´óÊı¼ÆËãÆ÷</a>¡¢
+3:<a href="../xljg.html" target="_blank">ĞÂÀÏ¼Û¸ñ°Ù·Ö±È¼ÆËãÆ÷</a>¡¢
+4:<a href="../fwgt.html" target="_blank">·¿Îİ¹«Ì¯Ãæ»ı¼Æ</a>¡¢
+5:<a href="../bsjsq.html" target="_blank">±¶Êı¼ÆËãÆ÷</a>¡¢
+6:<a href="../bfbjsq.html" target="_blank">°Ù·Ö±È¼ÆËãÆ÷</a>¡¢
+7:<a href="../szfblsd.html" target="_blank">Êı×Ö±¶Êı±ÈÀıËø¶¨Æ÷</a>¡¢
+8:<a href="../bcjjsq.html" target="_blank">¶©ÔÄÌ×²ÍÒµÎñ²¹²î¼Û¼ÆËãÆ÷</a>¡¢
+9:<a href="../nhjsq.html" target="_blank">Äê»¯ÊÕÒæÂÊ²éÑ¯¹¤¾ß</a>¡¢
+10:<a href="../fljsq.html" target="_blank">´æ¿îÀûÏ¢¸´Àû»Ø±¨ÂÊ¼ÆËãÆ÷</a>¡¢
+11:<a href="../bl.html" target="_blank">²£Á§ÖØÁ¿¼ÆËãÆ÷</a>¡¢
+12:<a href="../wtzl.html" target="_blank">ÎïÌåÖØÁ¿¼ÆËãÆ÷</a>¡¢
+13:<a href="../wpjg.html" target="_blank">ÎïÆ·³ß´ç¼Û¸ñ¼ÆËãÆ÷</a>¡¢
+14:<a href="../hjgpjj.html" target="_blank">»Æ½ğ¹ÉÆ±»ù½ğÓ¯¿÷¼ÆËãÆ÷</a>¡¢
+15:<a href="../pjzjsq.html" target="_blank">Æ½¾ù·ÖÊıÖµ¼ÆËãÆ÷</a>¡¢
+16:<a href="../cgsbsjjljsq.html" target="_blank">³É¹¦Ê§°ÜÊµ¼Ê¼¸ÂÊ¼ÆËãÆ÷</a>¡¢
+17:<a href="../ztzglmnq.html" target="_blank">ÖÀ÷»×Ó¸ÅÂÊÄ£ÄâÆ÷</a>¡¢
+18:<a href="../csljsq.html" target="_blank">³öË®Á¿¼ÆËãÆ÷</a>¡¢
+19:<a href="../xhhjaszrmbhjkjghxzhq.html" target="_blank">ÏÖ»õ»Æ½ğ°»Ë¾×ªÈËÃñ±Ò»Æ½ğ¿Ë¼Û¸ñ»¥Ïà×ª»»Æ÷</a>¡¢
+20:<a href="../ktqnqydljsq.html" target="_blank">¿Õµ÷È¡Å¯Æ÷ÓÃµçÁ¿¼ÆËãÆ÷</a>¡¢
+21:<a href="../tydlhdjsq.html" target="_blank">Í¨ÓÃµçÁ¿ºÄµç¼ÆËãÆ÷</a>¡¢
+22:<a href="../gjshjjgjsq.html" target="_blank">¹ó½ğÊô»Æ½ğ¼Û¸ñ¼ÆËãÆ÷</a>¡¢
+23:<a href="../dgtbfwjgjsq.html" target="_blank">´ø¹«Ì¯°æ·¿Îİ¼Û¸ñ¼ÆËãÆ÷</a>¡¢
+24:<a href="../cscgsbljsq.html" target="_blank">´ÎÊı³É¹¦Ê§°ÜÂÊ¼ÆËãÆ÷</a>¡¢
+25:<a href="../jfzjlxcgsbjljsq.html" target="_blank">¼¸·ÖÖ®¼¸Á¬Ğø³É¹¦Ê§°Ü¼¸ÂÊ¼ÆËãÆ÷</a>¡¢
+26:<a href="../szzybfbfejsgj.html" target="_blank">Êı×ÖÕ¼ÓÃ°Ù·Ö°Ù·İ¶î¼ÆËã¹¤¾ß</a>¡¢
+27:<a href="../ypfqsjsrszcxq.html" target="_blank">Ó²ÅÌ·ÖÇøÊµ¼ÊÊäÈëÊıÖµ²éÑ¯Æ÷</a>¡¢
+28:<a href="../yjsjcckjjsq.html" target="_blank">Ó²¼şÊµ¼Ê´æ´¢¿Õ¼ä¼ÆËãÆ÷</a>¡¢
+29:<a href="../mjtjjsq.html" target="_blank">Ãæ»ıÌå»ı¼ÆËãÆ÷</a>¡¢
+30:<a href="../szpffbjsq.html" target="_blank">Êı×ÖÆ½·½·­±¶¼ÆËãÆ÷</a>¡¢
+31:<a href="../yfch.html" target="_blank">ĞĞ³ÌÓÍ·Ñ²éÑ¯Æ÷</a>¡¢
+32:<a href="../xsjlcx.html" target="_blank">ĞĞÊ»¾àÀëÔ¤²â²éÑ¯¹¤¾ß</a>¡¢
+33:<a href="../mglyh.html" target="_blank">Ã¿¹«ÀïÓÍºÄÓÍ·Ñ²éÑ¯¹¤¾ß</a>¡¢
+34:<a href="../jyjesyfcxgj.html" target="_blank">¼ÓÓÍ½ğ¶îÊ½ÓÍ·Ñ²éÑ¯¹¤¾ß</a>¡¢
+35:<a href="../xhylsyjcxgj.html" target="_blank">ÏûºÄÓÍÁ¿Ê½ÓÍ¼Û²éÑ¯¹¤¾ß</a>¡¢
+36:<a href="../xnyddc.html" target="_blank">ĞÂÄÜÔ´µç¶¯³µµç·Ñ¼ÆËã²éÑ¯¹¤¾ß</a>¡¢
+37:<a href="../xssjcx.html" target="_blank">ĞĞÊ»Ê±¼äÔ¤²â²éÑ¯¹¤¾ß</a>¡¢
+38:<a href="../tpwjys.html" target="_blank">Í¼Æ¬ÎÄ¼ş´óĞ¡Ñ¹Ëõ¹¤¾ß</a>¡¢
+39:<a href="../tpdxxg.html" target="_blank">Í¼Æ¬´óĞ¡ĞŞ¸ÄÆ÷</a>¡¢
+40:<a href="../tpwzsytj.html" target="_blank">Í¼Æ¬ÎÄ×ÖË®Ó¡Ìí¼ÓÆ÷</a>¡¢
+41:<a href="../tppj.html" target="_blank">Í¼Æ¬Æ´½ÓÆ÷</a>¡¢
+42:<a href="../tptjtjsy.html" target="_blank">Í¼Æ¬Ìí¼ÓÍ¼Æ¬Ë®Ó¡¹¤¾ß</a>¡¢
+43:<a href="../tptmd.html" target="_blank">Í¼Æ¬Í¸Ã÷¶Èµ÷½ÚÆ÷</a>¡¢
+44:<a href="../jggtpscq.html" target="_blank">¾Å¹¬¸ñÍ¼Æ¬Éú³ÉÆ÷</a>¡¢
+45:<a href="../tpxzgj.html" target="_blank">Í¼Æ¬Ğı×ª¹¤¾ß</a>¡¢
+46:<a href="../zdydggtpscq.html" target="_blank">×Ô¶¨Òå¶à¹¬¸ñÍ¼Æ¬Éú³ÉÆ÷</a>¡¢
+47:<a href="../tpyjclgj.html" target="_blank">Í¼Æ¬Ô²½Ç´¦Àí¹¤¾ß</a>¡¢
+48:<a href="../wzztp.html" target="_blank">ÎÄ×Ö×ªÍ¼Æ¬¹¤¾ß</a>¡¢
+49:<a href="../qsq.html" target="_blank">RGBÈ¡É«Æ÷</a>¡¢
+50:<a href="../csjb.html" target="_blank">²ÊÉ«½¥±ä¿ò</a>¡¢
+51:<a href="../ccwbnrzbcctpscq.html" target="_blank">³¬³¤ÎÄ±¾ÄÚÈİ×ª±ä³¬³¤Í¼Æ¬Éú³ÉÆ÷</a>¡¢
+52:<a href="../ktjscstpbhbgj.html" target="_blank">¿Éµ÷½ÚÊ½²ÊÉ«Í¼Æ¬±äºÚ°×¹¤¾ß</a>¡¢
+53:<a href="../tpfgzhq.html" target="_blank">Í¼Æ¬·ç¸ñ×ª»»Æ÷</a>¡¢
+54:<a href="../cddw.html" target="_blank">³¤¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+55:<a href="../ldw.html" target="_blank">Á¦µ¥Î»»»ËãÆ÷</a>¡¢
+56:<a href="../mddw.html" target="_blank">ÃÜ¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+57:<a href="../mjdw.html" target="_blank">Ãæ»ıµ¥Î»»»ËãÆ÷</a>¡¢
+58:<a href="../sddw.html" target="_blank">ËÙ¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+59:<a href="../tjdw.html" target="_blank">Ìå»ıµ¥Î»»»ËãÆ÷</a>¡¢
+60:<a href="../yqdw.html" target="_blank">Ñ¹Ç¿µ¥Î»»»ËãÆ÷</a>¡¢
+61:<a href="../zldw.html" target="_blank">ÖÊÁ¿µ¥Î»»»ËãÆ÷</a>¡¢
+62:<a href="../ccdw.html" target="_blank">´æ´¢µ¥Î»»»ËãÆ÷</a>¡¢
+63:<a href="../dldw.html" target="_blank">µçÁ÷µ¥Î»»»ËãÆ÷</a>¡¢
+64:<a href="../dydw.html" target="_blank">µçÑ¹µ¥Î»»»ËãÆ÷</a>¡¢
+65:<a href="../jddw.html" target="_blank">½Ç¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+66:<a href="../ljdw.html" target="_blank">Á¦¾Øµ¥Î»»»ËãÆ÷</a>¡¢
+67:<a href="../sjdw.html" target="_blank">Ê±¼äµ¥Î»»»ËãÆ÷</a>¡¢
+68:<a href="../wddw.html" target="_blank">ÎÂ¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+69:<a href="../gldw.html" target="_blank">¹¦ÂÊµ¥Î»»»ËãÆ÷</a>¡¢
+70:<a href="../dzdw.html" target="_blank">µç×èµ¥Î»»»ËãÆ÷</a>¡¢
+71:<a href="../gnrdw.html" target="_blank">¹¦ÄÜÈÈµ¥Î»»»ËãÆ÷</a>¡¢
+72:<a href="../rmbdw.html" target="_blank">ÈËÃñ±Òµ¥Î»»»ËãÆ÷</a>¡¢
+73:<a href="../gzddw.html" target="_blank">¹âÕÕ¶Èµ¥Î»»»ËãÆ÷</a>¡¢
+74:<a href="../wyzyy.html" target="_blank">ÍòÔª×ªÒÚÔª×ª»»¹¤¾ß</a>¡¢
+75:<a href="../szljsq.html" target="_blank">Ë®ÖØÁ¿¼ÆËãÆ÷</a>¡¢
+76:<a href="../mb.html" target="_blank">¿ÉĞÂ½¨Ê½Ãë±í</a>¡¢
+77:<a href="../tsjsq.html" target="_blank">ÌìÊı¼ÆËãÆ÷</a>¡¢
+78:<a href="../qhtjs.html" target="_blank">Ç°ºóÌì¼ÆËãÆ÷</a>¡¢
+79:<a href="../jt.html" target="_blank">¼¸ÌìÇ°ºóÊÇ¼¸ÔÂ¼¸ÈÕ</a>¡¢
+80:<a href="../dbbj.html" target="_blank">´ı°ìÊÂÏî±ã¼ã</a>¡¢
+81:<a href="../djs.html" target="_blank">×Ô¶¨ÒåÉùÒôÊ½µ¹¼ÆÊ±Æ÷</a>¡¢
+82:<a href="../bmncxq.html" target="_blank">±¾ÃüÄê²éÑ¯Æ÷</a>¡¢
+83:<a href="../sjgd.html" target="_blank">ÊÀ½ç¸÷µØÊ±¼ä</a>¡¢
+84:<a href="../wbdb.html" target="_blank">ÎÄ±¾¶Ô±È¹¤¾ß</a>¡¢
+85:<a href="../bzqjsq.html" target="_blank">±£ÖÊÆÚ¼ÆËãÆ÷</a>¡¢
+86:<a href="../bzztjbltscq.html" target="_blank">±ıÖù×´Í³¼Æ±ÈÀıÍ¼Éú³ÉÆ÷</a>¡¢
+87:<a href="../hxldldtjbltscq.html" target="_blank">»·ĞÎÂ©¶·À×´ïÍ³¼Æ±ÈÀıÍ¼Éú³ÉÆ÷</a>¡¢
+88:<a href="../nntzjkdbmicxq.html" target="_blank">ÄĞÅ®ÌåÖØ½¡¿µ¶ÈBMI²éÑ¯Æ÷</a>¡¢
+89:<a href="../znsgycq.html" target="_blank">×ÓÅ®Éí¸ßÔ¤²âÆ÷</a>¡¢
+90:<a href="../jsqromlxsztylsmcxq.html" target="_blank">¾»Ë®Æ÷ROÄ¤ÂËĞ¾Ë®ÖÊÍÑÑÎÂÊÊÙÃü²éÑ¯Æ÷</a>¡¢
+91:<a href="../bjjdwdwzzbcxq.html" target="_blank">±¾»ú¾­¶ÈÎ³¶ÈÎ»ÖÃ×ø±ê²éÑ¯Æ÷</a>¡¢
+92:<a href="../wlljsdgjcx.html" target="_blank">ÍøÂçÁ¬½ÓËÙ¶È¹À¼Æ²éÑ¯</a>¡¢
+93:<a href="../pzbggj.html" target="_blank">ÅÄÕÕ²¹¹â¹¤¾ß</a>¡¢
+94:<a href="../huanse.html" target="_blank">ÍøÒ³×ÔÓÉ»»É«</a>¡¢
+95:<a href="../folder/beijing/index.html" target="_blank">´¿É«±³¾°ÍøÒ³</a>¡¢
+96:<a href="../smjdt.html" target="_blank">ÉúÃü½ø¶ÈÌõ</a>¡¢
+97:<a href="../md5.html" target="_blank">md5¼ÓÃÜ</a>¡¢
+98:<a href="../sjmmsc.html" target="_blank">Ëæ»úÃÜÂëÉú³ÉÆ÷</a>¡¢
+99:<a href="../zdymmscq.html" target="_blank">×Ô¶¨ÒåÃÜÂëÉú³ÉÆ÷</a>¡¢
+100:<a href="../pmbh.html" target="_blank">ÅÜÂíµÆÊ½ÆÁÄ»±£»¤³ÌĞò</a>¡¢
+101:<a href="../drspmbhcx.html" target="_blank">µ­ÈëÊ½ÆÁÄ»±£»¤³ÌĞò</a>¡¢
+102:<a href="../ppi.html" target="_blank">PPI²éÑ¯</a>¡¢
+103:<a href="../xzsd.html" target="_blank">¿í´øÏÂÔØËÙ¶È²éÑ¯</a>¡¢
+104:<a href="../xzsj.html" target="_blank">ÎÄ¼şÏÂÔØÊ±¼ä²éÑ¯</a>¡¢
+105:<a href="../kdll.html" target="_blank">¿í´øÏÂÔØÁ÷Á¿ÏûºÄ²éÑ¯Æ÷</a>¡¢
+106:<a href="../wbnr.html" target="_blank">ÎÄ±¾ÄÚÈİÍ³¼Æ¹¤¾ß</a>¡¢
+107:<a href="../sjc.html" target="_blank">Ê±¼ä´Á×ª»»Æ÷</a>¡¢
+108:<a href="../zjtj.html" target="_blank">×Ö½ÚÍ³¼Æ¹¤¾ß</a>¡¢
+109:<a href="../sbdjcstj.html" target="_blank">Êó±êµã»÷´ÎÊıÍ³¼Æ</a>¡¢
+110:<a href="../jpajcstj.html" target="_blank">¼üÅÌ°´¼ü´ÎÊıÍ³¼Æ</a>¡¢
+111:<a href="../uuid.html" target="_blank">UUIDÉú³ÉÆ÷</a>¡¢
+112:<a href="../wzzbase64zhq.html" target="_blank">ÎÄ×Ö×ªBASE64×ª»»Æ÷</a>¡¢
+113:<a href="../tpzbase64zhq.html" target="_blank">Í¼Æ¬×ªBASE64×ª»»Æ÷</a>¡¢
+114:<a href="../htmlwzscq.html" target="_blank">HTMLÎÄÕÂÉú³ÉÆ÷</a>¡¢
+115:<a href="../urlbjmgj.html" target="_blank">URL±à½âÂë¹¤¾ß</a>¡¢
+116:<a href="../wbqzgj.html" target="_blank">ÎÄ±¾È¥ÖØ¹¤¾ß</a>¡¢
+117:<a href="../wbdlnrschckbhxgj.html" target="_blank">ÎÄ±¾¶ÎÂäÄÚÈİÉ¾³ı»Ø³µ¿Õ°×»»ĞĞ¹¤¾ß</a>¡¢
+118:<a href="../sbxsbcx.html" target="_blank">Éè±¸ÏñËØ±È²éÑ¯</a>¡¢
+119:<a href="../pmfblcx.html" target="_blank">ÆÁÄ»·Ö±æÂÊ²éÑ¯</a>¡¢
+120:<a href="../llqyycx.html" target="_blank">ä¯ÀÀÆ÷ÓïÑÔ²éÑ¯</a>¡¢
+121:<a href="../llqlxhbbcx.html" target="_blank">ä¯ÀÀÆ÷ÀàĞÍºÍ°æ±¾²éÑ¯</a>¡¢
+122:<a href="../llqwebassemblyzcqkcx.html" target="_blank">ä¯ÀÀÆ÷WebAssemblyÖ§³ÖÇé¿ö²éÑ¯</a>¡¢
+123:<a href="../dqllqckkgcx.html" target="_blank">µ±Ç°ä¯ÀÀÆ÷´°¿Ú¿í¸ß²éÑ¯</a>¡¢
+124:<a href="../czxtlxcx.html" target="_blank">²Ù×÷ÏµÍ³ÀàĞÍ²éÑ¯</a>¡¢
+125:<a href="../bjxtztcx.html" target="_blank">±¾»úÏµÍ³×ÖÌå²éÑ¯</a>¡¢
+126:<a href="../bjllqxxcx.html" target="_blank">±¾»úä¯ÀÀÆ÷ĞÅÏ¢²éÑ¯</a>¡¢
+127:<a href="../bjwebglxxcx.html" target="_blank">±¾»úWebGLĞÅÏ¢²éÑ¯</a>¡¢
+128:<a href="../dnzmksjrwztbscq.html" target="_blank">µçÄÔ×ÀÃæ¿ìËÙ½øÈëÍøÕ¾Í¼±êÉú³ÉÆ÷</a>¡¢
+129:<a href="../wzzyicotbscq.html" target="_blank">ÍøÕ¾×¨ÓÃICOÍ¼±êÉú³ÉÆ÷</a>¡¢
+130:<a href="../hzwzwbzhyybfgj.html" target="_blank">ºº×ÖÎÄ×ÖÎÄ±¾×ªÓïÒô²¥·Å¹¤¾ß</a>¡¢
+131:<a href="../kxfwsxhhjjgmyasdyrmbkcxq.html" target="_blank">¿ÉÑ¡·¶Î§Ê½ÏÖ»õ»Æ½ğ¼Û¸ñÃÀÔª°»Ë¾¶ÔÓ¦ÈËÃñ±Ò¿Ë²éÑ¯Æ÷</a>¡¢
+132:<a href="../qbpmczybtzbzqtsyljsq.html" target="_blank">Ç½±ÚÆÌÂú´É×©ÑÒ°åÌùÖ½±ÚÖ½Ç½ÌùÊ¹ÓÃÁ¿¼ÆËãÆ÷</a>¡¢
+133:<a href="../czybtzbzqtmkjgdbjscxq.html" target="_blank">´É×©ÑÒ°åÌùÖ½±ÚÖ½Ç½ÌùÃ¿¿é¼Û¸ñ¶Ô±È¼ÆËã²éÑ¯Æ÷</a>¡¢
+134:<a href="../folder/hzzpyslszmtqgj/index.html" target="_blank">ºº×Ö×ªÆ´ÒôËõÂÔÊ××ÖÄ¸ÌáÈ¡¹¤¾ß</a>¡¢
+135:<a href="../eslgywzmcxcspltjgj.html" target="_blank">¶şÊ®Áù¸öÓ¢ÎÄ×ÖÄ¸³öÏÖ´ÎÊıÆµÂÊÍ³¼Æ¹¤¾ß</a>¡¢
+136:<a href="../eydmjcgj.html" target="_blank">¶ñÒâ´úÂë¼ì²â¹¤¾ß</a>¡¢
+137:<a href="../fwfjtjyyhljsq.html" target="_blank">·¿Îİ·¿¼äÌå»ıÓëÑõº¬Á¿¼ÆËãÆ÷</a>¡¢
+138:<a href="../fxfjrlkjtjlfyhljsq.html" target="_blank">·½ĞÎ·¿¼äÈİÁ¿¿Õ¼äÌå»ıÁ¢·½Ñõº¬Á¿¼ÆËãÆ÷</a>¡¢
+139:<a href="../fxwtdxccdbtpscq.html" target="_blank">·½ĞÎÎïÌå´óĞ¡³ß´ç¶Ô±ÈÍ¼Æ¬Éú³ÉÆ÷</a>¡¢
+140:<a href="../htmldmylq.html" target="_blank">HTML´úÂëÔ¤ÀÀÆ÷</a>¡¢
+141:<a href="../htmlyubbdmhxzhq.html" target="_blank">HTMLÓëUBB´úÂë»¥Ïà×ª»»Æ÷</a>¡¢
+142:<a href="../hzwzzscptjgj.html" target="_blank">ºº×ÖÎÄ×Ö×ÖÊı´ÊÆµÍ³¼Æ¹¤¾ß</a>¡¢
+143:<a href="../mfspwphwjgdbjsq.html" target="_blank">Ã¿·İÉÌÆ·ÎïÆ·»õÎï¼Û¸ñ¶Ô±È¼ÆËãÆ÷</a>¡¢
+144:<a href="../ptzybzfmglcxjlmnq.html" target="_blank">Å×Í¶ÖÀÓ²±ÒÕı·´Ãæ¸ÅÂÊ³öÏÖ¼¸ÂÊÄ£ÄâÆ÷</a>¡¢
+145:<a href="../sgalbszcxcspltjgj.html" target="_blank">Ê®¸ö°¢À­²®Êı×Ö³öÏÖ´ÎÊıÆµÂÊÍ³¼Æ¹¤¾ß</a>¡¢
+146:<a href="../szdcfbjsq.html" target="_blank">Êı×Ö¶à´Î·­±¶¼ÆËãÆ÷</a>¡¢
+147:<a href="../szsjcxplcstjgj.html" target="_blank">Êı×ÖÊı¾İ³öÏÖÆµÂÊ´ÎÊıÍ³¼Æ¹¤¾ß</a>¡¢
+148:<a href="../szybdybdbcxq.html" target="_blank">Êı×ÖÒ»°ëµÄÒ»°ë¶Ô°ë²éÑ¯Æ÷</a>¡¢
+149:<a href="../ubbdmylq.html" target="_blank">UBB´úÂëÔ¤ÀÀÆ÷</a>¡¢
+150:<a href="../wbnrthgj.html" target="_blank">ÎÄ±¾ÄÚÈİÌæ»»¹¤¾ß</a>¡¢
+151:<a href="../ywdccxplcsjctjgj.html" target="_blank">Ó¢ÎÄµ¥´Ê³öÏÖÆµÂÊ´ÎÊı¼ì²âÍ³¼Æ¹¤¾ß</a>¡¢
+152:<a href="../zcscxq.html" target="_blank">Õû³ıÊı²éÑ¯Æ÷</a>¡¢
+153:<a href="../zdywbhzywszcpwbcxcstjgj.html" target="_blank">×Ô¶¨ÒåÎÄ±¾ºº×ÖÓ¢ÎÄÊı×Ö´ÊÆµÎÄ±¾³öÏÖ´ÎÊıÍ³¼Æ¹¤¾ß</a>¡¢
+154:<a href="../gbkhutfwjbmzhq.html" target="_blank">GBKºÍUTFÎÄ¼ş±àÂë×ª»»Æ÷</a>¡¢
+155:<a href="../big5yisowjbmzhq.html" target="_blank">big5ÓëisoÎÄ¼ş±àÂë×ª»»Æ÷</a>¡¢
+</div>
 <p>
 <hr />
 <p>
 <center>
-<p><a href="https://beian.miit.gov.cn/" target="_blank">é—½ICPå¤‡11012075å·-7</a>
+»¶Ó­À´µ½ÌÆÑôÍøÂç·ÖÏí£¬ÕâÊÇÒ»¸ö¹«ÒæĞÔÖÊµÄÍøÕ¾£¬·ÖÏí¸÷ÀàµçÄÔ°æÊµÓÃĞ¡¹¤¾ß¡£<p>
+±¾Õ¾Ğ¡¹¤¾ß¾ùÎªHTML´úÂëÍ¨¹ıAI±àĞ´£¬È«²¿Ãâ·Ñ¿ªÔ´ÎŞ¹ã¸æ£¬ÓÃµçÄÔÊó±êÓÒ»÷ÍøÒ³Ñ¡ÔñÁí´æÎª¾Í¿ÉÓÀ¾Ã±£´æµ½±¾µØµçÄÔ£¡<p>
+±¾Õ¾ÕûÕ¾Ô´´úÂë¾ùÒÑÉÏ´«ÖÁgithub£¬¿É×ÔÓÉÏÂÔØ¡£<p>
+<a href="https://beian.miit.gov.cn/" target="_blank">ÃöICP±¸11012075ºÅ-7</a>
   </p></center>
 
 

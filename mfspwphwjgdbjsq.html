@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>每份商品物品货物价格对比计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .calculator {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+        }
+        input {
+            padding: 8px;
+            width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result {
+            font-size: 1.2em;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>每份商品物品货物价格对比计算器</h1>
+    <h2>（每份可以理解成每个、每克、每斤、每升..等等）</h2>
+    <div class="controls">
+        <button onclick="addCalculator()">新建计算器</button>
+        <button onclick="sortCalculators()">显示每份最低价格在最前面</button>
+    </div>
+    <div id="calculators-container"></div>
+
+    <script>
+        function createCalculator() {
+            const calculator = document.createElement('div');
+            calculator.className = 'calculator';
+            calculator.innerHTML = `
+                <div class="input-group">
+                    <label>总份数：</label>
+                    <input type="number" class="portions" step="1" min="0">
+                </div>
+                <div class="input-group">
+                    <label>总价格（元）：</label>
+                    <input type="number" class="price" step="0.01" min="0">
+                </div>
+                <div class="result">每份价格：0.00 元</div>
+            `;
+
+            const portionsInput = calculator.querySelector('.portions');
+            const priceInput = calculator.querySelector('.price');
+            const result = calculator.querySelector('.result');
+
+            // 存储当前价格的属性
+            calculator.currentPrice = 0;
+
+            function calculate() {
+                const portions = parseInt(portionsInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                
+                if (portions > 0) {
+                    const pricePerPortion = price / portions;
+                    result.textContent = `每份价格：${pricePerPortion.toFixed(2)} 元`;
+                    calculator.currentPrice = pricePerPortion;
+                } else {
+                    result.textContent = '每份价格：0.00 元';
+                    calculator.currentPrice = 0;
+                }
+            }
+
+            portionsInput.addEventListener('input', calculate);
+            priceInput.addEventListener('input', calculate);
+
+            return calculator;
+        }
+
+        function addCalculator() {
+            const container = document.getElementById('calculators-container');
+            container.appendChild(createCalculator());
+        }
+
+        function sortCalculators() {
+            const container = document.getElementById('calculators-container');
+            const calculators = Array.from(container.children);
+            
+            calculators.sort((a, b) => {
+                // 将未填写数据的计算器排在最后
+                if (a.currentPrice === 0) return 1;
+                if (b.currentPrice === 0) return -1;
+                return a.currentPrice - b.currentPrice;
+            });
+
+            // 清空容器
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+
+            // 重新按排序后的顺序添加计算器
+            calculators.forEach(calc => container.appendChild(calc));
+        }
+
+        // 初始创建一个计算器
+        addCalculator();
+    </script>
+</body>
+</html>

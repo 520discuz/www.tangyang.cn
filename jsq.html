@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数字中文语音计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: auto;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .calculator {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 400px;
+            padding: 10px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .result {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            min-width: 300px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .play-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #2196F3;
+        }
+        .play-button:hover {
+            background-color: #1976D2;
+        }
+        .play-button svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        .disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .disabled:hover {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="calculators-container">
+        <div class="calculator">
+            <input type="text" class="expression" placeholder="输入表达式" oninput="calculate(this)">
+            <div class="result-container">
+                <div class="result">答案: </div>
+                <button class="play-button" onclick="playChineseResult(this)" disabled>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                    朗读结果
+                </button>
+            </div>
+        </div>
+    </div>
+    <button onclick="addCalculator()">新建计算器</button>
+    <script>
+        // 数字转中文函数
+        function numberToChinese(num) {
+            const digitMap = {
+                '0': '零', '1': '一', '2': '二', '3': '三', '4': '四',
+                '5': '五', '6': '六', '7': '七', '8': '八', '9': '九'
+            };
+            const units = ['', '十', '百', '千', '万', '十万', '百万', '千万', '亿'];
+            
+            // 处理小数和整数部分
+            const [integerPart, decimalPart] = num.toString().split('.');
+            
+            // 处理整数部分
+            function translateInteger(num) {
+                if (num === '0') return '零';
+                
+                let result = '';
+                let lastWasZero = false;
+                let needZero = false;
+                
+                // 处理万位以上
+                if (num.length > 8) {
+                    const high = num.slice(0, -8);
+                    const low = num.slice(-8);
+                    const highChinese = translateInteger(high);
+                    const lowChinese = translateInteger(low);
+                    return highChinese + '亿' + (low[0] === '0' ? '零' : '') + lowChinese;
+                }
+                
+                // 处理万位
+                if (num.length > 4) {
+                    const high = num.slice(0, -4);
+                    const low = num.slice(-4);
+                    const highChinese = translateInteger(high);
+                    const lowChinese = translateInteger(low);
+                    return highChinese + '万' + (low[0] === '0' ? '零' : '') + lowChinese;
+                }
+                
+                // 处理千位以下
+                for (let i = 0; i < num.length; i++) {
+                    const digit = num[i];
+                    const position = num.length - 1 - i;
+                    
+                    if (digit === '0') {
+                        needZero = true;
+                        continue;
+                    }
+                    
+                    if (needZero && position > 0) {
+                        result += '零';
+                        needZero = false;
+                    }
+                    
+                    result += digitMap[digit] + (position > 0 ? units[position] : '');
+                }
+                
+                // 特殊处理"一十"开头的数字
+                if (result.startsWith('一十')) {
+                    result = result.slice(1);
+                }
+                
+                return result;
+            }
+            
+            // 处理小数部分
+            function translateDecimal(decimal) {
+                if (!decimal) return '';
+                let result = '点';
+                let leadingZeros = true;
+                
+                for (let i = 0; i < decimal.length; i++) {
+                    // 处理前导零
+                    if (decimal[i] === '0' && leadingZeros) {
+                        result += '零';
+                        continue;
+                    }
+                    leadingZeros = false;
+                    result += digitMap[decimal[i]];
+                }
+                return result;
+            }
+            
+            // 组合结果
+            const intResult = translateInteger(integerPart);
+            const decResult = translateDecimal(decimalPart);
+            
+            return intResult + decResult;
+        }
+
+        function calculate(inputElement) {
+            const expression = inputElement.value;
+            const resultContainer = inputElement.nextElementSibling;
+            const resultDiv = resultContainer.querySelector('.result');
+            const playButton = resultContainer.querySelector('.play-button');
+            
+            try {
+                const result = eval(expression);
+                const chineseResult = numberToChinese(result);
+                resultDiv.innerHTML = `答案: ${result}\n中文: ${chineseResult}`;
+                playButton.disabled = false;
+                playButton.classList.remove('disabled');
+                // 存储中文结果供语音播放使用
+                playButton.setAttribute('data-text', chineseResult);
+            } catch (e) {
+                resultDiv.innerHTML = '答案: 输入中';
+                playButton.disabled = true;
+                playButton.classList.add('disabled');
+            }
+        }
+
+        function playChineseResult(button) {
+            const text = button.getAttribute('data-text');
+            if (text && 'speechSynthesis' in window) {
+                // 停止之前的语音播放
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                // 设置语音为中文
+                utterance.lang = 'zh-CN';
+                // 设置语速略慢一点，使读数更清晰
+                utterance.rate = 0.8;
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function addCalculator() {
+            const calculatorsContainer = document.getElementById('calculators-container');
+            const newCalculator = document.createElement('div');
+            newCalculator.classList.add('calculator');
+            newCalculator.innerHTML = `
+                <input type="text" class="expression" placeholder="输入表达式" oninput="calculate(this)">
+                <div class="result-container">
+                    <div class="result">答案: </div>
+                    <button class="play-button" onclick="playChineseResult(this)" disabled>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                        朗读结果
+                    </button>
+                </div>
+            `;
+            calculatorsContainer.appendChild(newCalculator);
+        }
+    </script>
+</body>
+</html>

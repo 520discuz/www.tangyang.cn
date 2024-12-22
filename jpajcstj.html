@@ -1,0 +1,75 @@
+<html>
+<head>
+    <title>键盘按键次数统计</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #counter {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        #timer {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 24px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #stopButton {
+            background-color: #f44336; /* 红色 */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>键盘按键次数统计</h1>
+	    <h2>按键盘任意一个按键自动开始统计</h2>
+    <button id="stopButton" onclick="stopCount()">停止统计</button>
+    <div id="counter">按键次数: 0</div>
+    <div id="timer" style="display: none;">计时: 0.000秒</div>
+
+    <script>
+        let keyCount = 0;
+        let timerRunning = false;
+        let startTime;
+        let timerInterval;
+
+        document.addEventListener('keydown', function() {
+            if (!timerRunning) {
+                timerRunning = true;
+                startTime = Date.now();
+                document.getElementById('timer').style.display = 'block';
+                startTimer();
+            }
+            keyCount++;
+            document.getElementById('counter').innerText = '按键次数: ' + keyCount;
+        });
+
+        function startTimer() {
+            let lastTime = Date.now();
+
+            timerInterval = setInterval(() => {
+                const currentTime = Date.now();
+                const elapsed = currentTime - startTime;
+
+                const seconds = Math.floor(elapsed / 1000);
+                const milliseconds = elapsed % 1000;
+
+                document.getElementById('timer').innerText = `计时: ${seconds}.${Math.floor(milliseconds / 10).toString().padStart(2, '0')}秒`;
+            }, 10);
+        }
+
+        function stopCount() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            alert(`统计结束! 按键次数: ${keyCount}, 时间: ${((Date.now() - startTime) / 1000).toFixed(3)}秒`);
+        }
+    </script>
+</body>
+</html>

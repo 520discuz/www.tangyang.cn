@@ -1,0 +1,78 @@
+<head>
+    <title>黄金股票基金盈亏计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>黄金股票基金盈亏计算器</h1>
+    
+    <label for="principal">本金:</label>
+    <input type="number" id="principal" placeholder="输入本金" oninput="updateValues()">
+
+    <label for="buyPrice">买入价:</label>
+    <input type="number" id="buyPrice" placeholder="输入买入价" oninput="updateValues()">
+
+    <label for="currentPrice">当前价:</label>
+    <input type="number" id="currentPrice" placeholder="输入当前价" oninput="updateValues()">
+
+    <label for="days">已购买天数:</label>
+    <input type="number" id="days" placeholder="输入天数" oninput="updateValues()">
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function updateValues() {
+            const principal = parseFloat(document.getElementById('principal').value) || 0;
+            const buyPrice = parseFloat(document.getElementById('buyPrice').value) || 0;
+            const currentPrice = parseFloat(document.getElementById('currentPrice').value) || 0;
+            const days = parseFloat(document.getElementById('days').value) || 0;
+
+            // 计算总盈亏金额
+            const totalProfitLoss = (currentPrice - buyPrice) * (principal / buyPrice);
+            // 总盈亏百分比
+            const totalProfitLossPercent = (totalProfitLoss / principal) * 100;
+
+            // 计算年化收益
+            const annualizeReturn = totalProfitLoss / days * 365;
+            // 年化百分比
+            const annualizeReturnPercent = (annualizeReturn / principal) * 100;
+
+            // 计算日化收益
+            const dailyReturn = totalProfitLoss / days;
+            // 日化百分比
+            const dailyReturnPercent = (dailyReturn / principal) * 100;
+
+            // 显示结果
+            document.getElementById('result').innerHTML = `
+                <p>总盈亏金额: ${totalProfitLoss.toFixed(2)} 元</p>
+                <p>总盈亏百分比: ${totalProfitLossPercent.toFixed(2)}%</p>
+                <p>年化收益: ${annualizeReturn.toFixed(2)} 元</p>
+                <p>年化百分比: ${annualizeReturnPercent.toFixed(2)}%</p>
+                <p>日化收益: ${dailyReturn.toFixed(2)} 元</p>
+                <p>日化百分比: ${dailyReturnPercent.toFixed(2)}%</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
