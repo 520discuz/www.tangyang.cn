@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>数字一半的一半对半查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+        input {
+            padding: 5px;
+            font-size: 16px;
+        }
+        #output {
+            margin-top: 10px;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <h2>数字一半的一半对半查询器</h2>
+    <div>
+        <label>请输入数字：</label>
+        <input type="number" id="inputNumber" onInput="calculateHalf()">
+    </div>
+    <div class="result">
+        <div>结果：</div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function calculateHalf() {
+            const input = document.getElementById('inputNumber').value;
+            const output = document.getElementById('output');
+            let num = parseFloat(input);
+            let result = '';
+            
+            if (!isNaN(num)) {
+                while (num >= 0.0001) {
+                    result += num + '\n';
+                    num = num / 2;
+                }
+                output.textContent = result;
+            } else {
+                output.textContent = '请输入有效数字';
+            }
+        }
+    </script>
+</body>
+</html>

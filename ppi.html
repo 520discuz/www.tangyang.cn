@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PPI查询</title>
+    <style>
+        body {
+            font-family: 微软雅黑, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 8px 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        #ppi-result {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>手机屏幕、电脑屏幕、等电子产品屏幕PPI查询计算器</h1>
+    <input type="number" id="screen-length" placeholder="屏幕宽度 (像素)" required>
+    <input type="number" id="screen-width" placeholder="屏幕高度 (像素)" required>
+    <input type="number" id="screen-size" placeholder="屏幕对角线尺寸 (英寸)" required>
+    <button onclick="calculatePPI()">计算 PPI</button>
+    <div id="ppi-result"></div>
+
+    <script>
+        function calculatePPI() {
+            // 获取用户输入的屏幕尺寸
+            const screenLength = parseFloat(document.getElementById('screen-length').value);
+            const screenWidth = parseFloat(document.getElementById('screen-width').value);
+            const screenSize = parseFloat(document.getElementById('screen-size').value);
+
+            // 检查输入是否合法
+            if (isNaN(screenLength) || isNaN(screenWidth) || isNaN(screenSize) || screenLength <= 0 || screenWidth <= 0 || screenSize <= 0) {
+                document.getElementById('ppi-result').textContent = '请输入有效的屏幕尺寸。';
+                return;
+            }
+
+            // 计算 PPI
+            const ppi = Math.sqrt(screenLength * screenLength + screenWidth * screenWidth) / screenSize;
+
+            // 显示结果
+            document.getElementById('ppi-result').textContent = `PPI: ${ppi.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>墙壁铺满瓷砖岩板贴纸壁纸墙贴使用量计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input, select {
+            margin: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .wall-section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>墙壁铺满瓷砖岩板贴纸壁纸墙贴使用量计算器</h1>
+    <div id="wallsContainer">
+        <div class="wall-section">
+            <label for="wallWidth">墙壁宽度:</label>
+            <input type="number" class="wallWidth" placeholder="输入墙壁宽度" oninput="calculateTotalTiles()">
+            <select class="wallWidthUnit" onChange="calculateTotalTiles()">
+                <option value="米">m（米）</option>
+                <option value="厘米">cm（厘米）</option>
+                <option value="毫米">mm（毫米）</option>
+            </select><br>
+
+            <label for="wallHeight">墙壁高度:</label>
+            <input type="number" class="wallHeight" placeholder="输入墙壁高度" oninput="calculateTotalTiles()">
+            <select class="wallHeightUnit" onChange="calculateTotalTiles()">
+                <option value="米">m（米）</option>
+                <option value="厘米">cm（厘米）</option>
+                <option value="毫米">mm（毫米）</option>
+            </select><br>
+        </div>
+    </div>
+
+    <div>
+        <label for="tileWidth">瓷砖宽度:</label>
+        <input type="number" id="tileWidth" placeholder="输入瓷砖宽度" oninput="calculateTotalTiles()">
+        <select id="tileWidthUnit" onChange="calculateTotalTiles()">
+            <option value="米">m（米）</option>
+            <option value="厘米" selected>cm（厘米）</option>
+            <option value="毫米">mm（毫米）</option>
+        </select><br>
+
+        <label for="tileHeight">瓷砖高度:</label>
+        <input type="number" id="tileHeight" placeholder="输入瓷砖高度" oninput="calculateTotalTiles()">
+        <select id="tileHeightUnit" onChange="calculateTotalTiles()">
+            <option value="米">m（米）</option>
+            <option value="厘米" selected>cm（厘米）</option>
+            <option value="毫米">mm（毫米）</option>
+        </select><br>
+    </div>
+
+    <button onClick="addWall()">添加更多墙壁</button>
+    <h2 id="result">所需瓷砖数量: 0 块</h2>
+
+    <script>
+        function convertToMeters(value, unit) {
+            switch (unit) {
+                case '米':
+                    return value;
+                case '厘米':
+                    return value / 100;
+                case '毫米':
+                    return value / 1000;
+                default:
+                    return value;
+            }
+        }
+
+        function calculateTotalTiles() {
+            const wallSections = document.querySelectorAll('.wall-section');
+            let totalWallArea = 0;
+            let totalTileArea = convertToMeters(parseFloat(document.getElementById('tileWidth').value) || 0, document.getElementById('tileWidthUnit').value) *
+                               convertToMeters(parseFloat(document.getElementById('tileHeight').value) || 0, document.getElementById('tileHeightUnit').value);
+
+            wallSections.forEach(section => {
+                const wallWidth = convertToMeters(parseFloat(section.querySelector('.wallWidth').value) || 0, section.querySelector('.wallWidthUnit').value);
+                const wallHeight = convertToMeters(parseFloat(section.querySelector('.wallHeight').value) || 0, section.querySelector('.wallHeightUnit').value);
+                totalWallArea += wallWidth * wallHeight;
+            });
+
+            const numberOfTiles = totalTileArea > 0 ? Math.ceil(totalWallArea / totalTileArea) : 0;
+            document.getElementById('result').innerText = `所需瓷砖数量: ${numberOfTiles} 块`;
+        }
+
+        function addWall() {
+            const wallsContainer = document.getElementById('wallsContainer');
+            const newWallSection = document.createElement('div');
+            newWallSection.className = 'wall-section';
+            newWallSection.innerHTML = `
+                <label for="wallWidth">墙壁宽度:</label>
+                <input type="number" class="wallWidth" placeholder="输入墙壁宽度" oninput="calculateTotalTiles()">
+                <select class="wallWidthUnit" onchange="calculateTotalTiles()">
+                    <option value="米">m（米）</option>
+                    <option value="厘米">cm（厘米）</option>
+                    <option value="毫米">mm（毫米）</option>
+                </select><br>
+
+                <label for="wallHeight">墙壁高度:</label>
+                <input type="number" class="wallHeight" placeholder="输入墙壁高度" oninput="calculateTotalTiles()">
+                <select class="wallHeightUnit" onchange="calculateTotalTiles()">
+                    <option value="米">m（米）</option>
+                    <option value="厘米">cm（厘米）</option>
+                    <option value="毫米">mm（毫米）</option>
+                </select><br>
+            `;
+            wallsContainer.appendChild(newWallSection);
+        }
+    </script>
+
+</body>
+</html>

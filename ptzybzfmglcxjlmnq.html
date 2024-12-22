@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>抛投掷硬币正反面概率出现几率模拟器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .result-list {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: #fff;
+        }
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>抛投掷硬币正反面概率出现几率模拟器</h1>
+    
+    <div class="controls">
+        一次抛几个硬币：
+        <input type="number" id="coinCount" min="1" value="1">
+        <button onClick="flipCoins()">抛硬币</button>
+    </div>
+
+    <div class="stats" id="statistics">
+        总共抛掷次数：0<br>
+        正面次数：0 (0%)<br>
+        反面次数：0 (0%)
+    </div>
+
+    <div class="result-list" id="results">
+        <!-- 结果将在这里显示 -->
+    </div>
+
+    <script>
+        let totalFlips = 0;
+        let heads = 0;
+        let tails = 0;
+        
+        function flipCoins() {
+            const count = parseInt(document.getElementById('coinCount').value);
+            if (count < 1 || count > 9999999999999) {
+                alert('请输入1-100之间的数字');
+                return;
+            }
+
+            let results = [];
+            for (let i = 0; i < count; i++) {
+                const isHeads = Math.random() < 0.5;
+                if (isHeads) {
+                    heads++;
+                    results.push('正面');
+                } else {
+                    tails++;
+                    results.push('反面');
+                }
+                totalFlips++;
+            }
+
+            // 更新结果列表
+            const resultsDiv = document.getElementById('results');
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+            resultItem.textContent = `抛硬币结果：${results.join('、')}`;
+            resultsDiv.insertBefore(resultItem, resultsDiv.firstChild);
+
+            // 更新统计数据
+            updateStats();
+        }
+
+        function updateStats() {
+            const headsPercent = (heads / totalFlips * 100).toFixed(2);
+            const tailsPercent = (tails / totalFlips * 100).toFixed(2);
+            
+            document.getElementById('statistics').innerHTML = `
+                总共抛掷次数：${totalFlips}<br>
+                正面次数：${heads} (${headsPercent}%)<br>
+                反面次数：${tails} (${tailsPercent}%)
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RGB颜色取色器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .color-picker {
+
+
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(256, 1px);
+      grid-gap: 0;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .color-grid div {
+      width: 1px;
+      height: 1px;
+      cursor: pointer;
+    }
+
+    .color-grid div:hover + .color-preview {
+      display: block;
+    }
+
+    .color-preview {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      display: none;
+      z-index: 1;
+    }
+
+    .color-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .color-info p {
+      margin: 5px 0;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="color-picker">
+    <div class="color-grid">
+      <div></div>
+    </div>
+    <div class="color-preview"></div>
+    <div class="color-info">
+      <p id="rgb-value"></p>
+      <p id="hex-value"></p>
+      <button class="copy-btn" onClick="copyColorCode()">点击复制</button>
+    </div>
+  </div>
+<br>	友情提示：当停留到您想要的颜色时，右击鼠标可以让网页暂停，这样更容易复制。
+  <script>
+    const colorGrid = document.querySelector('.color-grid');
+    const colorPreview = document.querySelector('.color-preview');
+    const rgbValueDisplay = document.getElementById('rgb-value');
+    const hexValueDisplay = document.getElementById('hex-value');
+
+    // Generate the color grid
+    for (let i = 0; i < 65535; i++) {
+      const r = Math.floor(i / 256);
+      const g = Math.floor((i % 256) / 16) * 16;
+      const b = (i % 16) * 16;
+      const color = `rgb(${r}, ${g}, ${b})`;
+      const colorDiv = document.createElement('div');
+      colorDiv.style.backgroundColor = color;
+      colorDiv.addEventListener('mousemove', (e) => showColorPreview(e, r, g, b));
+      colorDiv.addEventListener('click', () => showColorInfo(r, g, b));
+      colorGrid.appendChild(colorDiv);
+    }
+
+    function showColorPreview(e, r, g, b) {
+      const previewX = e.clientX + 20;
+      const previewY = e.clientY;
+      colorPreview.style.display = 'block';
+      colorPreview.style.left = `${previewX}px`;
+      colorPreview.style.top = `${previewY}px`;
+      colorPreview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+      // Show color information in the preview
+      const hex = rgbToHex(r, g, b);
+      rgbValueDisplay.textContent = `RGB: ${r}, ${g}, ${b}`;
+      hexValueDisplay.textContent = `HEX: ${hex}`;
+    }
+
+    function showColorInfo(r, g, b) {
+      const hex = rgbToHex(r, g, b);
+      rgbValueDisplay.textContent = `RGB: ${r}, ${g}, ${b}`;
+      hexValueDisplay.textContent = `HEX: ${hex}`;
+    }
+
+    function rgbToHex(r, g, b) {
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    function copyColorCode() {
+      const hexValue = document.getElementById('hex-value').textContent.split(': ')[1];
+      navigator.clipboard.writeText(hexValue);
+      alert('复制成功');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>图片添加图片水印工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .upload-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+        }
+        .control-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+        .position-inputs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .canvas-container {
+            position: relative;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+        }
+        #mainCanvas {
+            max-width: 100%;
+            background-color: #f8f8f8;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .size-display {
+            margin-left: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片添加图片水印工具</h1>
+        
+        <div class="upload-section">
+            <h3>上传主图片：</h3>
+            <input type="file" id="mainImageInput" accept="image/*">
+            
+            <h3>上传水印图片：</h3>
+            <input type="file" id="watermarkInput" accept="image/*">
+        </div>
+
+        <div class="control-section">
+            <div class="position-inputs">
+                <div class="input-group">
+                    <label for="xPosition">X坐标（像素）：</label>
+                    <input type="number" id="xPosition" value="0" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="yPosition">Y坐标（像素）：</label>
+                    <input type="number" id="yPosition" value="0" min="0">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="sizeSlider">水印大小：<span id="sizeValue" class="size-display">50%</span></label>
+                <input type="range" id="sizeSlider" min="1" max="100" value="50">
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="mainCanvas"></canvas>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="button" id="saveButton">保存图片</button>
+            <button class="button" id="resetButton">重置</button>
+        </div>
+    </div>
+
+    <script>
+        const mainCanvas = document.getElementById('mainCanvas');
+        const ctx = mainCanvas.getContext('2d');
+        let mainImage = null;
+        let watermarkImage = null;
+
+        // 更新画布函数
+        function updateCanvas() {
+            if (!mainImage) return;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            
+            // 绘制主图片
+            ctx.drawImage(mainImage, 0, 0);
+            
+            // 如果有水印图片，则绘制水印
+            if (watermarkImage) {
+                const x = parseInt(document.getElementById('xPosition').value) || 0;
+                const y = parseInt(document.getElementById('yPosition').value) || 0;
+                const sizePercent = parseInt(document.getElementById('sizeSlider').value) / 100;
+
+                // 计算水印大小
+                const maxWidth = mainCanvas.width * 0.8; // 最大宽度为主图的80%
+                const scaledWidth = watermarkImage.width * sizePercent;
+                const scaledHeight = watermarkImage.height * (scaledWidth / watermarkImage.width);
+
+                ctx.drawImage(watermarkImage, x, y, scaledWidth, scaledHeight);
+            }
+        }
+
+        // 主图片上传处理
+        document.getElementById('mainImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    mainImage = new Image();
+                    mainImage.onload = function() {
+                        mainCanvas.width = mainImage.width;
+                        mainCanvas.height = mainImage.height;
+                        
+                        // 更新坐标输入框的最大值
+                        document.getElementById('xPosition').max = mainImage.width;
+                        document.getElementById('yPosition').max = mainImage.height;
+                        
+                        updateCanvas();
+                    };
+                    mainImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 水印图片上传处理
+        document.getElementById('watermarkInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    watermarkImage = new Image();
+                    watermarkImage.onload = function() {
+                        updateCanvas();
+                    };
+                    watermarkImage.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 监听所有控制输入的变化
+        ['xPosition', 'yPosition'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateCanvas);
+        });
+
+        // 大小滑块值显示和更新
+        const sizeSlider = document.getElementById('sizeSlider');
+        const sizeValue = document.getElementById('sizeValue');
+        
+        sizeSlider.addEventListener('input', function(e) {
+            sizeValue.textContent = e.target.value + '%';
+            updateCanvas();
+        });
+
+        // 保存按钮
+        document.getElementById('saveButton').addEventListener('click', function() {
+            if (!mainImage) {
+                alert('请先上传图片');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = 'watermarked-image.png';
+            link.href = mainCanvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // 重置按钮
+        document.getElementById('resetButton').addEventListener('click', function() {
+            mainImage = null;
+            watermarkImage = null;
+            ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+            document.getElementById('mainImageInput').value = '';
+            document.getElementById('watermarkInput').value = '';
+            document.getElementById('xPosition').value = '0';
+            document.getElementById('yPosition').value = '0';
+            document.getElementById('sizeSlider').value = '50';
+            document.getElementById('sizeValue').textContent = '50%';
+        });
+    </script>
+</body>
+</html>

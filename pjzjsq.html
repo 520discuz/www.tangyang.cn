@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>平均分数值计算器</title>
+    <style>
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .input-group.highest {
+            background-color: #ffedef;
+        }
+        .input-group.lowest {
+            background-color: #e3f2fd;
+        }
+        .input-group span {
+            margin-right: 8px;
+            color: #666;
+            min-width: 24px;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 12px;
+            padding: 0;
+            line-height: 1;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .add-btn {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .settings {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .legend-highest {
+            background-color: #ffedef;
+        }
+        .legend-lowest {
+            background-color: #e3f2fd;
+        }
+        @keyframes highlight {
+            0% { background-color: #4CAF50; }
+            100% { background-color: #f8f9fa; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>平均分数值计算器</h1>
+        <div id="input-container" class="input-container">
+            <!-- 输入框将通过JavaScript动态生成 -->
+        </div>
+        <div class="controls">
+            <div class="controls-row">
+                <div class="settings">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="removeHighest" onChange="calculateAverage()">
+                        <label for="removeHighest">去掉最高分</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="removeLowest" onChange="calculateAverage()">
+                        <label for="removeLowest">去掉最低分</label>
+                    </div>
+                </div>
+                <button class="add-btn" onClick="addInput()">添加输入框</button>
+            </div>
+            <div class="controls-row">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-highest"></div>
+                        <span>最高分</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-lowest"></div>
+                        <span>最低分</span>
+                    </div>
+                </div>
+                <div class="result">平均数：<span id="average">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inputCount = 0;
+
+        function createInputGroup() {
+            inputCount++;
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <span>${inputCount}</span>
+                <input type="number" step="any" oninput="calculateAverage()" placeholder="请输入数字">
+                ${inputCount > 10 ? '<button class="delete-btn" onclick="deleteInput(this)">×</button>' : ''}
+            `;
+            return div;
+        }
+
+        function addInput() {
+            const container = document.getElementById('input-container');
+            const inputGroup = createInputGroup();
+            container.appendChild(inputGroup);
+        }
+
+        function deleteInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+            renumberInputs();
+            calculateAverage();
+        }
+
+        function renumberInputs() {
+            const spans = document.querySelectorAll('.input-group span');
+            spans.forEach((span, index) => {
+                span.textContent = index + 1;
+            });
+            inputCount = spans.length;
+        }
+
+        function calculateAverage() {
+            // 重置所有输入框的样式
+            document.querySelectorAll('.input-group').forEach(group => {
+                group.classList.remove('highest', 'lowest');
+            });
+
+            const inputs = document.querySelectorAll('input[type="number"]');
+            const numbers = [];
+            
+            // 收集所有有效的数字
+            inputs.forEach(input => {
+                if (input.value !== '') {
+                    numbers.push({
+                        value: parseFloat(input.value),
+                        element: input.parentElement
+                    });
+                }
+            });
+
+            if (numbers.length === 0) {
+                document.getElementById('average').textContent = '0';
+                return;
+            }
+
+            // 排序以找出最高分和最低分
+            numbers.sort((a, b) => b.value - a.value);
+
+            let sum = 0;
+            let count = numbers.length;
+            let removeHighest = document.getElementById('removeHighest').checked;
+            let removeLowest = document.getElementById('removeLowest').checked;
+
+            // 标记最高分和最低分
+            if (numbers.length > 0) {
+                if (removeHighest) {
+                    numbers[0].element.classList.add('highest');
+                    sum = numbers.reduce((acc, curr) => acc + curr.value, 0) - numbers[0].value;
+                    count--;
+                } else {
+                    sum = numbers.reduce((acc, curr) => acc + curr.value, 0);
+                }
+
+                if (removeLowest && numbers.length > 1) {
+                    numbers[numbers.length - 1].element.classList.add('lowest');
+                    sum -= numbers[numbers.length - 1].value;
+                    count--;
+                }
+            }
+
+            const average = count > 0 ? (sum / count).toFixed(2) : '0';
+            document.getElementById('average').textContent = average;
+        }
+
+        // 页面加载时初始化10个输入框
+        window.onload = function() {
+            for (let i = 0; i < 10; i++) {
+                addInput();
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拍照补光工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            transition: background-color 0.5s; /* 背景颜色渐变效果 */
+            position: relative;
+        }
+        .slider {
+            width: 80%;
+            margin: 20px auto;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #toggleButton {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: rgba(0, 123, 255, 0.5); /* 初始透明背景 */
+            color: white;
+            border: 2px solid gray; /* 灰色边框 */
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.5s, color 0.5s; /* 背景和字体颜色渐变 */
+        }
+        #sliderContainer {
+            transition: opacity 0.5s;
+        }
+        .color-button {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        #colorPalette {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sliderContainer">
+        <div>
+            <label>颜色 (色相):</label>
+            <input type="range" id="colorSlider" class="slider" min="0" max="360" value="180" oninput="updateValues()">
+            <div id="colorValue" class="result">180</div>
+        </div>
+
+        <div>
+            <label>饱和度:</label>
+            <input type="range" id="saturationSlider" class="slider" min="0" max="100" value="100" oninput="updateValues()">
+            <div id="saturationValue" class="result">100</div>
+        </div>
+
+        <div>
+            <label>亮度:</label>
+            <input type="range" id="brightnessSlider" class="slider" min="0" max="100" value="50" oninput="updateValues()">
+            <div id="brightnessValue" class="result">50</div>
+        </div>
+    </div>
+
+    <div id="colorPalette">
+        <!-- 预设颜色按钮 -->
+        <button class="color-button" style="background-color: hsl(0, 100%, 50%);" onClick="selectColor(0, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(30, 100%, 50%);" onClick="selectColor(30, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(60, 100%, 50%);" onClick="selectColor(60, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(120, 100%, 50%);" onClick="selectColor(120, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(180, 100%, 50%);" onClick="selectColor(180, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(240, 100%, 50%);" onClick="selectColor(240, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(300, 100%, 50%);" onClick="selectColor(300, 100, 50)"></button>
+        <button class="color-button" style="background-color: hsl(0, 0%, 0%);" onClick="selectColor(0, 0, 0)"></button>
+        <button class="color-button" style="background-color: hsl(0, 0%, 100%);" onClick="selectColor(0, 0, 100)"></button>
+        <button class="color-button" style="background-color: hsl(0, 50%, 50%);" onClick="selectColor(0, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(120, 50%, 50%);" onClick="selectColor(120, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(240, 50%, 50%);" onClick="selectColor(240, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(300, 50%, 50%);" onClick="selectColor(300, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(30, 50%, 50%);" onClick="selectColor(30, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(60, 50%, 50%);" onClick="selectColor(60, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(180, 50%, 50%);" onClick="selectColor(180, 50, 50)"></button>
+        <button class="color-button" style="background-color: hsl(300, 100%, 80%);" onClick="selectColor(300, 100, 80)"></button>
+        <button class="color-button" style="background-color: hsl(240, 100%, 80%);" onClick="selectColor(240, 100, 80)"></button>
+        <button class="color-button" style="background-color: hsl(60, 100%, 80%);" onClick="selectColor(60, 100, 80)"></button>
+        <button class="color-button" style="background-color: hsl(0, 100%, 80%);" onClick="selectColor(0, 100, 80)"></button>
+    </div>
+
+    <button id="toggleButton" onClick="toggleSliders()">隐藏</button>
+
+    <script>
+        let slidersVisible = true;
+
+        function updateValues() {
+            const hue = document.getElementById('colorSlider').value;
+            const saturation = document.getElementById('saturationSlider').value;
+            const brightness = document.getElementById('brightnessSlider').value;
+
+            document.getElementById('colorValue').innerText = hue;
+            document.getElementById('saturationValue').innerText = saturation;
+            document.getElementById('brightnessValue').innerText = brightness;
+
+            // 使用 HSL 模型设置背景颜色
+            const body = document.body;
+            const hslColor = `hsl(${hue}, ${saturation}%, ${brightness}%)`;
+            body.style.backgroundColor = hslColor;
+
+            // 更新按钮的背景颜色
+            document.getElementById('toggleButton').style.backgroundColor = hslColor;
+        }
+
+        function selectColor(hue, saturation, brightness) {
+            document.getElementById('colorSlider').value = hue;
+            document.getElementById('saturationSlider').value = saturation;
+            document.getElementById('brightnessSlider').value = brightness;
+            updateValues();
+        }
+
+        function toggleSliders() {
+            const sliderContainer = document.getElementById('sliderContainer');
+            const colorPalette = document.getElementById('colorPalette');
+            if (slidersVisible) {
+                sliderContainer.style.opacity = '0';
+                sliderContainer.style.pointerEvents = 'none'; // 禁止事件
+                colorPalette.style.opacity = '0'; // 隐藏颜色选择区域
+                colorPalette.style.pointerEvents = 'none'; // 禁止事件
+                document.getElementById('toggleButton').innerText = '显示';
+                slidersVisible = false;
+            } else {
+                sliderContainer.style.opacity = '1';
+                sliderContainer.style.pointerEvents = 'auto'; // 开启事件
+                colorPalette.style.opacity = '1'; // 显示颜色选择区域
+                colorPalette.style.pointerEvents = 'auto'; // 开启事件
+                document.getElementById('toggleButton').innerText = '隐藏';
+                slidersVisible = true;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>图片旋转工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        
+        .control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .control-group label {
+            min-width: 120px;
+            margin-right: 10px;
+        }
+        
+        .control-group input[type="number"],
+        .control-group input[type="range"] {
+            width: 150px;
+            margin-right: 20px;
+        }
+        
+        .control-group input[type="number"] {
+            width: 100px;
+            padding: 5px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .control-group span {
+            margin: 0 5px;
+        }
+        
+        .rotate-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        #rotateArea {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #previewImage {
+            max-width: 90%;
+            max-height: 90%;
+            transition: transform 0.3s ease;
+            object-fit: contain;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .button-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .button-group button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .button-group button:hover {
+            opacity: 0.9;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .color-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="control-group">
+            <label>选择图片：</label>
+            <input type="file" accept="image/*" id="imageInput" onchange="handleImageUpload(event)">
+        </div>
+        
+        <div class="control-group">
+            <label>旋转角度：</label>
+            <input type="number" id="rotateNumber" value="0" min="-360" max="360" step="1" oninput="updateRotation('number')">
+            <input type="range" id="rotateRange" value="0" min="-360" max="360" step="1" oninput="updateRotation('range')">
+        </div>
+
+        <div class="control-group">
+            <label>背景区域：</label>
+            <input type="number" id="containerWidth" value="800" min="100" max="2000" step="10" placeholder="宽度" 
+                oninput="updateContainerSize()">
+            <span>×</span>
+            <input type="number" id="containerHeight" value="600" min="100" max="2000" step="10" placeholder="高度" 
+                oninput="updateContainerSize()">
+            <label style="min-width: auto; margin: 0 5px;">像素</label>
+        </div>
+
+        <div class="control-group">
+            <label>背景设置：</label>
+            <span class="color-label">
+                <input type="color" id="bgColor" value="#ffffff" oninput="updateBackground()">
+                <span>背景颜色</span>
+            </span>
+            <label>
+                <input type="checkbox" id="transparentBg" onchange="updateBackground()"> 透明背景
+            </label>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="saveImage()">保存图片</button>
+            <button onclick="resetRotation()">重置旋转</button>
+        </div>
+    </div>
+    
+    <div class="rotate-container" id="rotateContainer">
+        <div id="rotateArea">
+            <div class="upload-area" id="uploadArea">
+                
+            </div>
+            <img id="previewImage" style="display: none;">
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        let currentRotation = 0;
+        
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    const uploadArea = document.getElementById('uploadArea');
+                    
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function updateRotation(source) {
+            const numberInput = document.getElementById('rotateNumber');
+            const rangeInput = document.getElementById('rotateRange');
+            const previewImage = document.getElementById('previewImage');
+            
+            if (source === 'number') {
+                rangeInput.value = numberInput.value;
+            } else {
+                numberInput.value = rangeInput.value;
+            }
+            
+            currentRotation = parseInt(numberInput.value);
+            previewImage.style.transform = `rotate(${currentRotation}deg)`;
+        }
+        
+        function resetRotation() {
+            const numberInput = document.getElementById('rotateNumber');
+            const rangeInput = document.getElementById('rotateRange');
+            const previewImage = document.getElementById('previewImage');
+            
+            currentRotation = 0;
+            numberInput.value = 0;
+            rangeInput.value = 0;
+            previewImage.style.transform = 'rotate(0deg)';
+        }
+
+        function updateContainerSize() {
+            const container = document.getElementById('rotateContainer');
+            const width = document.getElementById('containerWidth').value;
+            const height = document.getElementById('containerHeight').value;
+            
+            container.style.width = `${width}px`;
+            container.style.height = `${height}px`;
+        }
+
+        function updateBackground() {
+            const container = document.getElementById('rotateContainer');
+            const transparentBg = document.getElementById('transparentBg').checked;
+            const bgColor = document.getElementById('bgColor');
+            
+            container.style.backgroundColor = transparentBg ? 'transparent' : bgColor.value;
+            bgColor.disabled = transparentBg;
+        }
+        
+        async function saveImage() {
+            const container = document.getElementById('rotateContainer');
+            const transparentBg = document.getElementById('transparentBg').checked;
+            const bgColor = document.getElementById('bgColor').value;
+            
+            try {
+                const canvas = await html2canvas(container, {
+                    useCORS: true,
+                    backgroundColor: transparentBg ? null : bgColor,
+                    scale: 2
+                });
+
+                const link = document.createElement('a');
+                link.download = '旋转后的图片.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('保存图片时出错：', error);
+                alert('保存图片时出错，请重试！');
+            }
+        }
+
+        // 支持拖拽上传
+        const rotateArea = document.getElementById('rotateArea');
+        
+        rotateArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            rotateArea.style.borderColor = '#2196F3';
+        });
+        
+        rotateArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            rotateArea.style.borderColor = '#ccc';
+        });
+        
+        rotateArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            rotateArea.style.borderColor = '#ccc';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('previewImage');
+                    const uploadArea = document.getElementById('uploadArea');
+                    
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    uploadArea.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 初始化
+        updateBackground();
+        updateContainerSize();
+    </script>
+</body>
+</html>

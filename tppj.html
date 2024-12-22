@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>图片拼接器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .direction-select {
+            margin: 10px 0;
+        }
+        #imageContainer {
+            margin: 20px 0;
+            border: 2px dashed #ccc;
+            padding: 10px;
+            min-height: 200px;
+        }
+        #imageContainer.horizontal {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+        }
+        #imageContainer.vertical {
+            display: flex;
+            flex-direction: column;
+        }
+        .image-item {
+            position: relative;
+            margin: 5px;
+        }
+        .image-item img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片拼接器</h1>
+    
+    <div class="controls">
+        <div class="direction-select">
+            <label>拼接方向：</label>
+            <select id="direction">
+                <option value="horizontal">向右拼接</option>
+                <option value="vertical">向下拼接</option>
+            </select>
+        </div>
+        
+        <input type="file" id="fileInput" multiple accept="image/*">
+        <button onclick="document.getElementById('fileInput').click()">选择图片</button>
+        <button onclick="saveImage()">保存拼接结果</button>
+    </div>
+
+    <div id="imageContainer" class="horizontal"></div>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const imageContainer = document.getElementById('imageContainer');
+        const directionSelect = document.getElementById('direction');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        directionSelect.addEventListener('change', function() {
+            imageContainer.className = this.value;
+            updateCanvas();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            
+            for(let file of files) {
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    
+                    img.onload = function() {
+                        const imageItem = document.createElement('div');
+                        imageItem.className = 'image-item';
+                        
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'delete-btn';
+                        deleteBtn.innerHTML = '×';
+                        deleteBtn.onclick = function() {
+                            imageItem.remove();
+                            updateCanvas();
+                        };
+                        
+                        imageItem.appendChild(img);
+                        imageItem.appendChild(deleteBtn);
+                        imageContainer.appendChild(imageItem);
+                        
+                        updateCanvas();
+                    };
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateCanvas() {
+            const images = Array.from(imageContainer.getElementsByTagName('img'));
+            if (images.length === 0) return;
+
+            let totalWidth = 0;
+            let totalHeight = 0;
+            let maxWidth = 0;
+            let maxHeight = 0;
+
+            // 计算总尺寸
+            images.forEach(img => {
+                if (directionSelect.value === 'horizontal') {
+                    totalWidth += img.naturalWidth;
+                    maxHeight = Math.max(maxHeight, img.naturalHeight);
+                } else {
+                    totalHeight += img.naturalHeight;
+                    maxWidth = Math.max(maxWidth, img.naturalWidth);
+                }
+            });
+
+            // 设置画布尺寸
+            if (directionSelect.value === 'horizontal') {
+                canvas.width = totalWidth;
+                canvas.height = maxHeight;
+            } else {
+                canvas.width = maxWidth;
+                canvas.height = totalHeight;
+            }
+
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制图片
+            let currentX = 0;
+            let currentY = 0;
+
+            images.forEach(img => {
+                if (directionSelect.value === 'horizontal') {
+                    ctx.drawImage(img, currentX, 0, img.naturalWidth, img.naturalHeight);
+                    currentX += img.naturalWidth;
+                } else {
+                    ctx.drawImage(img, 0, currentY, img.naturalWidth, img.naturalHeight);
+                    currentY += img.naturalHeight;
+                }
+            });
+        }
+
+        function saveImage() {
+            if (imageContainer.getElementsByTagName('img').length === 0) {
+                alert('请先添加图片！');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = 'merged-image.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

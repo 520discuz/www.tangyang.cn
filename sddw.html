@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>速度单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .unit-row {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            width: 200px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>速度单位换算器</h1>
+    
+    <div class="section">
+        <h2>公制</h2>
+        <div class="unit-row">
+            <label>米/秒:</label>
+            <input type="number" id="ms" step="any" oninput="convert(this.id, this.value)">
+            <span>(m/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>千米/秒:</label>
+            <input type="number" id="kms" step="any" oninput="convert(this.id, this.value)">
+            <span>(km/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>千米/时:</label>
+            <input type="number" id="kmh" step="any" oninput="convert(this.id, this.value)">
+            <span>(km/h)</span>
+        </div>
+        <div class="unit-row">
+            <label>光速:</label>
+            <input type="number" id="c" step="any" oninput="convert(this.id, this.value)">
+            <span>(c)</span>
+        </div>
+        <div class="unit-row">
+            <label>毫米/秒:</label>
+            <input type="number" id="mms" step="any" oninput="convert(this.id, this.value)">
+            <span>(mm/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>微米/秒:</label>
+            <input type="number" id="ums" step="any" oninput="convert(this.id, this.value)">
+            <span>(μm/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>音速:</label>
+            <input type="number" id="au" step="any" oninput="convert(this.id, this.value)">
+            <span>(AU)</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>英制</h2>
+        <div class="unit-row">
+            <label>马赫:</label>
+            <input type="number" id="mach" step="any" oninput="convert(this.id, this.value)">
+            <span>(mach)</span>
+        </div>
+        <div class="unit-row">
+            <label>英里/时:</label>
+            <input type="number" id="mph" step="any" oninput="convert(this.id, this.value)">
+            <span>(mile/h)</span>
+        </div>
+        <div class="unit-row">
+            <label>英寸/秒:</label>
+            <input type="number" id="ins" step="any" oninput="convert(this.id, this.value)">
+            <span>(in/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>英里/秒:</label>
+            <input type="number" id="mis" step="any" oninput="convert(this.id, this.value)">
+            <span>(mi/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>英尺/秒:</label>
+            <input type="number" id="fts" step="any" oninput="convert(this.id, this.value)">
+            <span>(ft/s)</span>
+        </div>
+        <div class="unit-row">
+            <label>英尺/分:</label>
+            <input type="number" id="ftm" step="any" oninput="convert(this.id, this.value)">
+            <span>(ft/m)</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>航海</h2>
+        <div class="unit-row">
+            <label>海里/时:</label>
+            <input type="number" id="nmh" step="any" oninput="convert(this.id, this.value)">
+            <span>(Nm/h)</span>
+        </div>
+        <div class="unit-row">
+            <label>节:</label>
+            <input type="number" id="kt" step="any" oninput="convert(this.id, this.value)">
+            <span>(kt)</span>
+        </div>
+        <div class="unit-row">
+            <label>海里/秒:</label>
+            <input type="number" id="nms" step="any" oninput="convert(this.id, this.value)">
+            <span>(Nm/s)</span>
+        </div>
+    </div>
+
+    <script>
+        const SPEED_OF_LIGHT = 299792458; // 光速 (m/s)
+        const SPEED_OF_SOUND = 340.29; // 音速 (m/s)
+
+        function convert(sourceId, value) {
+            if (value === '') return;
+            // 将输入值转换为米/秒
+            let msValue = toMS(sourceId, parseFloat(value));
+            
+            // 更新所有输入框
+            updateAllInputs(msValue, sourceId);
+        }
+
+        function toMS(unit, value) {
+            switch(unit) {
+                case 'ms': return value;
+                case 'kms': return value * 1000;
+                case 'kmh': return value * (1000/3600);
+                case 'c': return value * SPEED_OF_LIGHT;
+                case 'mms': return value / 1000;
+                case 'ums': return value / 1000000;
+                case 'au': return value * SPEED_OF_SOUND;
+                case 'mach': return value * SPEED_OF_SOUND;
+                case 'mph': return value * 0.44704;
+                case 'ins': return value * 0.0254;
+                case 'mis': return value * 1609.344;
+                case 'fts': return value * 0.3048;
+                case 'ftm': return value * 0.3048 / 60;
+                case 'nmh': return value * 0.514444444;
+                case 'kt': return value * 0.514444444;
+                case 'nms': return value * 1.852;
+                default: return value;
+            }
+        }
+
+        function fromMS(unit, msValue) {
+            switch(unit) {
+                case 'ms': return msValue;
+                case 'kms': return msValue / 1000;
+                case 'kmh': return msValue * (3600/1000);
+                case 'c': return msValue / SPEED_OF_LIGHT;
+                case 'mms': return msValue * 1000;
+                case 'ums': return msValue * 1000000;
+                case 'au': return msValue / SPEED_OF_SOUND;
+                case 'mach': return msValue / SPEED_OF_SOUND;
+                case 'mph': return msValue / 0.44704;
+                case 'ins': return msValue / 0.0254;
+                case 'mis': return msValue / 1609.344;
+                case 'fts': return msValue / 0.3048;
+                case 'ftm': return (msValue / 0.3048) * 60;
+                case 'nmh': return msValue / 0.514444444;
+                case 'kt': return msValue / 0.514444444;
+                case 'nms': return msValue / 1.852;
+                default: return msValue;
+            }
+        }
+
+        function updateAllInputs(msValue, sourceId) {
+            document.querySelectorAll('input').forEach(input => {
+                if (input.id !== sourceId) {
+                    let convertedValue = fromMS(input.id, msValue);
+                    // 使用toLocaleString避免科学计数法
+                    if (Math.abs(convertedValue) >= 1e-6 && Math.abs(convertedValue) < 1e21) {
+                        input.value = convertedValue.toLocaleString('fullwide', {useGrouping: false, maximumFractionDigits: 10});
+                    } else {
+                        input.value = convertedValue;
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

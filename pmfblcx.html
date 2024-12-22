@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN" charset="GBK">
+<head>
+  <meta charset="GBK">
+  <title>屏幕分辨率查询</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>屏幕分辨率查询</h1>
+  <p>您的屏幕分辨率为:</p>
+  <div id="result">
+    宽度: <span id="screenWidth"></span>px
+    <br>
+    高度: <span id="screenHeight"></span>px
+  </div>
+
+  <script>
+    document.getElementById("screenWidth").innerText = screen.width;
+    document.getElementById("screenHeight").innerText = screen.height;
+  </script>
+</body>
+</html>

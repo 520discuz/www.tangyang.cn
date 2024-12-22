@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>时间戳转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>时间戳转换器</h1>
+
+    <h2>输入日期转换为时间戳</h2>
+    <label for="date-input">输入日期:</label>
+    <input type="date" id="date-input">
+    <button onclick="convertDateToTimestamp()">转换</button>
+    <p id="date-timestamp-result"></p>
+
+    <h2>查看当前时间戳</h2>
+    <p id="current-timestamp"></p>
+
+    <h2>输入 UNIX 时间戳转换为各地时间</h2>
+    <label for="timestamp">输入 UNIX 时间戳:</label>
+    <input type="number" id="timestamp" placeholder="例如：1633036800">
+    <button onclick="convertTimestamp()">转换时间</button>
+    <h2>各国时间</h2>
+    <div id="results"></div>
+
+    <script>
+        function convertDateToTimestamp() {
+            const dateInput = document.getElementById('date-input');
+            const dateValue = dateInput.value;
+            const timestamp = new Date(dateValue).getTime() / 1000;
+            document.getElementById('date-timestamp-result').textContent = `输入的日期 ${dateValue} 对应的时间戳是: ${timestamp}`;
+        }
+
+        function convertTimestamp() {
+            // 获取用户输入的时间戳
+            const timestamp = document.getElementById('timestamp').value;
+            const utcDate = new Date(timestamp * 1000); // 转换为毫秒
+            // 定义时区
+            const timezones = {
+                "美国 (纽约)": "America/New_York",
+                "美国 (洛杉矶)": "America/Los_Angeles",
+                "加拿大 (温哥华)": "America/Vancouver",
+                "巴西 (里约热内卢)": "America/Sao_Paulo", 
+                "英国 (伦敦)": "Europe/London",
+                "法国 (巴黎)": "Europe/Paris",
+                "德国 (柏林)": "Europe/Berlin",
+                "俄罗斯 (莫斯科)": "Europe/Moscow",
+                "意大利 (罗马)": "Europe/Rome",
+                "西班牙 (马德里)": "Europe/Madrid",
+                "中国 (北京)": "Asia/Shanghai",
+                "日本 (东京)": "Asia/Tokyo",
+                "韩国 (首尔)": "Asia/Seoul",
+                "新加坡": "Asia/Singapore",
+                "澳大利亚 (悉尼)": "Australia/Sydney",
+                "阿联酋 (迪拜)": "Asia/Dubai",
+                "南非 (约翰内斯堡)": "Africa/Johannesburg",
+                "墨西哥 (墨西哥城)": "America/Mexico_City",
+                "印度 (新德里)": "Asia/Kolkata",
+                "巴基斯坦 (卡拉achi)": "Asia/Karachi"
+            };
+            let resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // 清空之前的结果
+            for (let country in timezones) {
+                let timezone = timezones[country];
+                let options = { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                let localTime = utcDate.toLocaleString('zh-CN', options);
+                resultsDiv.innerHTML += `<p>${country}: ${localTime}</p>`;
+            }
+        }
+
+        // 显示当前时间戳
+        document.getElementById('current-timestamp').textContent = `当前时间戳: ${Math.floor(Date.now() / 1000)}`;
+    </script>
+</body>
+</html>

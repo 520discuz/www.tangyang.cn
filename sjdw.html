@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>时间单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        .input-group label {
+            width: 100px;
+            display: inline-block;
+            font-size: 16px;
+        }
+        input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .unit {
+            color: #666;
+            font-size: 16px;
+            min-width: 50px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>时间单位换算器</h1>
+        
+        <div class="input-group">
+            <label>年</label>
+            <input type="text" id="year" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(yr)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>月</label>
+            <input type="text" id="month" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(month)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>周</label>
+            <input type="text" id="week" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(week)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>天</label>
+            <input type="text" id="day" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(d)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>时</label>
+            <input type="text" id="hour" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(h)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>分</label>
+            <input type="text" id="minute" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(min)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>秒</label>
+            <input type="text" id="second" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(s)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>毫秒</label>
+            <input type="text" id="millisecond" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(ms)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>微秒</label>
+            <input type="text" id="microsecond" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(μs)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>纳秒</label>
+            <input type="text" id="nanosecond" oninput="convert(this)" placeholder="请输入数值">
+            <span class="unit">(ns)</span>
+        </div>
+
+
+    </div>
+
+    <script>
+        function convert(input) {
+            // 获取输入值
+            let value = parseFloat(input.value);
+            if (isNaN(value)) {
+                clearAll();
+                return;
+            }
+
+            // 先转换为秒作为基准单位
+            let seconds;
+            switch(input.id) {
+                case 'year':
+                    seconds = value * 365 * 24 * 60 * 60;
+                    break;
+                case 'month':
+                    seconds = value * 30.44 * 24 * 60 * 60;
+                    break;
+                case 'week':
+                    seconds = value * 7 * 24 * 60 * 60;
+                    break;
+                case 'day':
+                    seconds = value * 24 * 60 * 60;
+                    break;
+                case 'hour':
+                    seconds = value * 60 * 60;
+                    break;
+                case 'minute':
+                    seconds = value * 60;
+                    break;
+                case 'second':
+                    seconds = value;
+                    break;
+                case 'millisecond':
+                    seconds = value / 1000;
+                    break;
+                case 'microsecond':
+                    seconds = value / 1000000;
+                    break;
+                case 'nanosecond':
+                    seconds = value / 1000000000;
+                    break;
+            }
+
+            // 转换为所有其他单位
+            if (input.id !== 'year') document.getElementById('year').value = formatNumber(seconds / (365 * 24 * 60 * 60));
+            if (input.id !== 'month') document.getElementById('month').value = formatNumber(seconds / (30.44 * 24 * 60 * 60));
+            if (input.id !== 'week') document.getElementById('week').value = formatNumber(seconds / (7 * 24 * 60 * 60));
+            if (input.id !== 'day') document.getElementById('day').value = formatNumber(seconds / (24 * 60 * 60));
+            if (input.id !== 'hour') document.getElementById('hour').value = formatNumber(seconds / (60 * 60));
+            if (input.id !== 'minute') document.getElementById('minute').value = formatNumber(seconds / 60);
+            if (input.id !== 'second') document.getElementById('second').value = formatNumber(seconds);
+            if (input.id !== 'millisecond') document.getElementById('millisecond').value = formatNumber(seconds * 1000);
+            if (input.id !== 'microsecond') document.getElementById('microsecond').value = formatNumber(seconds * 1000000);
+            if (input.id !== 'nanosecond') document.getElementById('nanosecond').value = formatNumber(seconds * 1000000000);
+        }
+
+        function formatNumber(num) {
+            // 避免使用科学计数法，保留12位小数
+            return Number(num.toFixed(12)).toString();
+        }
+
+        function clearAll() {
+            const inputs = document.getElementsByTagName('input');
+            for(let input of inputs) {
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
