@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>自定义声音式倒计时器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .section-title {
+            margin-bottom: 1rem;
+            color: #444;
+            font-size: 1.2rem;
+        }
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .preset-btn {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .preset-btn:hover {
+            background: #45a049;
+        }
+        .custom-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .control-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+        .start-btn {
+            background: #2196F3;
+            color: white;
+        }
+        .start-btn:hover {
+            background: #1976D2;
+        }
+        .pause-btn {
+            background: #FF9800;
+            color: white;
+        }
+        .pause-btn:hover {
+            background: #F57C00;
+        }
+        .reset-btn {
+            background: #f44336;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #d32f2f;
+        }
+        .display {
+            font-size: 4rem;
+            text-align: center;
+            font-family: monospace;
+            margin: 2rem 0;
+            color: #333;
+        }
+        .sound-options {
+            margin-top: 1rem;
+        }
+        .sound-option {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .custom-file {
+            margin-left: 1.5rem;
+            display: none;
+        }
+        .custom-file.visible {
+            display: block;
+        }
+        .status {
+            text-align: center;
+            color: #666;
+            margin-top: 1rem;
+        }
+        .popup-options {
+            margin-top: 1rem;
+            padding-left: 2rem;
+        }
+        .popup-checkbox {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>自定义音乐式倒计时器</h1>
+        <h2>（因部分浏览器有内存节约机制，请勿把浏览器最小化，否则会出错！）</h1>
+        <!-- 预设时间按钮 -->
+        <div class="section">
+            <div class="section-title">预设时间</div>
+            <div class="preset-buttons">
+<button class="preset-btn" data-seconds="1">1秒</button>
+							                <button class="preset-btn" data-seconds="3">3秒</button>
+											                <button class="preset-btn" data-seconds="5">5秒</button>
+															                <button class="preset-btn" data-seconds="7">7秒</button>
+																			                <button class="preset-btn" data-seconds="10">10秒</button>
+																							                <button class="preset-btn" data-seconds="30">30秒</button>
+																											                <button class="preset-btn" data-seconds="40">40秒</button>
+                <button class="preset-btn" data-seconds="50">50秒</button>
+				                <button class="preset-btn" data-seconds="60">60秒</button>
+                <button class="preset-btn" data-seconds="60">1分钟</button>
+				                <button class="preset-btn" data-seconds="120">2分钟</button>
+								                <button class="preset-btn" data-seconds="180">3分钟</button>
+												                <button class="preset-btn" data-seconds="240">4分钟</button>
+                <button class="preset-btn" data-seconds="300">5分钟</button>
+                <button class="preset-btn" data-seconds="360">6分钟</button>
+				                <button class="preset-btn" data-seconds="600">10分钟</button>
+								                <button class="preset-btn" data-seconds="1200">20分钟</button>
+												                <button class="preset-btn" data-seconds="1500">25分钟</button>
+																                <button class="preset-btn" data-seconds="1800">30分钟</button>
+																				                <button class="preset-btn" data-seconds="2400">40分钟</button>
+																								                <button class="preset-btn" data-seconds="3000">50分钟</button>
+																												                <button class="preset-btn" data-seconds="3600">60分钟</button>
+                <button class="preset-btn" data-seconds="3600">1小时</button>
+                <button class="preset-btn" data-seconds="7200">2小时</button>
+                <button class="preset-btn" data-seconds="10800">3小时</button>
+				                <button class="preset-btn" data-seconds="14400">4小时</button>
+								                <button class="preset-btn" data-seconds="18000">5小时</button>
+												                <button class="preset-btn" data-seconds="21600">6小时</button>
+																                <button class="preset-btn" data-seconds="25200">7小时</button>
+																				                <button class="preset-btn" data-seconds="28800">8小时</button>
+																								                <button class="preset-btn" data-seconds="32400">9小时</button>
+																												                <button class="preset-btn" data-seconds="36000">10小时</button>
+																																 <button class="preset-btn" data-seconds="86400">24小时</button>
+																																  <button class="preset-btn" data-seconds="172800">48小时</button>
+																																   <button class="preset-btn" data-seconds="259200">72小时</button>
+																																   <button class="preset-btn" data-seconds="345600">96小时</button>
+            </div>
+        </div>
+
+        <!-- 自定义时间输入 -->
+        <div class="section">
+            <div class="section-title">自定义时间</div>
+            <div class="custom-input">
+                <div class="input-group">
+                    <input type="number" id="hours" min="0" max="99999" value="0">
+                    <label>小时</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="minutes" min="0" max="99999" value="0">
+                    <label>分钟</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="seconds" min="0" max="99999" value="0">
+                    <label>秒</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 时间显示 -->
+        <div class="display" id="display">00:00:00</div>
+
+        <!-- 控制按钮 -->
+        <div class="control-buttons">
+            <button class="control-btn start-btn" id="startBtn">开始</button>
+            <button class="control-btn pause-btn" id="pauseBtn" disabled>暂停</button>
+            <button class="control-btn reset-btn" id="resetBtn">重置</button>
+        </div>
+
+        <!-- 声音选项 -->
+        <div class="section">
+            <div class="section-title">提示音选择</div>
+            <div class="sound-options">
+                <div class="sound-option">
+                    <input type="radio" name="sound" id="defaultSound" value="default">
+                    <label for="defaultSound">系统默认提示音</label>
+                </div>
+                <div class="sound-option">
+                    <input name="sound" type="radio" id="beepSound" value="beep" checked>
+                    <label for="beepSound">硬件蜂鸣声</label>
+                </div>
+                <div class="sound-option">
+                    <input type="radio" name="sound" id="customSound" value="custom">
+                    <label for="customSound">自定义声音</label>
+                    <input type="file" id="customFile" accept="audio/*" class="custom-file">
+                    <div class="popup-options">
+                        <input type="checkbox" id="showPopup" class="popup-checkbox">
+                        <label for="showPopup">弹窗提示(此功能无法在窗口最小化时正常使用，还会导致声音一直循环播放)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // 音频对象
+        const defaultAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiCQbmPhcLt559la4C67/7Nk3l2i9T7/tWeaVh0wvz//8eJUlqy/f//2Z1nZbL///7678fU///'+Array(1000).join('A'));
+        let customAudio = null;
+
+        // DOM 元素
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const hoursInput = document.getElementById('hours');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const customFileInput = document.getElementById('customFile');
+        const statusEl = document.getElementById('status');
+        const showPopupCheckbox = document.getElementById('showPopup');
+
+        let timeLeft = 0;
+        let timerId = null;
+        let isPaused = false;
+        let originalTime = 0;
+
+        // 更新显示时间
+        function updateDisplay(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            display.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // 播放提示音并显示弹窗
+        function playSound() {
+            const selectedSound = document.querySelector('input[name="sound"]:checked').value;
+            switch (selectedSound) {
+                case 'default':
+                    defaultAudio.play();
+                    break;
+                case 'beep':
+                    const context = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = context.createOscillator();
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(880, context.currentTime);
+                    oscillator.connect(context.destination);
+                    oscillator.start();
+                    setTimeout(() => oscillator.stop(), 1000);
+                    break;
+                case 'custom':
+                    if (customAudio) {
+                        customAudio.play();
+                    }
+                    break;
+            }
+
+            // 显示弹窗提示
+            if (showPopupCheckbox.checked) {
+                alert('时间到！');
+            }
+        }
+
+        // 开始倒计时
+        function startTimer() {
+            if (timeLeft <= 0) {
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                timeLeft = hours * 3600 + minutes * 60 + seconds;
+                originalTime = timeLeft;
+            }
+
+            if (timeLeft > 0 && !timerId) {
+                startBtn.textContent = '停止';
+                pauseBtn.disabled = false;
+                timerId = setInterval(() => {
+                    if (!isPaused) {
+                        timeLeft--;
+                        updateDisplay(timeLeft);
+                        statusEl.textContent = `倒计时进行中 (${Math.floor((originalTime - timeLeft) / originalTime * 100)}%)`;
+
+                        if (timeLeft <= 0) {
+                            clearInterval(timerId);
+                            timerId = null;
+                            playSound();
+                            startBtn.textContent = '开始';
+                            pauseBtn.disabled = true;
+                            statusEl.textContent = '倒计时结束！';
+                        }
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerId);
+                timerId = null;
+                startBtn.textContent = '开始';
+                pauseBtn.disabled = true;
+            }
+        }
+
+        // 事件监听器
+        startBtn.addEventListener('click', () => {
+            if (timerId) {
+                clearInterval(timerId);
+                timerId = null;
+                timeLeft = 0;
+                updateDisplay(0);
+                startBtn.textContent = '开始';
+                pauseBtn.disabled = true;
+                statusEl.textContent = '倒计时已停止';
+            } else {
+                startTimer();
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? '继续' : '暂停';
+            statusEl.textContent = isPaused ? '倒计时已暂停' : '倒计时继续';
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timerId);
+            timerId = null;
+            timeLeft = 0;
+            isPaused = false;
+            updateDisplay(0);
+            startBtn.textContent = '开始';
+            pauseBtn.textContent = '暂停';
+            pauseBtn.disabled = true;
+            hoursInput.value = '0';
+            minutesInput.value = '0';
+            secondsInput.value = '0';
+            statusEl.textContent = '倒计时已重置';
+        });
+
+        // 预设按钮点击事件 - 修改为直接开始倒计时
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const seconds = parseInt(btn.dataset.seconds);
+                hoursInput.value = Math.floor(seconds / 3600);
+                minutesInput.value = Math.floor((seconds % 3600) / 60);
+                secondsInput.value = seconds % 60;
+                timeLeft = 0; // 重置当前计时
+                updateDisplay(seconds);
+                // 直接开始倒计时
+                startTimer();
+            });
+        });
+
+        // 自定义声音文件处理
+        document.getElementById('customSound').addEventListener('change', function() {
+            customFileInput.classList.toggle('visible', this.checked);
+        });
+
+        customFileInput.addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const url = URL.createObjectURL(file);
+                if (customAudio) {
+                    URL.revokeObjectURL(customAudio.src);
+                }
+                customAudio = new Audio(url);
+            }
+        });
+
+        // 输入验证
+        [hoursInput, minutesInput, secondsInput].forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+                if (this.id === 'hours' && this.value > 99999) this.value = 99999;
+                if ((this.id === 'minutes' || this.id === 'seconds') && this.value > 99999) this.value = 99999;
+            });
+        });
+    </script>
+</body>
+</html>

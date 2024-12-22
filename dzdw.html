@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>电阻单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            min-width: 250px;
+        }
+        input {
+            width: 180px;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .label {
+            min-width: 100px;
+            font-size: 16px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>电阻单位换算器</h1>
+    
+    <div class="container">
+        <div class="input-group">
+            <input type="number" id="ohm" onInput="convert(this)">
+            <span class="label">欧姆 (Ω)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="kohm" onInput="convert(this)">
+            <span class="label">千欧 (kΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="mohm" onInput="convert(this)">
+            <span class="label">毫欧 (mΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="uohm" onInput="convert(this)">
+            <span class="label">微欧 (μΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="nohm" onInput="convert(this)">
+            <span class="label">纳欧 (nΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="Mohm" onInput="convert(this)">
+            <span class="label">兆欧 (MΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="Gohm" onInput="convert(this)">
+            <span class="label">吉欧 (GΩ)</span>
+        </div>
+        <div class="input-group">
+            <input type="number" id="abohm" onInput="convert(this)">
+            <span class="label">绝对欧姆 (abΩ)</span>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            // 如果数字非常大或非常小，使用固定小数位数而不是科学计数法
+            if (Math.abs(num) >= 1e-3 && Math.abs(num) < 1e12) {
+                return num.toFixed(10).replace(/\.?0+$/, '');
+            } else {
+                return num.toString();
+            }
+        }
+
+        function convert(input) {
+            // 获取输入的值和ID
+            let value = parseFloat(input.value);
+            let unit = input.id;
+            
+            // 如果输入为空或不是数字，清空所有输入框
+            if (isNaN(value)) {
+                document.querySelectorAll('input').forEach(input => input.value = '');
+                return;
+            }
+            
+            // 先转换为欧姆
+            let ohms = 0;
+            switch(unit) {
+                case 'ohm': ohms = value; break;
+                case 'kohm': ohms = value * 1000; break;
+                case 'mohm': ohms = value * 0.001; break;
+                case 'uohm': ohms = value * 1e-6; break;
+                case 'nohm': ohms = value * 1e-9; break;
+                case 'Mohm': ohms = value * 1e6; break;
+                case 'Gohm': ohms = value * 1e9; break;
+                case 'abohm': ohms = value * 1e-9; break; // 1 abΩ = 10^-9 Ω
+            }
+            
+            // 从欧姆转换为其他单位，使用格式化函数避免科学计数法
+            if (unit !== 'ohm') document.getElementById('ohm').value = formatNumber(ohms);
+            if (unit !== 'kohm') document.getElementById('kohm').value = formatNumber(ohms / 1000);
+            if (unit !== 'mohm') document.getElementById('mohm').value = formatNumber(ohms * 1000);
+            if (unit !== 'uohm') document.getElementById('uohm').value = formatNumber(ohms * 1e6);
+            if (unit !== 'nohm') document.getElementById('nohm').value = formatNumber(ohms * 1e9);
+            if (unit !== 'Mohm') document.getElementById('Mohm').value = formatNumber(ohms / 1e6);
+            if (unit !== 'Gohm') document.getElementById('Gohm').value = formatNumber(ohms / 1e9);
+            if (unit !== 'abohm') document.getElementById('abohm').value = formatNumber(ohms * 1e9);
+        }
+    </script>
+</body>
+</html>

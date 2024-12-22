@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>当前浏览器窗口宽高查询</title>
+</head>
+<body>
+    <h1>当前浏览器窗口宽高查询（参数可实时跟随窗口大小变化而变化）</h1>
+    <p>浏览器窗口宽度: <span id="windowWidth"></span>px</p>
+    <p>浏览器窗口高度: <span id="windowHeight"></span>px</p>
+    <p>屏幕宽度: <span id="screenWidth"></span>px</p>
+    <p>屏幕高度: <span id="screenHeight"></span>px</p>
+
+    <script>
+        function updateWindowInfo() {
+            document.getElementById("windowWidth").innerText = window.innerWidth;
+            document.getElementById("windowHeight").innerText = window.innerHeight;
+            document.getElementById("screenWidth").innerText = screen.width;
+            document.getElementById("screenHeight").innerText = screen.height;
+        }
+
+        // 初次加载时更新窗口信息
+        updateWindowInfo();
+
+        // 监听浏览器窗口大小变化事件
+        window.addEventListener("resize", updateWindowInfo);
+    </script>
+</body>
+</html>

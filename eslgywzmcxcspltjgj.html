@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>二十六个英文字母出现次数频率统计工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+        .input-section, .result-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        textarea {
+            flex: 1;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-size: 16px;
+        }
+        #result {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .count-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            font-size: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 18px;
+        }
+        .letter {
+            font-weight: bold;
+        }
+        .frequency {
+            color: #666;
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .toggle-switch input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>二十六个英文字母出现次数频率统计工具</h1>
+    <div class="controls">
+        <label class="toggle-switch">
+            <input type="checkbox" id="caseSensitive">
+            区分大小写
+        </label>
+    </div>
+    <div class="container">
+        <div class="input-section">
+            <h2 class="section-title">输入文本</h2>
+            <textarea id="input" placeholder="在此输入或粘贴要统计的文本..."></textarea>
+        </div>
+        <div class="result-section">
+            <h2 class="section-title">字母频次统计</h2>
+            <div id="result"></div>
+        </div>
+    </div>
+    <script>
+        function countLetters(text) {
+            const caseSensitive = document.getElementById('caseSensitive').checked;
+            const counts = {};
+            
+            // Initialize counts based on case sensitivity
+            if (caseSensitive) {
+                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
+                    counts[letter] = 0;
+                });
+            } else {
+                'abcdefghijklmnopqrstuvwxyz'.split('').forEach(letter => {
+                    counts[letter] = 0;
+                });
+            }
+
+            // Count letters
+            const chars = text.split('');
+            chars.forEach(char => {
+                if (caseSensitive) {
+                    if (counts.hasOwnProperty(char)) {
+                        counts[char]++;
+                    }
+                } else {
+                    const lowerChar = char.toLowerCase();
+                    if (counts.hasOwnProperty(lowerChar)) {
+                        counts[lowerChar]++;
+                    }
+                }
+            });
+
+            const result = document.getElementById('result');
+            result.innerHTML = '';
+
+            // Display results
+            Object.entries(counts)
+                .filter(([_, count]) => count > 0)  // Always filter out zero counts
+                .sort((a, b) => {
+                    const letterA = caseSensitive ? a[0] : a[0].toLowerCase();
+                    const letterB = caseSensitive ? b[0] : b[0].toLowerCase();
+                    return letterA.localeCompare(letterB);
+                })
+                .forEach(([letter, count]) => {
+                    const div = document.createElement('div');
+                    div.className = 'count-item';
+                    div.innerHTML = `
+                        <span class="letter">${letter}</span>
+                        <span class="frequency">出现 ${count} 次</span>
+                    `;
+                    result.appendChild(div);
+                });
+        }
+
+        document.getElementById('input').addEventListener('input', function(e) {
+            countLetters(e.target.value);
+        });
+
+        document.getElementById('caseSensitive').addEventListener('change', function() {
+            countLetters(document.getElementById('input').value);
+        });
+
+        // Initialize display
+        countLetters('');
+    </script>
+</body>
+</html>

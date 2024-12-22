@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>网页恶意源代码检测工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .input-area {
+            width: 100%;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .button-area {
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .results {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .warning {
+            color: #d32f2f;
+            margin: 5px 0;
+        }
+        .safe {
+            color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>恶意代码检测工具</h1>
+    
+    <div class="container">
+        <div class="input-area">
+            <h3>请输入需要检测的代码：</h3>
+            <textarea id="codeInput" placeholder="在此粘贴代码..."></textarea>
+        </div>
+        
+        <div class="button-area">
+            <button onClick="detectMaliciousCode()">开始检测</button>
+        </div>
+        
+        <div class="results" id="results">
+            检测结果将在这里显示
+        </div>
+    </div>
+
+    <script>
+        function detectMaliciousCode() {
+            const code = document.getElementById('codeInput').value;
+            const resultsDiv = document.getElementById('results');
+            let warnings = [];
+            
+            // 定义恶意代码特征
+            const maliciousPatterns = [
+                {
+                    pattern: /eval\s*\(/i,
+                    description: '发现可疑的eval()函数调用，这可能用于执行动态代码'
+                },
+                {
+                    pattern: /document\.write\s*\(/i,
+                    description: '发现document.write()调用，这可能用于注入恶意内容'
+                },
+                {
+                    pattern: /<script[^>]*src\s*=\s*["']http:\/\//i,
+                    description: '发现不安全的外部脚本引用（使用HTTP）'
+                },
+                {
+                    pattern: /base64/i,
+                    description: '发现Base64编码使用，可能试图隐藏恶意代码'
+                },
+                {
+                    pattern: /fromCharCode|String\.fromCharCode/i,
+                    description: '发现可疑的字符串解码方法'
+                },
+                {
+                    pattern: /location\s*=|location\.href\s*=|location\.replace\s*\(/i,
+                    description: '发现可疑的页面重定向代码'
+                },
+                {
+                    pattern: /window\.open\s*\(/i,
+                    description: '发现弹窗代码，可能用于广告或欺骗'
+                },
+                {
+                    pattern: /innerHTML\s*=(?![^]*?encodeURIComponent)/i,
+                    description: '发现不安全的innerHTML使用，没有进行适当的转义'
+                },
+                {
+                    pattern: /onclick\s*=\s*["']javascript:/i,
+                    description: '发现内联JavaScript事件处理器，可能存在XSS风险'
+                },
+                {
+                    pattern: /new\s+Function\s*\(/i,
+                    description: '发现动态Function构造函数使用，可能用于执行恶意代码'
+                },
+                {
+                    pattern: /debugger/i,
+                    description: '发现debugger语句，可能试图干扰代码调试'
+                },
+                {
+                    pattern: /localStorage|sessionStorage/i,
+                    description: '发现本地存储使用，请确保存储的数据安全性'
+                },
+                {
+                    pattern: /\.cookie\s*=/i,
+                    description: '发现cookie操作，请确保cookie安全性'
+                },
+                {
+                    pattern: /xhr\.open\s*\(\s*["']POST/i,
+                    description: '发现POST请求，请确保数据传输安全性'
+                },
+                {
+                    pattern: /iframe/i,
+                    description: '发现iframe使用，可能用于加载恶意内容'
+                }
+            ];
+
+            // 检查每个模式
+            maliciousPatterns.forEach(item => {
+                if (item.pattern.test(code)) {
+                    warnings.push(item.description);
+                }
+            });
+
+            // 检查其他可疑特征
+            if (code.length > 0) {
+                // 检查代码混淆
+                if ((code.match(/\\/g) || []).length > code.length / 10) {
+                    warnings.push('代码中包含大量转义字符，可能是混淆后的代码');
+                }
+                
+                // 检查异常的Unicode编码使用
+                if ((code.match(/\\u[0-9a-f]{4}/gi) || []).length > 0) {
+                    warnings.push('发现Unicode编码字符，可能试图隐藏恶意代码');
+                }
+                
+                // 检查可疑的长字符串
+                if ((code.match(/["'][^"']*["']/g) || []).some(str => str.length > 500)) {
+                    warnings.push('发现异常长的字符串，可能包含编码后的恶意代码');
+                }
+            }
+
+            // 显示结果
+            if (warnings.length > 0) {
+                resultsDiv.innerHTML = '<h3>检测到以下可疑内容：</h3>' +
+                    warnings.map(w => '<div class="warning">? ' + w + '</div>').join('') +
+                    '<br><div>注意：这些只是潜在的风险提示，需要结合具体场景进行判断。</div>';
+            } else {
+                resultsDiv.innerHTML = '<div class="safe">未检测到明显的恶意代码特征。但请注意，这只是基础检查，仍需谨慎。</div>';
+            }
+        }
+    </script>
+
+<ol depth="0">
+  <li index="0">提供代码输入文本框，可以粘贴需要检测的代码</li>
+  <li index="1">一键检测功能，点击按钮即可开始检测</li>
+  <li index="2">检测多种恶意代码特征，包括：
+    <ul depth="1">
+        <li index="0">eval()等危险函数的使用</li>
+      <li index="1">可疑的重定向代码</li>
+      <li index="2">XSS攻击特征</li>
+      <li index="3">代码混淆特征</li>
+      <li index="4">不安全的DOM操作</li>
+      <li index="5">可疑的外部资源引用</li>
+      <li index="6">Base64编码使用检测</li>
+      <li index="7">异常的Unicode编码使用</li>
+      <li index="8">可疑的长字符串  等等</li>
+    </ul>
+  </li>
+  <li index="3">结果显示区域会清晰列出所有发现的可疑特征</li>
+  <li index="4">使用GBK编码确保中文显示正常</li>
+</ol>
+<p>这个工具主要针对常见的恶意代码模式进行检测。需要注意的是：</p>
+<ul depth="0">
+  <li index="0">这是基础的静态检测，可能存在误报和漏报的情况</li>
+  <li index="1">某些特征的使用不一定意味着代码是恶意的，需要结合具体场景判断</li>
+  <li index="2">工具不依赖任何外部JavaScript库,本工具是AI生成，只做参考，就当这个是玩具，请勿认真</li>
+</ul>
+
+</body>
+</html>

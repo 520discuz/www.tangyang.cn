@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>带公摊版房屋价格计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px; /* 设置页面最大宽度 */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin: 10px 0 5px; /* 标签的上下边距 */
+            display: block;
+        }
+        input {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 100%; /* 输入框宽度 */
+            margin-bottom: 10px; /* 输入框之间的间距 */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h2>带公摊版房屋价格计算器</h2>
+        
+        <label for="totalArea">总面积平方数：</label>
+        <input type="number" id="totalArea" placeholder="输入总面积平方数" oninput="calculatePrice()" />
+
+        <label for="pricePerSquare">每平方价格（人民币）：</label>
+        <input type="number" id="pricePerSquare" placeholder="输入每平方价格" oninput="calculatePrice()" />
+
+        <label for="sharedArea">公摊面积：</label>
+        <input type="number" id="sharedArea" placeholder="输入公摊面积平方数" oninput="calculatePrice()" />
+
+        <div class="result" id="resultDisplay">
+            最终房价：<span id="finalPrice">0.00</span> 元<br>
+            公摊后每平方米实际价格：<span id="finalPricePerSquareWithShare">0.00</span> 元
+        </div>
+    </div>
+
+    <script>
+        function calculatePrice() {
+            // 获取输入值并转化为数字
+            const totalArea = parseFloat(document.getElementById('totalArea').value) || 0;
+            const pricePerSquare = parseFloat(document.getElementById('pricePerSquare').value) || 0;
+            const sharedArea = parseFloat(document.getElementById('sharedArea').value) || 0;
+
+            // 计算最终房价
+            const finalPrice = (totalArea * pricePerSquare).toFixed(2);
+            document.getElementById('finalPrice').innerText = finalPrice;
+
+            // 计算实际可得面积（总面积 - 公摊面积）
+            const actualArea = totalArea - sharedArea;
+
+            // 计算公摊后每平方米的实际价格
+            const finalPricePerSquareWithShare = actualArea > 0 
+                ? (finalPrice / actualArea).toFixed(2) 
+                : '0.00';
+
+            document.getElementById('finalPricePerSquareWithShare').innerText = finalPricePerSquareWithShare;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<head>
+    <title>存款利息复利回报率计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin: 10px 0;
+        }
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            width: 200px;
+        }
+        button {
+            padding: 10px;
+        }
+        .result-container {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>存款利息复利回报率计算器</h1>
+    <div class="input-container">
+        <input type="number" id="principal" placeholder="输入本金（元）" required>
+        <input type="number" id="interestRate" placeholder="输入利率（%）" required>
+        <input type="number" id="years" placeholder="输入存款年数" required>
+        <button id="calculateButton">计算利息</button>
+    </div>
+
+    <div class="result-container">
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>年份</th>
+                    <th>本金</th>
+                    <th>利息</th>
+                    <th>总额</th>
+                    <th>总回报率</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100; // 转换为小数
+            const years = parseInt(document.getElementById('years').value);
+
+            const resultTable = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+            resultTable.innerHTML = ''; // 清空之前的结果
+
+            let currentPrincipal = principal;
+            for (let i = 1; i <= years; i++) {
+                const interest = currentPrincipal * interestRate;
+                const totalAmount = currentPrincipal + interest;
+                const totalReturn = totalAmount - principal;
+                const totalReturnRate = (totalReturn / principal) * 100;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${i}</td>
+                    <td>${currentPrincipal.toFixed(2)}</td>
+                    <td>${interest.toFixed(2)}</td>
+                    <td>${totalAmount.toFixed(2)}</td>
+                    <td>${totalReturnRate.toFixed(2)}%</td>
+                `;
+                resultTable.appendChild(row);
+
+                currentPrincipal = totalAmount;
+            }
+        });
+    </script>
+</body>
+</html>

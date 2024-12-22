@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>高级长度单位转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            width: 250px;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .unit {
+            min-width: 120px;
+            font-size: 16px;
+            color: #666;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .section {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>高级长度单位转换器</h2>
+        
+        <div class="section">
+            <div class="section-title">国际单位</div>
+            <div class="input-group">
+                <input type="number" id="pm" step="any">
+                <span class="unit">皮米 (pm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="nm" step="any">
+                <span class="unit">纳米 (nm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="um" step="any">
+                <span class="unit">微米 (μm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="mm" step="any">
+                <span class="unit">毫米 (mm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="cm" step="any">
+                <span class="unit">厘米/公分 (cm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="dm" step="any">
+                <span class="unit">分米 (dm)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="m" step="any">
+                <span class="unit">米/公尺 (m)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="km" step="any">
+                <span class="unit">千米/公里 (km)</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">英制单位</div>
+            <div class="input-group">
+                <input type="number" id="mil" step="any">
+                <span class="unit">密耳 (mil)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="in" step="any">
+                <span class="unit">英寸 (in)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="ft" step="any">
+                <span class="unit">英尺 (ft)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="yd" step="any">
+                <span class="unit">码 (yd)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="fathom" step="any">
+                <span class="unit">英寻 (fathom)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="furlong" step="any">
+                <span class="unit">弗隆 (furlong)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="mi" step="any">
+                <span class="unit">英里 (mi)</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="nmi" step="any">
+                <span class="unit">海里 (nautical mile)</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">中国市制单位</div>
+            <div class="input-group">
+                <input type="number" id="fen" step="any">
+                <span class="unit">分</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="cun" step="any">
+                <span class="unit">寸</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="chi" step="any">
+                <span class="unit">尺</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="zhang" step="any">
+                <span class="unit">丈</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="li" step="any">
+                <span class="unit">里</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">天文单位</div>
+            <div class="input-group">
+                <input type="number" id="ly" step="any">
+                <span class="unit">光年 (ly)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 所有单位换算为米的系数
+        const unitToMeter = {
+            'pm': 1e-12,
+            'nm': 1e-9,
+            'um': 1e-6,
+            'mm': 1e-3,
+            'cm': 1e-2,
+            'dm': 1e-1,
+            'm': 1,
+            'km': 1e3,
+            'mil': 0.0000254,
+            'in': 0.0254,
+            'ft': 0.3048,
+            'yd': 0.9144,
+            'fathom': 1.8288,
+            'furlong': 201.168,
+            'mi': 1609.344,
+            'nmi': 1852,
+            'fen': 0.0033,
+            'cun': 0.033,
+            'chi': 0.33,
+            'zhang': 3.3,
+            'li': 500,
+            'ly': 9.461e15
+        };
+
+        // 获取所有输入框
+        const inputs = {};
+        for (const unit in unitToMeter) {
+            inputs[unit] = document.getElementById(unit);
+        }
+
+        // 转换函数
+        function convertLength(value, fromUnit) {
+            if (value === '' || isNaN(value)) {
+                // 清空所有输入框
+                for (const unit in inputs) {
+                    if (unit !== fromUnit) {
+                        inputs[unit].value = '';
+                    }
+                }
+                return;
+            }
+
+            // 转换为米
+            const meters = value * unitToMeter[fromUnit];
+
+            // 更新所有输入框
+            for (const unit in inputs) {
+                if (unit !== fromUnit) {
+                    const convertedValue = meters / unitToMeter[unit];
+                    // 根据数值大小动态调整小数位数
+                    const decimals = Math.abs(convertedValue) < 0.000001 || Math.abs(convertedValue) >= 1e6 ? 
+                        6 : Math.abs(convertedValue) < 0.01 ? 4 : 3;
+                    inputs[unit].value = convertedValue.toFixed(decimals);
+                }
+            }
+        }
+
+        // 为每个输入框添加事件监听器
+        for (const unit in inputs) {
+            inputs[unit].addEventListener('input', (e) => {
+                convertLength(parseFloat(e.target.value), unit);
+            });
+        }
+    </script>
+</body>
+</html>

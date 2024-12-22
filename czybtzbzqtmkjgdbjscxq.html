@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瓷砖岩板贴纸壁纸墙贴每块价格对比计算查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input, select {
+            margin: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .calculator {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>瓷砖岩板贴纸壁纸墙贴每块价格对比计算查询器</h1>
+    <div id="calculatorsContainer">
+        <!-- 默认显示5个计算器 -->
+        <div class="calculator">
+            <label for="width">宽度:</label>
+            <input type="number" class="width" placeholder="输入宽度" oninput="calculatePrice(this)">
+            <select class="widthUnit" onchange="calculatePrice(this)">
+                <option value="厘米" selected>cm（厘米）</option>
+                <option value="毫米">mm（毫米）</option>
+                <option value="米">m（米）</option>
+            </select><br>
+
+            <label for="height">高度:</label>
+            <input type="number" class="height" placeholder="输入高度" oninput="calculatePrice(this)">
+            <select class="heightUnit" onchange="calculatePrice(this)">
+                <option value="厘米" selected>cm（厘米）</option>
+                <option value="毫米">mm（毫米）</option>
+                <option value="米">m（米）</option>
+            </select><br>
+
+            <label for="count">片数:</label>
+            <input type="number" class="count" placeholder="输入块数" oninput="calculatePrice(this)"><br>
+
+            <label for="totalPrice">总价格:</label>
+            <input type="number" class="totalPrice" placeholder="输入总价格" oninput="calculatePrice(this)"><br>
+
+            <h2>每片价格: <span class="price">0.00</span> 元</h2>
+        </div>
+    </div>
+
+    <button onclick="addCalculator()">添加更多价格计算器</button>
+
+    <script>
+        function convertToSquareMeters(value, unit) {
+            switch (unit) {
+                case '米':
+                    return value / 10000; // cm2 to m2
+                case '厘米':
+                    return value / 10000; // cm2 to m2
+                case '毫米':
+                    return value / 1000000; // mm2 to m2
+                default:
+                    return value;
+            }
+        }
+
+        function calculatePrice(element) {
+            const calculator = element.closest('.calculator');
+            const width = parseFloat(calculator.querySelector('.width').value) || 0;
+            const widthUnit = calculator.querySelector('.widthUnit').value;
+            const height = parseFloat(calculator.querySelector('.height').value) || 0;
+            const heightUnit = calculator.querySelector('.heightUnit').value;
+            const count = parseFloat(calculator.querySelector('.count').value) || 0;
+            const totalPrice = parseFloat(calculator.querySelector('.totalPrice').value) || 0;
+
+            // 计算每块瓷砖的面积（m2）
+            const tileArea = convertToSquareMeters(width, widthUnit) * convertToSquareMeters(height, heightUnit);
+            const pricePerTile = count > 0 ? totalPrice / count : 0;
+
+            // 更新每块瓷砖的价格显示
+            const priceDisplay = calculator.querySelector('.price');
+            priceDisplay.innerText = pricePerTile.toFixed(2);
+        }
+
+        function addCalculator() {
+            const calculatorsContainer = document.getElementById('calculatorsContainer');
+            const newCalculator = document.createElement('div');
+            newCalculator.className = 'calculator';
+            newCalculator.innerHTML = `
+                <label for="width">瓷砖宽度:</label>
+                <input type="number" class="width" placeholder="输入宽度" oninput="calculatePrice(this)">
+                <select class="widthUnit" onchange="calculatePrice(this)">
+                    <option value="厘米" selected>cm（厘米）</option>
+                    <option value="毫米">mm（毫米）</option>
+                    <option value="米">m（米）</option>
+                </select><br>
+
+                <label for="height">瓷砖高度:</label>
+                <input type="number" class="height" placeholder="输入高度" oninput="calculatePrice(this)">
+                <select class="heightUnit" onchange="calculatePrice(this)">
+                    <option value="厘米" selected>cm（厘米）</option>
+                    <option value="毫米">mm（毫米）</option>
+                    <option value="米">m（米）</option>
+                </select><br>
+
+                <label for="count">块数:</label>
+                <input type="number" class="count" placeholder="输入块数" oninput="calculatePrice(this)"><br>
+
+                <label for="totalPrice">总价格:</label>
+                <input type="number" class="totalPrice" placeholder="输入总价格" oninput="calculatePrice(this)"><br>
+
+                <h2>每块瓷砖价格: <span class="price">0.00</span> 元</h2>
+            `;
+            calculatorsContainer.appendChild(newCalculator);
+        }
+    </script>
+
+</body>
+</html>

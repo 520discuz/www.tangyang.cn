@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" charset="GBK">
+<head>
+  <meta charset="GBK">
+  <title>本机经度纬度位置坐标查询器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>本机经度纬度位置坐标查询器</h1>
+    <h3>本程序是纯HTML网页，调用浏览器自身功能显示结果，不联网、不会泄露任何隐私</h3>
+  <p>您当前的位置坐标为:</p>
+  <div id="result">
+    纬度: <span id="latitude"></span>
+    <br>
+    经度: <span id="longitude"></span>
+  </div>
+
+  <script>
+    navigator.geolocation.getCurrentPosition((position) => {
+      document.getElementById("latitude").innerText = position.coords.latitude;
+      document.getElementById("longitude").innerText = position.coords.longitude;
+    });
+  </script>
+</body>
+</html>

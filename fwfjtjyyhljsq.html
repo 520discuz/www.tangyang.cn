@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房屋房间体积与氧含量计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input {
+            margin: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>房屋房间体积与氧含量计算器</h1>
+    <div>
+        <label for="area">房屋/房间总面积 (平方米):</label>
+        <input type="number" id="area" placeholder="输入面积" oninput="calculateVolumeAndOxygen()"><br>
+
+        <label for="height">房屋/房间高度 (米):</label>
+        <input type="number" id="height" placeholder="输入高度" oninput="calculateVolumeAndOxygen()"><br>
+
+        <button onclick="calculateVolumeAndOxygen()">计算氧含量</button>
+
+        <div class="result">
+            <h2>体积: <span id="volume">0</span> 立方米（<span id="volumeLiters">0</span> 升）</h2>
+            <h2>氧气含量: <span id="oxygen">0</span> 立方米（<span id="oxygenLiters">0</span> 升）</h2>
+        </div>
+    </div>
+
+    <script>
+        function calculateVolumeAndOxygen() {
+            const area = parseFloat(document.getElementById('area').value) || 0;
+            const height = parseFloat(document.getElementById('height').value) || 0;
+
+            // 计算体积
+            const volume = area * height;  // 体积 = 面积 × 高度
+            const volumeInLiters = volume * 1000;  // 1立方米 = 1000升
+
+            // 计算氧气含量（约21%）
+            const oxygen = (volume * 0.21).toFixed(2);
+            const oxygenInLiters = (volumeInLiters * 0.21).toFixed(2);
+
+            // 更新显示
+            document.getElementById('volume').innerText = volume.toFixed(2);
+            document.getElementById('volumeLiters').innerText = volumeInLiters.toFixed(2);
+            document.getElementById('oxygen').innerText = oxygen;
+            document.getElementById('oxygenLiters').innerText = oxygenInLiters;
+        }
+    </script>
+
+</body>
+</html>

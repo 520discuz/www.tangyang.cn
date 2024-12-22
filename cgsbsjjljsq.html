@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>成功失败实际几率计算器</title>
+    <style>
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .mode-selector {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 4px;
+        }
+        .mode-label {
+            display: inline-flex;
+            align-items: center;
+            margin: 0 15px;
+            cursor: pointer;
+        }
+        .mode-label input {
+            margin-right: 8px;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            position: relative;
+        }
+        .input-label {
+            margin-right: 10px;
+            min-width: 80px;
+            color: #666;
+        }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        input[type="number"] {
+            width: 100px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .percentage {
+            margin-left: 5px;
+            color: #666;
+        }
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .add-btn {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .add-btn:hover {
+            background-color: #45a049;
+        }
+        .result {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .result-title {
+            font-size: 18px;
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+        .formula {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .example {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>成功失败实际几率计算器</h1>
+        <div class="mode-selector">
+            <label class="mode-label">
+                <input type="radio" name="mode" value="multiply" checked onChange="calculateProbability()">
+                全部成功模式（概率相乘）
+            </label>
+            <label class="mode-label">
+                <input type="radio" name="mode" value="add" onChange="calculateProbability()">
+                任一成功模式（概率叠加）
+            </label>
+        </div>
+        <div class="input-container" id="input-container">
+            <!-- 输入框将通过JavaScript动态生成 -->
+        </div>
+        <div class="controls">
+            <button class="add-btn" onClick="addInput()">添加条件</button>
+        </div>
+        <div class="result">
+            <div class="result-title">实际成功几率</div>
+            <div class="result-value" id="final-probability">0%</div>
+            <div class="formula" id="formula"></div>
+        </div>
+        <div class="example" id="example-text">
+            全部成功模式示例：如果三个条件都需要满足，成功率分别是80%、70%、60%，
+            那么最终成功率为：80% × 70% × 60% = 33.6%
+        </div>
+    </div>
+
+    <script>
+        let inputCount = 0;
+
+        function createInputGroup() {
+            inputCount++;
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <div class="input-label">条件${inputCount}</div>
+                <div class="input-wrapper">
+                    <input type="number" 
+                           min="0" 
+                           max="100" 
+                           step="0.1" 
+                           oninput="calculateProbability()" 
+                           placeholder="输入成功率">
+                    <span class="percentage">%</span>
+                    ${inputCount > 1 ? '<button class="delete-btn" onclick="deleteInput(this)">×</button>' : ''}
+                </div>
+            `;
+            return div;
+        }
+
+        function addInput() {
+            const container = document.getElementById('input-container');
+            container.appendChild(createInputGroup());
+            calculateProbability();
+        }
+
+        function deleteInput(button) {
+            const inputGroup = button.closest('.input-group');
+            inputGroup.remove();
+            renumberInputs();
+            calculateProbability();
+        }
+
+        function renumberInputs() {
+            const inputGroups = document.querySelectorAll('.input-group');
+            inputGroups.forEach((group, index) => {
+                const label = group.querySelector('.input-label');
+                label.textContent = `条件${index + 1}`;
+            });
+            inputCount = inputGroups.length;
+        }
+
+        function calculateProbability() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const example = document.getElementById('example-text');
+            
+            let result = 0;
+            let formula = [];
+            let allValid = true;
+            let values = [];
+
+            inputs.forEach(input => {
+                if (input.value !== '') {
+                    const successRate = parseFloat(input.value) / 100;
+                    if (successRate >= 0 && successRate <= 1) {
+                        values.push(successRate);
+                        formula.push(`${input.value}%`);
+                    } else {
+                        allValid = false;
+                    }
+                }
+            });
+
+            if (mode === 'multiply') {
+                // 全部成功模式（相乘）
+                result = values.reduce((acc, val) => acc * val, 1) * 100;
+                example.textContent = '全部成功模式示例：如果三个条件都需要满足，成功率分别是80%、70%、60%，' +
+                                    '那么最终成功率为：80% × 70% × 60% = 33.6%';
+            } else {
+                // 任一成功模式（1减去全部失败的概率）
+                result = (1 - values.reduce((acc, val) => acc * (1 - val), 1)) * 100;
+                example.textContent = '任一成功模式示例：如果三次尝试，每次成功率分别是80%、70%、60%，' +
+                                    '那么至少成功一次的概率为：1 - (1-80%) × (1-70%) × (1-60%) = 97.6%';
+            }
+
+            document.getElementById('final-probability').textContent = 
+                `${result.toFixed(2)}%`;
+
+            // 更新计算公式显示
+            if (formula.length > 0) {
+                const formulaText = mode === 'multiply' ?
+                    `计算公式：${formula.join(' × ')} = ${result.toFixed(2)}%` :
+                    `计算公式：1 - (1 - ${formula.join(') × (1 - ')}) = ${result.toFixed(2)}%`;
+                document.getElementById('formula').textContent = formulaText;
+            } else {
+                document.getElementById('formula').textContent = '';
+            }
+        }
+
+        // 页面加载时初始化一个输入框
+        window.onload = function() {
+            addInput();
+        };
+    </script>
+</body>
+</html>

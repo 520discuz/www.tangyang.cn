@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>big5与iso文件编码转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .button-group {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button.download-btn {
+            background-color: #2196F3;
+        }
+        button.download-btn:hover {
+            background-color: #1976D2;
+        }
+        .preview {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        #previewContent {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>big5与iso文件编码转换器</h1>
+        <div class="form-group">
+            <label for="fileInput">选择文件：</label>
+            <input type="file" id="fileInput">
+        </div>
+        <div class="form-group">
+            <label for="sourceEncoding">源文件编码：</label>
+            <select id="sourceEncoding">
+                <option value="UTF-8">UTF-8</option>
+                <option value="GBK">GBK</option>
+                <option value="GB2312">GB2312</option>
+                <option value="Big5">Big5</option>
+                <option value="ISO-8859-1">ISO-8859-1</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="targetEncoding">目标编码：</label>
+            <select id="targetEncoding">
+                <option value="UTF-8">UTF-8</option>
+                <option value="GBK">GBK</option>
+                <option value="GB2312">GB2312</option>
+                <option value="Big5">Big5</option>
+                <option value="ISO-8859-1">ISO-8859-1</option>
+            </select>
+        </div>
+        <div class="button-group">
+            <button onClick="convertEncoding()">转换编码</button>
+            <button id="downloadBtn" class="download-btn" onClick="downloadFile()" disabled>下载文件</button>
+        </div>
+        <div class="preview">
+            <h3>文件预览：</h3>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let convertedContent = null;
+        let originalFileName = '';
+
+        async function convertEncoding() {
+            const fileInput = document.getElementById('fileInput');
+            const sourceEncoding = document.getElementById('sourceEncoding').value;
+            const targetEncoding = document.getElementById('targetEncoding').value;
+            const previewContent = document.getElementById('previewContent');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (!fileInput.files.length) {
+                alert('请先选择文件！');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            originalFileName = file.name;
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    // 在实际应用中，这里需要服务器端支持
+                    // 目前仅显示文件内容
+                    convertedContent = e.target.result;
+                    previewContent.textContent = `文件内容已从 ${sourceEncoding} 转换为 ${targetEncoding}\n\n` + 
+                        '注意：实际的编码转换需要服务器端支持。这里仅作演示。\n\n' +
+                        convertedContent;
+                    
+                    // 启用下载按钮
+                    downloadBtn.disabled = false;
+                };
+                reader.readAsText(file, sourceEncoding);
+            } catch (error) {
+                alert('读取文件时发生错误：' + error.message);
+            }
+        }
+
+        function downloadFile() {
+            if (!convertedContent) {
+                alert('请先转换文件！');
+                return;
+            }
+
+            const targetEncoding = document.getElementById('targetEncoding').value;
+            const blob = new Blob([convertedContent], { type: 'text/plain;charset=' + targetEncoding });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            // 构造新文件名
+            const fileNameParts = originalFileName.split('.');
+            const extension = fileNameParts.pop();
+            const newFileName = `${fileNameParts.join('.')}_${targetEncoding}.${extension}`;
+            
+            a.href = url;
+            a.download = newFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 文件选择改变时预览
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.disabled = true; // 重置下载按钮状态
+            
+            if (file) {
+                originalFileName = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewContent').textContent = 
+                        '原始文件内容预览：\n\n' + e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        });
+    </script>
+</body>
+</html>

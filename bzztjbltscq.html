@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>饼柱状统计比例图生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        .chart-section {
+            flex: 2;
+            min-width: 500px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        input[type="text"] {
+            width: 150px;
+        }
+        input[type="number"] {
+            width: 100px;
+        }
+        .data-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #f8f8f8;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        .data-row:hover {
+            background: #eee;
+        }
+        .color-input {
+            width: 50px;
+            padding: 0;
+            height: 30px;
+        }
+        .remove-btn {
+            padding: 0.5rem;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .control-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin: 0.5rem;
+        }
+        .add-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        .add-btn:hover {
+            background: #45a049;
+        }
+        .generate-btn {
+            background: #2196F3;
+            color: white;
+        }
+        .generate-btn:hover {
+            background: #1976D2;
+        }
+        .clear-btn {
+            background: #FF9800;
+            color: white;
+        }
+        .clear-btn:hover {
+            background: #F57C00;
+        }
+        .chart-controls {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .chart-container {
+            position: relative;
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        #chartCanvas {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-section">
+            <h1>饼柱状统计比例图生成器</h1>
+            
+            <div id="dataInputs">
+                <div class="data-row">
+                    <input type="text" placeholder="名称" class="name-input">
+                    <input type="number" placeholder="数值" class="value-input" min="0">
+                    <input type="color" class="color-input" value="#4CAF50">
+                    <button class="remove-btn" onClick="removeRow(this)">×</button>
+                </div>
+            </div>
+
+            <button class="control-btn add-btn" onClick="addRow()">添加数据</button>
+            <button class="control-btn clear-btn" onClick="clearAll()">清空数据</button>
+
+            <div class="chart-controls">
+                <div class="input-group">
+                    <label>图表类型：</label>
+                    <select id="chartType" onChange="generateChart()">
+                        <option value="pie">饼状图</option>
+                        <option value="bar">柱状图</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>图表宽度：</label>
+                    <input type="number" id="chartWidth" value="600" min="300" max="1200" onChange="updateChartSize()">
+                </div>
+                <div class="input-group">
+                    <label>图表高度：</label>
+                    <input type="number" id="chartHeight" value="400" min="200" max="800" onChange="updateChartSize()">
+                </div>
+                <button class="control-btn generate-btn" onClick="generateChart()">生成图表</button>
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <div class="chart-container">
+                <canvas id="chartCanvas"></canvas>
+                <div id="legend" class="legend"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加新行
+        function addRow() {
+            const container = document.getElementById('dataInputs');
+            const row = document.createElement('div');
+            row.className = 'data-row';
+            row.innerHTML = `
+                <input type="text" placeholder="名称" class="name-input">
+                <input type="number" placeholder="数值" class="value-input" min="0">
+                <input type="color" class="color-input" value="#${Math.floor(Math.random()*16777215).toString(16)}">
+                <button class="remove-btn" onclick="removeRow(this)">×</button>
+            `;
+            container.appendChild(row);
+        }
+
+        // 移除行
+        function removeRow(btn) {
+            btn.parentElement.remove();
+        }
+
+        // 清空所有数据
+        function clearAll() {
+            document.getElementById('dataInputs').innerHTML = `
+                <div class="data-row">
+                    <input type="text" placeholder="名称" class="name-input">
+                    <input type="number" placeholder="数值" class="value-input" min="0">
+                    <input type="color" class="color-input" value="#4CAF50">
+                    <button class="remove-btn" onclick="removeRow(this)">×</button>
+                </div>
+            `;
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('legend').innerHTML = '';
+        }
+
+        // 更新画布大小
+        function updateChartSize() {
+            const width = document.getElementById('chartWidth').value;
+            const height = document.getElementById('chartHeight').value;
+            const canvas = document.getElementById('chartCanvas');
+            canvas.width = width;
+            canvas.height = height;
+            generateChart();
+        }
+
+        // 生成图表
+        function generateChart() {
+            const rows = document.querySelectorAll('.data-row');
+            const data = [];
+            let total = 0;
+
+            // 收集数据
+            rows.forEach(row => {
+                const name = row.querySelector('.name-input').value;
+                const value = parseFloat(row.querySelector('.value-input').value);
+                const color = row.querySelector('.color-input').value;
+                
+                if (name && !isNaN(value) && value > 0) {
+                    data.push({ name, value, color });
+                    total += value;
+                }
+            });
+
+            if (data.length === 0) {
+                
+                return;
+            }
+
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+
+            const chartType = document.getElementById('chartType').value;
+
+            if (chartType === 'pie') {
+                drawPieChart(ctx, data, total, width, height);
+            } else if (chartType === 'bar') {
+                drawBarChart(ctx, data, total, width, height);
+            }
+
+            // 生成图例
+            generateLegend(data, total);
+        }
+
+        // 绘制饼图
+        function drawPieChart(ctx, data, total, width, height) {
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2.5;
+            
+            let startAngle = -Math.PI / 2;
+            
+            data.forEach(item => {
+                const sliceAngle = (item.value / total) * (Math.PI * 2);
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                
+                ctx.fillStyle = item.color;
+                ctx.fill();
+                
+                // 添加百分比标签
+                const labelAngle = startAngle + sliceAngle / 2;
+                const labelRadius = radius * 0.7;
+                const labelX = centerX + Math.cos(labelAngle) * labelRadius;
+                const labelY = centerY + Math.sin(labelAngle) * labelRadius;
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const percentage = ((item.value / total) * 100).toFixed(1) + '%';
+                ctx.fillText(percentage, labelX, labelY);
+                
+                startAngle += sliceAngle;
+            });
+        }
+
+        // 绘制柱状图
+        function drawBarChart(ctx, data, total, width, height) {
+            const padding = 50;
+            const barWidth = (width - padding * 2) / data.length;
+            const maxValue = Math.max(...data.map(item => item.value));
+            
+            // 绘制Y轴
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.stroke();
+            
+            // 绘制X轴
+            ctx.beginPath();
+            ctx.moveTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+            
+            // 绘制柱子
+            data.forEach((item, index) => {
+                const barHeight = (item.value / maxValue) * (height - padding * 2);
+                const x = padding + index * barWidth;
+                const y = height - padding - barHeight;
+                
+                ctx.fillStyle = item.color;
+                ctx.fillRect(x, y, barWidth * 0.8, barHeight);
+                
+                // 添加数值标签
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.value, x + barWidth * 0.4, y - 5);
+                
+                // 添加名称标签
+                ctx.save();
+                ctx.translate(x + barWidth * 0.4, height - padding + 5);
+                ctx.rotate(-Math.PI / 4);
+                ctx.fillText(item.name, 0, 0);
+                ctx.restore();
+            });
+        }
+
+        // 生成图例
+        function generateLegend(data, total) {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '';
+            
+            data.forEach(item => {
+                const percentage = ((item.value / total) * 100).toFixed(1) + '%';
+                const div = document.createElement('div');
+                div.className = 'legend-item';
+                div.innerHTML = `
+                    <div class="legend-color" style="background-color: ${item.color}"></div>
+                    <span>${item.name} (${item.value} - ${percentage})</span>
+                `;
+                legend.appendChild(div);
+            });
+        }
+
+        // 初始化
+        window.onload = function() {
+            // 添加9个额外的输入行
+            for (let i = 0; i < 9; i++) {
+                addRow();
+            }
+            
+            // 设置初始画布大小
+            updateChartSize();
+        };
+    </script>
+</body>
+</html>

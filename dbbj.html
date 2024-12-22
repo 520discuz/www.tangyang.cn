@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>待办事项便笺</title>
+  <style>
+    .text-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+      cursor: pointer;
+    }
+    
+    .text-box {
+      border: 1px solid black;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f1f1f1;
+      transition: background-color 0.3s ease;
+    }
+    
+    .text-box:hover {
+      background-color: #a6a6a6;
+    }
+    
+    .text-box.hidden {
+      display: none;
+    }
+    
+    .input-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .input-container input {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="text-container" id="text-container">
+    <div class="text-box">事项1</div>
+    <div class="text-box">事项2</div>
+        <div class="text-box">事项3</div>
+            <div class="text-box">点击事项、事项会自动消失</div>
+                <div class="text-box">可以在底部右下角添加新事项</div>
+                    <div class="text-box">右击本网页，另存为桌面，编辑桌面上的网页文件，你就可以自定义初始事项</div>
+                        <div class="text-box">事项4</div>
+                            <div class="text-box">事项5</div>
+                                <div class="text-box">事项6</div>
+  </div>
+
+  <div class="input-container">
+    <input type="text" id="text-input" placeholder="请输入事项名称">
+    <button id="submit-button">添加临时新事项</button>
+  </div>
+
+  <script>
+    const textContainer = document.getElementById('text-container');
+    const textInput = document.getElementById('text-input');
+    const submitButton = document.getElementById('submit-button');
+
+    const textBoxes = document.querySelectorAll('.text-box');
+
+    textBoxes.forEach(box => {
+      box.addEventListener('click', () => {
+        box.classList.add('hidden');
+      });
+
+      box.addEventListener('mouseenter', () => {
+        box.style.backgroundColor = '#a6a6a6';
+      });
+
+      box.addEventListener('mouseleave', () => {
+        box.style.backgroundColor = '#f1f1f1';
+      });
+    });
+
+    submitButton.addEventListener('click', () => {
+      const newText = textInput.value.trim();
+      if (newText) {
+        const newTextBox = document.createElement('div');
+        newTextBox.className = 'text-box';
+        newTextBox.textContent = newText;
+        newTextBox.addEventListener('click', () => {
+          newTextBox.classList.add('hidden');
+        });
+        newTextBox.addEventListener('mouseenter', () => {
+          newTextBox.style.backgroundColor = '#a6a6a6';
+        });
+        newTextBox.addEventListener('mouseleave', () => {
+          newTextBox.style.backgroundColor = '#f1f1f1';
+        });
+        textContainer.appendChild(newTextBox);
+        textInput.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

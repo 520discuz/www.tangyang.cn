@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>出水量计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .input-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        label {
+            width: 120px;
+            color: #444;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: white;
+        }
+        .time-inputs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .time-input {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .result-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+        .result-title {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .result-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .result-row:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            color: #666;
+        }
+        .result-value {
+            font-weight: bold;
+            color: #2196F3;
+        }
+        .note {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3e0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>出水量计算器</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label>出水速率：</label>
+                <input type="number" id="flowRate" step="0.001" min="0" placeholder="请输入数值" oninput="calculate()">
+                <select id="flowUnit" onchange="calculate()">
+                    <option value="ml">毫升/秒</option>
+                    <option value="l">升/秒</option>
+                    <option value="m3">立方米/秒</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>出水时间：</label>
+                <div class="time-inputs">
+                    <div class="time-input">
+                        <input type="number" id="hours" min="0" placeholder="小时" oninput="calculate()">
+                        <span>时</span>
+                    </div>
+                    <div class="time-input">
+                        <input type="number" id="minutes" min="0" max="59" placeholder="分钟" oninput="calculate()">
+                        <span>分</span>
+                    </div>
+                    <div class="time-input">
+                        <input type="number" id="seconds" min="0" max="59" placeholder="秒" oninput="calculate()">
+                        <span>秒</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-title">计算结果</div>
+            <div class="result-item">
+                <div class="result-row">
+                    <span class="result-label">总毫升数：</span>
+                    <span class="result-value" id="resultML">0 毫升</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">总升数：</span>
+                    <span class="result-value" id="resultL">0 升</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">总立方米：</span>
+                    <span class="result-value" id="resultM3">0 立方米</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">总吨数：</span>
+                    <span class="result-value" id="resultTon">0 吨</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="note">
+            说明：
+            <ul>
+                <li>1 立方米 = 1000 升 = 1,000,000 毫升 = 1 吨</li>
+                <li>计算结果四舍五入到小数点后3位</li>
+                <li>输入数值会实时计算结果</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // 获取流量输入
+            const flowRate = parseFloat(document.getElementById('flowRate').value) || 0;
+            const flowUnit = document.getElementById('flowUnit').value;
+
+            // 获取时间输入
+            const hours = parseFloat(document.getElementById('hours').value) || 0;
+            const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+            const seconds = parseFloat(document.getElementById('seconds').value) || 0;
+
+            // 计算总秒数
+            const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+            // 将流量统一转换为毫升/秒
+            let flowRateML = flowRate;
+            switch(flowUnit) {
+                case 'l':
+                    flowRateML = flowRate * 1000;
+                    break;
+                case 'm3':
+                    flowRateML = flowRate * 1000000;
+                    break;
+            }
+
+            // 计算总毫升数
+            const totalML = flowRateML * totalSeconds;
+
+            // 转换为其他单位
+            const totalL = totalML / 1000;
+            const totalM3 = totalML / 1000000;
+            const totalTon = totalM3; // 1立方米水 = 1吨水
+
+            // 显示结果，保留3位小数
+            document.getElementById('resultML').textContent = totalML.toLocaleString('zh-CN', {
+                maximumFractionDigits: 3,
+                minimumFractionDigits: 3
+            }) + ' 毫升';
+            document.getElementById('resultL').textContent = totalL.toLocaleString('zh-CN', {
+                maximumFractionDigits: 3,
+                minimumFractionDigits: 3
+            }) + ' 升';
+            document.getElementById('resultM3').textContent = totalM3.toLocaleString('zh-CN', {
+                maximumFractionDigits: 3,
+                minimumFractionDigits: 3
+            }) + ' 立方米';
+            document.getElementById('resultTon').textContent = totalTon.toLocaleString('zh-CN', {
+                maximumFractionDigits: 3,
+                minimumFractionDigits: 3
+            }) + ' 吨';
+        }
+
+        // 处理输入限制
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.id === 'minutes' || this.id === 'seconds') {
+                    if (this.value > 59) this.value = 59;
+                }
+                if (this.value < 0) this.value = 0;
+            });
+        });
+    </script>
+</body>
+</html>

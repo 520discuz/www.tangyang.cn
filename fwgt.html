@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>房屋公摊面积计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>房屋公摊面积计算器</h1>
+  <label for="houseArea">请输入房屋面积（平方米）：</label>
+  <input type="number" id="houseArea" min="0" step="any" placeholder="请输入房屋面积">
+  <br>  <br>  <br>
+  <label for="sharedPercentage">请输入公摊百分比（%）：</label>
+  <input type="number" id="sharedPercentage" min="0" step="any" placeholder="请输入公摊百分比">
+  <br>  <br>
+  <button onclick="calculate()">提交</button>
+  <div id="result"></div>
+
+  <script>
+    function calculate() {
+      var houseArea = document.getElementById("houseArea").value;
+      var sharedPercentage = document.getElementById("sharedPercentage").value;
+      var actualArea = houseArea * (1 - sharedPercentage / 100);
+      document.getElementById("result").innerHTML = "实际面积为：" + actualArea.toFixed(2) + " 平方米";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" charset="GBK">
+<head>
+  <meta charset="GBK">
+  <title>电脑桌面快速进入网站图标生成器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    input {
+      font-size: 16px;
+      padding: 8px 12px;
+      margin: 10px 0;
+    }
+    button {
+      font-size: 16px;
+      padding: 8px 16px;
+      margin-top: 10px;
+    }
+    #preview {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>电脑桌面快速进入网站图标生成器</h1>
+  <label for="iconName">图标名称:</label>
+  <input type="text" id="iconName" placeholder="请输入图标名称" value="百度"><p>
+  <label for="iconUrl">图标网址:</label>
+  <input type="url" id="iconUrl" placeholder="请输入图标链接" value="https://www.baidu.com">
+  <button onclick="generateShortcut()">生成快捷方式</button>
+  <div id="preview"></div>
+
+  <script>
+    function generateShortcut() {
+      const iconName = document.getElementById('iconName').value;
+      const iconUrl = document.getElementById('iconUrl').value;
+
+      // 检查输入是否合法
+      if (!iconName || !iconUrl) {
+        alert('请输入图标名称和链接!');
+        return;
+      }
+
+      // 创建快捷方式 .url 文件
+      const fileContent = `[InternetShortcut]
+URL=${iconUrl}
+`;
+      const blob = new Blob([fileContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${iconName}.url`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      // 显示预览
+      const previewDiv = document.getElementById('preview');
+      previewDiv.innerHTML = '';
+      const previewLink = document.createElement('a');
+      previewLink.href = iconUrl;
+      previewLink.target = '_blank';
+      previewLink.textContent = iconName;
+      previewDiv.appendChild(previewLink);
+
+      // 提示用户
+      alert(`快捷方式已生成并下载到您的电脑!`);
+    }
+  </script>
+</body>
+</html>
