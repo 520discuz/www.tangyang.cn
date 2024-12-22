@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>温度单位换算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .input-group.highlighted {
+            background-color: #f0f8ff;
+            border: 1px solid #b8daff;
+        }
+        .input-group label {
+            width: 120px;
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .unit {
+            color: #666;
+            font-size: 16px;
+            min-width: 50px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+        .emphasize {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>温度单位换算器</h1>
+        
+        <div class="input-group highlighted">
+            <label>摄氏度</label>
+            <input type="text" id="celsius" oninput="convert(this)" placeholder="请输入温度">
+            <span class="unit">(℃)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>华氏度</label>
+            <input type="text" id="fahrenheit" oninput="convert(this)" placeholder="请输入温度">
+            <span class="unit">(℉)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>开氏度</label>
+            <input type="text" id="kelvin" oninput="convert(this)" placeholder="请输入温度">
+            <span class="unit">(K)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>兰氏度</label>
+            <input type="text" id="rankine" oninput="convert(this)" placeholder="请输入温度">
+            <span class="unit">(°R)</span>
+        </div>
+        
+        <div class="input-group">
+            <label>列氏度</label>
+            <input type="text" id="reaumur" oninput="convert(this)" placeholder="请输入温度">
+            <span class="unit">(°Re)</span>
+        </div>
+
+
+    </div>
+
+    <script>
+        function convert(input) {
+            // 获取输入值
+            let value = parseFloat(input.value);
+            if (isNaN(value)) {
+                clearAll();
+                return;
+            }
+
+            // 先转换为摄氏度作为基准单位
+            let celsius;
+            switch(input.id) {
+                case 'celsius':
+                    celsius = value;
+                    break;
+                case 'fahrenheit':
+                    celsius = (value - 32) / 1.8;
+                    break;
+                case 'kelvin':
+                    celsius = value - 273.15;
+                    break;
+                case 'rankine':
+                    celsius = value / 1.8 - 273.15;
+                    break;
+                case 'reaumur':
+                    celsius = value / 0.8;
+                    break;
+            }
+
+            // 转换为其他单位
+            if (input.id !== 'celsius') document.getElementById('celsius').value = formatNumber(celsius);
+            if (input.id !== 'fahrenheit') document.getElementById('fahrenheit').value = formatNumber(celsius * 1.8 + 32);
+            if (input.id !== 'kelvin') document.getElementById('kelvin').value = formatNumber(celsius + 273.15);
+            if (input.id !== 'rankine') document.getElementById('rankine').value = formatNumber((celsius + 273.15) * 1.8);
+            if (input.id !== 'reaumur') document.getElementById('reaumur').value = formatNumber(celsius * 0.8);
+        }
+
+        function formatNumber(num) {
+            // 避免使用科学计数法，保留6位小数
+            return Number(num.toFixed(6)).toString();
+        }
+
+        function clearAll() {
+            const inputs = document.getElementsByTagName('input');
+            for(let input of inputs) {
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

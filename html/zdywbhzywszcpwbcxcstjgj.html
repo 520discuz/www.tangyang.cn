@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>自定义文本汉字英文数字词频文本出现次数统计工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .content-display {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .search-box {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-options {
+            margin: 10px 0;
+            padding: 10px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .search-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .highlight-result {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .highlight-text {
+            background-color: #ffeb3b;
+        }
+        h1, h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>自定义文本汉字英文数字词频文本出现次数统计工具</h1>
+    <div class="container">
+        <div class="section">
+            <h2>输入文本</h2>
+            <textarea id="content" class="hidden" placeholder="请在此输入要分析的文本内容..."></textarea>
+            <div id="displayContent" class="content-display" contenteditable="true" placeholder="请在此输入要分析的文本内容..."></div>
+        </div>
+        <div class="section">
+            <h2>搜索统计</h2>
+            <input type="text" id="searchTerm" class="search-box" placeholder="输入要查找的内容...">
+            <div class="search-options">
+                <label>
+                    <input type="checkbox" id="caseSensitive">
+                    区分大小写
+                </label>
+            </div>
+            <button onClick="countFrequency()">统计频次</button>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function highlightContent(content, searchTerm, caseSensitive) {
+            if (!searchTerm) return content;
+            const escapedSearchTerm = escapeRegExp(searchTerm);
+            const flags = caseSensitive ? 'g' : 'gi';
+            const regex = new RegExp(escapedSearchTerm, flags);
+            return content.replace(regex, match => `<span class="highlight-text">${match}</span>`);
+        }
+
+        function countFrequency() {
+            const content = document.getElementById('displayContent').innerText;
+            const searchTerm = document.getElementById('searchTerm').value.trim();
+            const caseSensitive = document.getElementById('caseSensitive').checked;
+            const result = document.getElementById('result');
+            const displayDiv = document.getElementById('displayContent');
+            
+            if (!searchTerm) {
+                result.innerHTML = '<div class="highlight-result">请输入要查找的内容</div>';
+                displayDiv.innerHTML = content;
+                return;
+            }
+            
+            if (!content) {
+                result.innerHTML = '<div class="highlight-result">请输入要分析的文本内容</div>';
+                return;
+            }
+
+            // 高亮显示内容
+            displayDiv.innerHTML = highlightContent(content, searchTerm, caseSensitive);
+
+            // 计算出现次数
+            const flags = caseSensitive ? 'g' : 'gi';
+            const regex = new RegExp(escapeRegExp(searchTerm), flags);
+            const matches = content.match(regex);
+            const count = matches ? matches.length : 0;
+            
+            // 构建结果显示
+            let html = `<div class="highlight-result">`;
+            html += `查找内容："${searchTerm}"<br>`;
+            html += `匹配模式：${caseSensitive ? '区分大小写' : '不区分大小写'}<br>`;
+            html += `出现次数：${count} 次<br>`;
+            
+            if (count > 0) {
+                // 计算出现位置
+                let positions = [];
+                let searchContent = caseSensitive ? content : content.toLowerCase();
+                let searchFor = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+                let pos = searchContent.indexOf(searchFor);
+                while (pos !== -1) {
+                    positions.push(pos);
+                    pos = searchContent.indexOf(searchFor, pos + 1);
+                }
+                
+                html += `首次出现位置：第 ${positions[0] + 1} 个字符<br>`;
+                if (positions.length > 1) {
+                    html += `末次出现位置：第 ${positions[positions.length - 1] + 1} 个字符`;
+                }
+            }
+            html += `</div>`;
+            
+            result.innerHTML = html;
+        }
+
+        // 添加回车键触发统计
+        document.getElementById('searchTerm').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                countFrequency();
+            }
+        });
+
+        // 实时同步编辑区内容
+        document.getElementById('displayContent').addEventListener('input', function() {
+            document.getElementById('content').value = this.innerText;
+        });
+
+        // 切换大小写敏感度时自动重新统计
+        document.getElementById('caseSensitive').addEventListener('change', countFrequency);
+    </script>
+</body>
+</html>

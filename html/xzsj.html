@@ -1,0 +1,97 @@
+<head>
+    <title>文件下载时间查询</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        input[type="number"] {
+            width: 150px;
+            padding: 10px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        select {
+            padding: 10px;
+            margin-right: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>文件下载时间查询</h1>
+        <h2>想知道下载一个电影或大文件要多久吗？试试看吧！</h2>
+    <div class="input-container">
+        <label for="bandwidth">请输入您的带宽(M):</label>
+        <input type="number" id="bandwidth" placeholder="输入带宽" min="1" oninput="calculateTime()">
+    </div>
+<p>
+    <div class="input-container">
+        <label for="fileSize">请输入文件大小:</label>
+        <input type="number" id="fileSize" placeholder="输入文件大小" min="1" oninput="calculateTime()">
+        <select id="sizeUnit" onchange="calculateTime()">
+            <option value="GB">GB</option>
+			            <option value="MB">MB</option>
+        </select>
+    </div>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateTime() {
+            const bandwidthM = document.getElementById('bandwidth').value;
+            const fileSize = document.getElementById('fileSize').value;
+            const sizeUnit = document.getElementById('sizeUnit').value;
+            const resultDiv = document.getElementById('result');
+
+            if (bandwidthM < 1 || fileSize < 1) {
+                resultDiv.innerText = '';
+                return;
+            }
+
+            // 转换文件大小到 MB
+            let fileSizeMB = sizeUnit === 'GB' ? fileSize * 1024 : fileSize;
+
+            // 下载时间（秒） = 文件大小（MB） / (带宽（Mbps） / 8)
+            const downloadTime = (fileSizeMB * 8) / bandwidthM;
+
+            // 格式化下载时间
+            let days = Math.floor(downloadTime / 86400);
+            let hours = Math.floor((downloadTime % 86400) / 3600);
+            let minutes = Math.floor((downloadTime % 3600) / 60);
+            let seconds = Math.floor(downloadTime % 60);
+
+            let formattedTime = '';
+            if (days > 0) {
+                formattedTime += days + ' 天 ';
+            }
+            if (hours > 0) {
+                formattedTime += hours + ' 小时 ';
+            }
+            if (minutes > 0) {
+                formattedTime += minutes + ' 分钟 ';
+            }
+            if (seconds > 0 || formattedTime === '') {
+                formattedTime += seconds + ' 秒';
+            }
+
+            resultDiv.innerHTML = `预计下载需要花费时间: ${formattedTime.trim()}`;
+        }
+    </script>
+
+</body>
+</html>

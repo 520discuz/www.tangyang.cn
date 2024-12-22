@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>天数计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input[type="date"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 10px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    #result {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>天数计算器（可以计算某2个日期之间相差多少天）</h1>
+  <label for="date1">选择日期 1:</label>
+  <input type="date" id="date1">
+  <br>
+  <label for="date2">选择日期 2:</label>
+  <input type="date" id="date2">
+  <br>
+  <button onClick="calculateDateDiff()">计算时间差</button>
+  <div id="result"></div>
+
+  <script>
+    function calculateDateDiff() {
+      var date1 = new Date(document.getElementById("date1").value);
+      var date2 = new Date(document.getElementById("date2").value);
+
+      var diffInDays = Math.abs(Math.ceil((date2 - date1) / (1000 * 60 * 60 * 24)));
+
+      document.getElementById("result").textContent = `这两个日期相差 ${diffInDays} 天。`;
+    }
+  </script>
+</body>
+</html>

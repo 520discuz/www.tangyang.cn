@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>新老价格百分比计算器</title>
+    <script>
+        function calculatePercentage() {
+            var oldPrice = parseFloat(document.getElementById("oldPrice").value);
+            var newPrice = parseFloat(document.getElementById("newPrice").value);
+
+            var percentageChange = ((newPrice - oldPrice) / Math.abs(oldPrice)) * 100;
+
+            var resultElement = document.getElementById("result");
+
+            if (isNaN(percentageChange)) {
+                resultElement.innerHTML = "请输入有效的价格";
+            } else if (oldPrice < newPrice) {
+                resultElement.innerHTML = "价格涨了 " + Math.abs(percentageChange) + "%";
+            } else if (oldPrice > newPrice) {
+                resultElement.innerHTML = "价格降了 " + Math.abs(percentageChange) + "%";
+            } else {
+                resultElement.innerHTML = "价格没有变化";
+            }
+        }
+    </script>
+</head>
+<body>
+    <center>
+    <h2>新老价格百分比计算器</h2>
+
+    <label for="oldPrice">老价格：</label>
+    <input type="text" id="oldPrice" required><br>
+
+    <label for="newPrice">新价格：</label>
+    <input type="text" id="newPrice" required><br>
+
+    <button onclick="calculatePercentage()">提交</button>
+
+    <p id="result"></p>
+    </center>
+</body>
+</html>

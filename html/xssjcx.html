@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>行驶时间预测查询工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="number"] {
+            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="number"]:focus {
+            border-color: #f40000;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4ff;
+            border-radius: 4px;
+            border-left: 4px solid #f40000;
+        }
+        .result-text {
+            font-size: 18px;
+            color: #333;
+            margin: 10px 0;
+        }
+        .highlight {
+            color: #f40000;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .unit {
+            color: #666;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>行驶时间预测查询工具</h1>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="speed">行驶速度：</label>
+                <input type="number" id="speed" min="1" value="120" step="1">
+                <span class="unit">公里/小时</span>
+                <div id="speedError" class="error">请输入大于0的速度</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="distance">行驶距离：</label>
+                <input type="number" id="distance" min="0.1" value="325" step="0.1">
+                <span class="unit">公里</span>
+                <div id="distanceError" class="error">请输入大于0的距离</div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-text">预计行驶时间：</div>
+            <div id="timeResult" class="result-text highlight">计算中...</div>
+            <div id="detailResult" class="result-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // 获取所有输入元素
+        const speedInput = document.getElementById('speed');
+        const distanceInput = document.getElementById('distance');
+        const timeResult = document.getElementById('timeResult');
+        const detailResult = document.getElementById('detailResult');
+        const speedError = document.getElementById('speedError');
+        const distanceError = document.getElementById('distanceError');
+
+        // 计算行驶时间并格式化显示
+        function calculateTime() {
+            // 获取输入值
+            const speed = parseFloat(speedInput.value);
+            const distance = parseFloat(distanceInput.value);
+            
+            // 验证输入
+            let isValid = true;
+            
+            if (!speed || speed <= 0) {
+                speedError.style.display = 'block';
+                isValid = false;
+            } else {
+                speedError.style.display = 'none';
+            }
+            
+            if (!distance || distance <= 0) {
+                distanceError.style.display = 'block';
+                isValid = false;
+            } else {
+                distanceError.style.display = 'none';
+            }
+
+            if (!isValid) {
+                timeResult.textContent = '请输入有效数据';
+                detailResult.textContent = '';
+                return;
+            }
+
+            // 计算时间（小时）
+            const timeHours = distance / speed;
+            
+            // 转换为小时、分钟格式
+            const hours = Math.floor(timeHours);
+            const minutes = Math.round((timeHours - hours) * 60);
+            
+            // 格式化显示时间
+            let timeText = '';
+            if (hours > 0) {
+                timeText += `${hours}小时`;
+            }
+            if (minutes > 0) {
+                timeText += `${minutes}分钟`;
+            }
+            if (timeText === '') {
+                timeText = '不到1分钟';
+            }
+            
+            timeResult.textContent = timeText;
+            
+            // 显示详细信息
+            const averageText = `以${speed}公里/小时的速度行驶${distance}公里`;
+            detailResult.textContent = averageText;
+        }
+
+        // 添加输入事件监听
+        speedInput.addEventListener('input', calculateTime);
+        distanceInput.addEventListener('input', calculateTime);
+
+        // 页面加载时进行初始计算
+        calculateTime();
+    </script>
+</body>
+</html>

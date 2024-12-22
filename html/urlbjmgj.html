@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>URL编解码工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+        .section-title {
+            margin-bottom: 1rem;
+            color: #444;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+            color: white;
+        }
+        .encode-btn {
+            background: #2196F3;
+        }
+        .encode-btn:hover {
+            background: #1976D2;
+        }
+        .decode-btn {
+            background: #4CAF50;
+        }
+        .decode-btn:hover {
+            background: #45a049;
+        }
+        .clear-btn {
+            background: #f44336;
+        }
+        .clear-btn:hover {
+            background: #d32f2f;
+        }
+        .result {
+            margin-top: 1rem;
+            word-break: break-all;
+        }
+        .checkbox-group {
+            margin-bottom: 1rem;
+        }
+        .checkbox-label {
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>URL编解码工具</h1>
+        
+        <div class="section">
+            <div class="section-title">输入文本</div>
+            <textarea id="input" placeholder="请输入需要编码或解码的文本..."></textarea>
+            
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="encodeSpace" checked>
+                    编码空格为+号
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="encodeChinese" checked>
+                    对中文进行编码
+                </label>
+            </div>
+            
+            <div class="button-group">
+                <button class="encode-btn" onclick="encodeText()">编码</button>
+                <button class="decode-btn" onclick="decodeText()">解码</button>
+                <button class="clear-btn" onclick="clearText()">清空</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">结果输出</div>
+            <textarea id="output" readonly></textarea>
+            <div class="button-group">
+                <button class="encode-btn" onclick="copyOutput()">复制结果</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function encodeText() {
+            const input = document.getElementById('input').value;
+            const encodeSpace = document.getElementById('encodeSpace').checked;
+            const encodeChinese = document.getElementById('encodeChinese').checked;
+            
+            let encoded = input;
+            
+            if (encodeChinese) {
+                // 使用encodeURIComponent对所有字符进行编码
+                encoded = encodeURIComponent(encoded);
+            } else {
+                // 只对特殊字符进行编码
+                encoded = encoded.replace(/[!'()*]/g, function(c) {
+                    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+                });
+            }
+            
+            if (encodeSpace) {
+                // 将空格替换为+号
+                encoded = encoded.replace(/%20/g, '+');
+            }
+            
+            document.getElementById('output').value = encoded;
+        }
+
+        function decodeText() {
+            const input = document.getElementById('input').value;
+            let decoded = input;
+            
+            // 先将+号替换回空格
+            decoded = decoded.replace(/\+/g, ' ');
+            
+            try {
+                // 尝试解码
+                decoded = decodeURIComponent(decoded);
+                document.getElementById('output').value = decoded;
+            } catch (e) {
+                alert('解码失败！请检查输入的编码格式是否正确。');
+            }
+        }
+
+        function clearText() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('output');
+            output.select();
+            document.execCommand('copy');
+            
+            // 创建临时提示元素
+            const tooltip = document.createElement('div');
+            tooltip.textContent = '已复制到剪贴板';
+            tooltip.style.position = 'fixed';
+            tooltip.style.left = '50%';
+            tooltip.style.top = '20px';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.padding = '8px 16px';
+            tooltip.style.background = '#333';
+            tooltip.style.color = 'white';
+            tooltip.style.borderRadius = '4px';
+            tooltip.style.zIndex = '1000';
+            
+            document.body.appendChild(tooltip);
+            
+            // 2秒后移除提示
+            setTimeout(() => {
+                document.body.removeChild(tooltip);
+            }, 2000);
+        }
+
+        // 添加快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'e':
+                        e.preventDefault();
+                        encodeText();
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        decodeText();
+                        break;
+                    case 'l':
+                        e.preventDefault();
+                        clearText();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

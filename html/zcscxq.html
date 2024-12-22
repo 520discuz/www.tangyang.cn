@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="GBK">
+    <title>整除数查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .result-count {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .divisors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .divisor {
+            background-color: #e9f5e9;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #c8e6c9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>整除数查询器</h2>
+        <div class="input-group">
+            <label>请输入一个正整数：</label><br>
+            <input type="number" id="number" min="1" placeholder="输入数字">
+            <button onclick="findDivisors()">查询</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function findDivisors() {
+            const num = parseInt(document.getElementById('number').value);
+            const resultDiv = document.getElementById('result');
+            
+            if (!num || num <= 0) {
+                resultDiv.innerHTML = '<div style="color: red;">请输入有效的正整数！</div>';
+                return;
+            }
+            
+            const divisors = [];
+            for (let i = 1; i <= num; i++) {
+                if (num % i === 0) {
+                    divisors.push(i);
+                }
+            }
+            
+            let html = `
+                <div class="result-count">数字 ${num} 共有 ${divisors.length} 个整除数</div>
+                <div class="divisors">
+                    ${divisors.map(d => `<span class="divisor">${d}</span>`).join('')}
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
