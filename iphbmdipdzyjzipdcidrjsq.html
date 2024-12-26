@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>IP黑白名单IP地址一键转IP段CIDR计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px; /* 设置页面最大宽度 */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px; /* 标签的上下边距 */
+        }
+        input {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            width: 100%; /* 输入框宽度 */
+            margin-bottom: 10px; /* 输入框之间的间距 */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+        .copy-button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>IP黑白名单IP地址一键转IP段CIDR计算器</h2>
+    
+    <label for="ip">请输入IP地址：</label>
+    <input type="text" id="ip" placeholder="输入IP地址" oninput="calculateIPRange()" />
+
+    <div class="result">
+        <div id="result1"></div><br>
+        <div id="result2"></div><br>
+        <div id="result3"></div>
+    </div>
+
+    <script>
+        function calculateIPRange() {
+            const ip = document.getElementById('ip').value;
+            const ipParts = ip.split('.').map(Number);
+
+            if (ipParts.length !== 4 || ipParts.some(part => part < 0 || part > 255)) {
+                document.getElementById('result1').innerText = '';
+                document.getElementById('result2').innerText = '';
+                document.getElementById('result3').innerText = '';
+                return;
+            }
+
+            // 计算 /24
+            const subnet24 = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.0/24`;
+            const range24Start = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.1`;
+            const range24End = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.254`;
+            const count24 = 254;
+            document.getElementById('result1').innerHTML = `${subnet24} <button class="copy-button" onclick="copyToClipboard('${subnet24}', this)">复制</button><br> (包含${range24Start}-${range24End} 共${count24}个IP) <button class="" onclick="copyToClipboard('(包含${range24Start}-${range24End} 共${count24}个IP)', this)"></button><br>`;
+
+            // 计算 /16
+            const subnet16 = `${ipParts[0]}.${ipParts[1]}.0.0/16`;
+            const range16Start = `${ipParts[0]}.${ipParts[1]}.0.0`;
+            const range16End = `${ipParts[0]}.${ipParts[1]}.255.255`;
+            const count16 = 65534; // 65536 - 2（网络地址和广播地址）
+            document.getElementById('result2').innerHTML = `${subnet16} <button class="copy-button" onclick="copyToClipboard('${subnet16}', this)">复制</button><br> (包含${range16Start} - ${range16End} 共${count16}个IP) <button class="" onclick="copyToClipboard('(包含${range16Start} - ${range16End} 共${count16}个IP)', this)"></button><br>`;
+
+            // 计算 /8
+            const subnet8 = `${ipParts[0]}.0.0.0/8`;
+            const range8Start = `${ipParts[0]}.0.0.0`;
+            const range8End = `${ipParts[0]}.255.255.255`;
+            const count8 = 16777214; // 16777216 - 2（网络地址和广播地址）
+            document.getElementById('result3').innerHTML = `${subnet8} <button class="copy-button" onclick="copyToClipboard('${subnet8}', this)">复制</button><br> (包含${range8Start} - ${range8End} 共${count8}个IP) <button class="" onclick="copyToClipboard('(包含${range8Start} - ${range8End} 共${count8}个IP)', this)"></button><br>`;
+        }
+
+        function copyToClipboard(text, button) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            button.innerText = '已复制'; // 修改按钮文本为“已复制”
+            setTimeout(() => {
+                button.innerText = '复制'; // 3秒后恢复按钮文本
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

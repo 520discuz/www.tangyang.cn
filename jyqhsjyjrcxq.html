@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>几月前后是几月几日查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px; /* 设置页面最大宽度 */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px; /* 标签的上下边距 */
+        }
+        input {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            width: 100%; /* 输入框宽度 */
+            margin-bottom: 10px; /* 输入框之间的间距 */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>几月前后是几月几日查询器</h2>
+    
+    <label for="months">请输入几月：</label>
+    <input type="number" id="months" placeholder="输入月数" oninput="calculateDates()" />
+
+    <div class="result">
+        <div id="monthsAgo"></div>
+        <div id="monthsLater"></div>
+    </div>
+
+    <script>
+        function calculateDates() {
+            const months = parseInt(document.getElementById('months').value) || 0;
+            const today = new Date();
+
+            // 计算几月前和几月后的日期
+            const monthsAgo = new Date(today);
+            monthsAgo.setMonth(today.getMonth() - months);
+
+            const monthsLater = new Date(today);
+            monthsLater.setMonth(today.getMonth() + months);
+
+            // 格式化日期为 "YYYY年MM月DD日"
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1; // 月份从0开始
+                const day = date.getDate();
+                return `${year}年${month}月${day}日`;
+            };
+
+            // 更新结果显示
+            document.getElementById('monthsAgo').innerText = `${months}月前是 ${formatDate(monthsAgo)}`;
+            document.getElementById('monthsLater').innerText = `${months}月后是 ${formatDate(monthsLater)}`;
+        }
+    </script>
+</body>
+</html>

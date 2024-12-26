@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>数字二进制十进制十六进制互相转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            padding: 8px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>数字二进制十进制十六进制互相转换器</h2>
+    
+    <label for="binaryInput">输入二进制：</label>
+    <input type="text" id="binaryInput" placeholder="输入二进制" oninput="convertFromBinary()" />
+
+    <label for="decimalInput">输入十进制：</label>
+    <input type="text" id="decimalInput" placeholder="输入十进制" oninput="convertFromDecimal()" />
+
+    <label for="hexInput">输入十六进制：</label>
+    <input type="text" id="hexInput" placeholder="输入十六进制" oninput="convertFromHex()" />
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function convertFromBinary() {
+            const binaryInput = document.getElementById('binaryInput').value;
+            const decimal = parseInt(binaryInput, 2);
+            document.getElementById('decimalInput').value = isNaN(decimal) ? '' : decimal;
+            document.getElementById('hexInput').value = isNaN(decimal) ? '' : decimal.toString(16).toUpperCase();
+        }
+
+        function convertFromDecimal() {
+            const decimalInput = document.getElementById('decimalInput').value;
+            const decimal = parseInt(decimalInput, 10);
+            document.getElementById('binaryInput').value = isNaN(decimal) ? '' : decimal.toString(2);
+            document.getElementById('hexInput').value = isNaN(decimal) ? '' : decimal.toString(16).toUpperCase();
+        }
+
+        function convertFromHex() {
+            const hexInput = document.getElementById('hexInput').value;
+            const decimal = parseInt(hexInput, 16);
+            document.getElementById('binaryInput').value = isNaN(decimal) ? '' : decimal.toString(2);
+            document.getElementById('decimalInput').value = isNaN(decimal) ? '' : decimal;
+        }
+    </script>
+</body>
+</html>

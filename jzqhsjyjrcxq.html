@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="GBK">
+    <title>几周前后是几月几日查询器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px; /* 设置页面最大宽度 */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px; /* 标签的上下边距 */
+        }
+        input {
+            padding: 8px; /* 内边距 */
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            width: 100%; /* 输入框宽度 */
+            margin-bottom: 10px; /* 输入框之间的间距 */
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a90e2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>几周前后是几月几日查询器</h2>
+    
+    <label for="weeks">请输入几周：</label>
+    <input type="number" id="weeks" placeholder="输入周数" oninput="calculateDates()" />
+
+    <div class="result">
+        <div id="weeksAgo"></div>
+        <div id="weeksLater"></div>
+    </div>
+
+    <script>
+        function calculateDates() {
+            const weeks = parseInt(document.getElementById('weeks').value) || 0;
+            const today = new Date();
+
+            // 计算几周前和几周后的日期
+            const weeksAgo = new Date(today);
+            weeksAgo.setDate(today.getDate() - weeks * 7);
+
+            const weeksLater = new Date(today);
+            weeksLater.setDate(today.getDate() + weeks * 7);
+
+            // 格式化日期为 "YYYY年MM月DD日"
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1; // 月份从0开始
+                const day = date.getDate();
+                return `${year}年${month}月${day}日`;
+            };
+
+            // 更新结果显示
+            document.getElementById('weeksAgo').innerText = `${weeks}周前是 ${formatDate(weeksAgo)}`;
+            document.getElementById('weeksLater').innerText = `${weeks}周后是 ${formatDate(weeksLater)}`;
+        }
+    </script>
+</body>
+</html>
