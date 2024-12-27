@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>一寸二寸照片尺寸图生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        img {
+            display: none;
+            margin: 0 auto;
+        }
+        #downloadLink {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>1寸2寸照片尺寸图生成器</h1>
+    <p>点击按钮生成相应尺寸的照片，并下载，暂不提供人物照上传功能，请把下载后的图片放入PS做图软件里自行编辑。</p>
+
+    <div>
+        <button onclick="generateImage('社保卡/医保卡', 358, 441)">社保卡/医保卡尺寸照片</button>
+        <button onclick="generateImage('小一寸', 260, 378)">小一寸照片</button>
+        <button onclick="generateImage('一寸', 295, 413)">一寸照片</button>
+        <button onclick="generateImage('大一寸', 390, 567)">大一寸照片</button>
+        <button onclick="generateImage('小二寸', 413, 531)">小二寸照片</button>
+        <button onclick="generateImage('二寸', 413, 591)">二寸照片</button>
+    </div>
+
+    <h2>生成的照片：</h2>
+    <div class="image-container">
+        <img id="generatedImage" alt="生成的照片" />
+    </div>
+    <a id="downloadLink" href="#" download></a>
+
+    <script>
+        function generateImage(label, width, height) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+
+            // 填充背景颜色
+            ctx.fillStyle = '#D3D3D3'; // 浅灰色
+            ctx.fillRect(0, 0, width, height);
+
+            // 添加文本
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#000000'; // 黑色
+            ctx.fillText(label, 10, 30);
+
+            // 生成图片链接
+            const img = document.getElementById('generatedImage');
+            img.src = canvas.toDataURL('image/png');
+            img.style.display = 'block';
+
+            // 创建下载链接
+            const link = document.getElementById('downloadLink');
+            link.href = img.src;
+            link.download = label + '.png';
+            link.innerText = '下载 ' + label + ' 照片';
+            link.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
