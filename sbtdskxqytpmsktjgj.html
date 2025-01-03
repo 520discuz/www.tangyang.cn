@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>鼠标拖动式可选区域图片马赛克添加工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #canvas {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            cursor: crosshair;
+        }
+        input[type="file"] {
+            margin: 10px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+        }
+        #mosaicSlider {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>鼠标拖动式可选区域图片马赛克添加工具（友情提示，暂时只支持添加一个马赛克，如果想要添加多个，可以先保存已添加马赛克的图片，然后重新上传已添加马赛克的图片再二次添加）</h1>
+    <input type="file" id="upload" accept="image/*">
+    <label for="mosaicSlider">马赛克复杂程度（块大小）：</label>
+    <input type="range" id="mosaicSlider" min="5" max="100" value="10">
+    <button onclick="saveImage()">保存图片</button>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let img = new Image();
+        let startX, startY, endX, endY;
+        let isDrawing = false;
+
+        document.getElementById("upload").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                }
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        canvas.addEventListener("mousedown", function(event) {
+            const rect = canvas.getBoundingClientRect();
+            startX = event.clientX - rect.left;
+            startY = event.clientY - rect.top;
+            isDrawing = true;
+        });
+
+        canvas.addEventListener("mousemove", function(event) {
+            if (isDrawing) {
+                const rect = canvas.getBoundingClientRect();
+                endX = event.clientX - rect.left;
+                endY = event.clientY - rect.top;
+                redraw();
+            }
+        });
+
+        canvas.addEventListener("mouseup", function() {
+            isDrawing = false;
+            applyMosaic();
+        });
+
+        function redraw() {
+            ctx.drawImage(img, 0, 0);
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+        }
+
+        function applyMosaic() {
+            const mosaicSize = parseInt(document.getElementById("mosaicSlider").value) || 10;
+            ctx.drawImage(img, 0, 0);
+
+            const xStart = Math.min(startX, endX);
+            const yStart = Math.min(startY, endY);
+            const xEnd = Math.max(startX, endX);
+            const yEnd = Math.max(startY, endY);
+
+            for (let y = yStart; y < yEnd; y += mosaicSize) {
+                for (let x = xStart; x < xEnd; x += mosaicSize) {
+                    const red = ctx.getImageData(x, y, 1, 1).data[0];
+                    const green = ctx.getImageData(x, y, 1, 1).data[1];
+                    const blue = ctx.getImageData(x, y, 1, 1).data[2];
+
+                    ctx.fillStyle = `rgba(${red}, ${green}, ${blue}, 1)`;
+                    ctx.fillRect(x, y, mosaicSize, mosaicSize);
+                }
+            }
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'mosaic_image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>

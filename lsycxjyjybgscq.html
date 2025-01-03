@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="GBK">
+    <title>临时一次性简约简易表格生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>临时一次性简约简易表格生成器</h1>
+    <button onclick="addRow()">添加行</button>
+    <button onclick="addColumn()">添加列</button>
+    <button onclick="generateHTML()">一键生成HTML</button>
+    
+    <div>
+        <label for="bgColor">背景颜色：</label>
+        <input type="color" id="bgColor" value="#ffffff">
+        
+        <label for="textColor">内容颜色：</label>
+        <input type="color" id="textColor" value="#000000">
+        
+        <label for="borderColor">边框颜色：</label>
+        <input type="color" id="borderColor" value="#cccccc">
+        
+        <button onclick="applyColors()">应用颜色</button>
+    </div>
+
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th contenteditable="true">0</th>
+                <th contenteditable="true">1</th>
+                <th contenteditable="true">2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td contenteditable="true">1</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function addRow() {
+            const table = document.getElementById("myTable").getElementsByTagName("tbody")[0];
+            const newRow = table.insertRow();
+            const cols = table.rows[0].cells.length;
+
+            const newCell = newRow.insertCell(0);
+            newCell.contentEditable = "true"; // 允许编辑行号
+            newCell.textContent = table.rows.length; // 设置行号
+
+            for (let i = 1; i < cols; i++) {
+                const newCell = newRow.insertCell(i);
+                newCell.contentEditable = "true"; // 允许内容编辑
+            }
+        }
+
+        function addColumn() {
+            const table = document.getElementById("myTable");
+            const header = table.getElementsByTagName("thead")[0].rows[0];
+            const newHeaderCell = document.createElement("th");
+            newHeaderCell.contentEditable = "true"; // 允许编辑
+            newHeaderCell.textContent = header.cells.length; // 设置列号
+            header.appendChild(newHeaderCell);
+
+            const rows = table.getElementsByTagName("tbody")[0].rows;
+            for (let i = 0; i < rows.length; i++) {
+                const newCell = rows[i].insertCell(rows[i].cells.length);
+                newCell.contentEditable = "true"; // 允许内容编辑
+            }
+        }
+
+        function generateHTML() {
+            const tableHTML = `
+                <!DOCTYPE html>
+                <html lang="zh">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>生成的表格</title>
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+                        th, td {
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${document.getElementById("myTable").outerHTML}
+                </body>
+                </html>
+            `;
+            const blob = new Blob([tableHTML], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'table.html';
+            link.click();
+        }
+
+        function applyColors() {
+            const bgColor = document.getElementById("bgColor").value;
+            const textColor = document.getElementById("textColor").value;
+            const borderColor = document.getElementById("borderColor").value;
+
+            const table = document.getElementById("myTable");
+            table.style.backgroundColor = bgColor;
+            table.style.color = textColor;
+
+            const cells = table.getElementsByTagName("th");
+            for (let cell of cells) {
+                cell.style.borderColor = borderColor;
+            }
+
+            const bodyCells = table.getElementsByTagName("td");
+            for (let cell of bodyCells) {
+                cell.style.borderColor = borderColor;
+            }
+
+            // 更新边框颜色
+            table.style.borderColor = borderColor;
+        }
+    </script>
+</body>
+</html>
